@@ -3,7 +3,7 @@
     <div id="_wrapper" class="pa-5">
       <v-main>
         <v-card>
-          <v-card-title primary>
+          <v-card-title>
             Create Patient
           </v-card-title>
           <v-card-text>
@@ -34,6 +34,47 @@
                     v-model="middlename"
                     label="Middlename"
                   ></v-text-field>
+                </v-col>
+              </v-row>
+              <v-row>
+                <v-col cols="2">
+                  <v-radio-group v-model="gender">
+                    <template v-slot:label>
+                      <div><strong>Gender</strong></div>
+                    </template>
+                    <v-radio value="male">
+                      <template v-slot:label>
+                        <div>Male</div>
+                      </template>
+                    </v-radio>
+                    <v-radio value="female">
+                      <template v-slot:label>
+                        <div>Female</div>
+                      </template>
+                    </v-radio>
+                  </v-radio-group>
+                </v-col>
+                <v-col>
+                  <v-radio-group v-model="civilstatus">
+                    <template v-slot:label>
+                      <div><strong>Civil Status</strong></div>
+                    </template>
+                    <v-radio value="single">
+                      <template v-slot:label>
+                        <div>Single</div>
+                      </template>
+                    </v-radio>
+                    <v-radio value="married">
+                      <template v-slot:label>
+                        <div>Married</div>
+                      </template>
+                    </v-radio>
+                    <v-radio value="widowed">
+                      <template v-slot:label>
+                        <div>Widowed</div>
+                      </template>
+                    </v-radio>
+                  </v-radio-group>
                 </v-col>
               </v-row>
               <v-text-field
@@ -85,6 +126,8 @@ export default {
     lastname: "",
     firstname: "",
     middlename: "",
+    gender: "male",
+    civilstatus: "single",
     email: "",
     select: null,
     items: ["Item 1", "Item 2", "Item 3", "Item 4"],

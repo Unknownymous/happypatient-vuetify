@@ -405,6 +405,47 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
@@ -433,6 +474,8 @@ __webpack_require__.r(__webpack_exports__);
       lastname: "",
       firstname: "",
       middlename: "",
+      gender: "male",
+      civilstatus: "single",
       email: "",
       select: null,
       items: ["Item 1", "Item 2", "Item 3", "Item 4"],
@@ -1986,7 +2029,7 @@ var render = function() {
             _c(
               "v-card",
               [
-                _c("v-card-title", { attrs: { primary: "" } }, [
+                _c("v-card-title", [
                   _vm._v("\n          Create Patient\n        ")
                 ]),
                 _vm._v(" "),
@@ -2068,6 +2111,154 @@ var render = function() {
                                   expression: "middlename"
                                 }
                               })
+                            ],
+                            1
+                          )
+                        ],
+                        1
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "v-row",
+                        [
+                          _c(
+                            "v-col",
+                            { attrs: { cols: "2" } },
+                            [
+                              _c(
+                                "v-radio-group",
+                                {
+                                  scopedSlots: _vm._u([
+                                    {
+                                      key: "label",
+                                      fn: function() {
+                                        return [
+                                          _c("div", [
+                                            _c("strong", [_vm._v("Gender")])
+                                          ])
+                                        ]
+                                      },
+                                      proxy: true
+                                    }
+                                  ]),
+                                  model: {
+                                    value: _vm.gender,
+                                    callback: function($$v) {
+                                      _vm.gender = $$v
+                                    },
+                                    expression: "gender"
+                                  }
+                                },
+                                [
+                                  _vm._v(" "),
+                                  _c("v-radio", {
+                                    attrs: { value: "male" },
+                                    scopedSlots: _vm._u([
+                                      {
+                                        key: "label",
+                                        fn: function() {
+                                          return [_c("div", [_vm._v("Male")])]
+                                        },
+                                        proxy: true
+                                      }
+                                    ])
+                                  }),
+                                  _vm._v(" "),
+                                  _c("v-radio", {
+                                    attrs: { value: "female" },
+                                    scopedSlots: _vm._u([
+                                      {
+                                        key: "label",
+                                        fn: function() {
+                                          return [_c("div", [_vm._v("Female")])]
+                                        },
+                                        proxy: true
+                                      }
+                                    ])
+                                  })
+                                ],
+                                1
+                              )
+                            ],
+                            1
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "v-col",
+                            [
+                              _c(
+                                "v-radio-group",
+                                {
+                                  scopedSlots: _vm._u([
+                                    {
+                                      key: "label",
+                                      fn: function() {
+                                        return [
+                                          _c("div", [
+                                            _c("strong", [
+                                              _vm._v("Civil Status")
+                                            ])
+                                          ])
+                                        ]
+                                      },
+                                      proxy: true
+                                    }
+                                  ]),
+                                  model: {
+                                    value: _vm.civilstatus,
+                                    callback: function($$v) {
+                                      _vm.civilstatus = $$v
+                                    },
+                                    expression: "civilstatus"
+                                  }
+                                },
+                                [
+                                  _vm._v(" "),
+                                  _c("v-radio", {
+                                    attrs: { value: "single" },
+                                    scopedSlots: _vm._u([
+                                      {
+                                        key: "label",
+                                        fn: function() {
+                                          return [_c("div", [_vm._v("Single")])]
+                                        },
+                                        proxy: true
+                                      }
+                                    ])
+                                  }),
+                                  _vm._v(" "),
+                                  _c("v-radio", {
+                                    attrs: { value: "married" },
+                                    scopedSlots: _vm._u([
+                                      {
+                                        key: "label",
+                                        fn: function() {
+                                          return [
+                                            _c("div", [_vm._v("Married")])
+                                          ]
+                                        },
+                                        proxy: true
+                                      }
+                                    ])
+                                  }),
+                                  _vm._v(" "),
+                                  _c("v-radio", {
+                                    attrs: { value: "widowed" },
+                                    scopedSlots: _vm._u([
+                                      {
+                                        key: "label",
+                                        fn: function() {
+                                          return [
+                                            _c("div", [_vm._v("Widowed")])
+                                          ]
+                                        },
+                                        proxy: true
+                                      }
+                                    ])
+                                  })
+                                ],
+                                1
+                              )
                             ],
                             1
                           )
