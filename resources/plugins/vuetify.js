@@ -1,7 +1,8 @@
 import Vue from 'vue';
 import Vuetify from 'vuetify';
 import 'vuetify/dist/vuetify.min.css';
-import '@mdi/font/css/materialdesignicons.css' // Ensure you are using css-loader
+import '@mdi/font/css/materialdesignicons.css';
+import 'font-awesome/css/font-awesome.min.css';
 
 Vue.use(Vuetify);
 
@@ -10,6 +11,6 @@ const opts = {};
 export default new Vuetify({
   opts: opts,
   icons: {
-    iconfont: 'mdi', 
+    iconfont: 'mdi' || 'fa', 
   }
 });
