@@ -404,17 +404,19 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   mixins: [vuelidate__WEBPACK_IMPORTED_MODULE_0__["validationMixin"]],
   validations: {
-    name: {
-      required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_1__["required"],
-      maxLength: Object(vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_1__["maxLength"])(10)
+    lastname: {
+      required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_1__["required"]
+    },
+    firstname: {
+      required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_1__["required"]
     },
     email: {
-      required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_1__["required"],
       email: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_1__["email"]
     },
     select: {
@@ -428,10 +430,12 @@ __webpack_require__.r(__webpack_exports__);
   },
   data: function data() {
     return {
-      name: '',
-      email: '',
+      lastname: "",
+      firstname: "",
+      middlename: "",
+      email: "",
       select: null,
-      items: ['Item 1', 'Item 2', 'Item 3', 'Item 4'],
+      items: ["Item 1", "Item 2", "Item 3", "Item 4"],
       checkbox: false
     };
   },
@@ -439,27 +443,34 @@ __webpack_require__.r(__webpack_exports__);
     checkboxErrors: function checkboxErrors() {
       var errors = [];
       if (!this.$v.checkbox.$dirty) return errors;
-      !this.$v.checkbox.checked && errors.push('You must agree to continue!');
+      !this.$v.checkbox.checked && errors.push("You must agree to continue!");
       return errors;
     },
     selectErrors: function selectErrors() {
       var errors = [];
       if (!this.$v.select.$dirty) return errors;
-      !this.$v.select.required && errors.push('Item is required');
+      !this.$v.select.required && errors.push("Item is required");
       return errors;
     },
-    nameErrors: function nameErrors() {
+    lastnameErrors: function lastnameErrors() {
       var errors = [];
-      if (!this.$v.name.$dirty) return errors;
-      !this.$v.name.maxLength && errors.push('Name must be at most 10 characters long');
-      !this.$v.name.required && errors.push('Name is required.');
+      if (!this.$v.lastname.$dirty) return errors; // !this.$v.lastname.maxLength &&
+      // errors.push("Name must be at most 10 characters long");
+
+      !this.$v.lastname.required && errors.push("Lastname is required.");
+      return errors;
+    },
+    firstnameErrors: function firstnameErrors() {
+      var errors = [];
+      if (!this.$v.firstname.$dirty) return errors;
+      !this.$v.firstname.required && errors.push("Firstname is required.");
       return errors;
     },
     emailErrors: function emailErrors() {
       var errors = [];
       if (!this.$v.email.$dirty) return errors;
-      !this.$v.email.email && errors.push('Must be valid e-mail');
-      !this.$v.email.required && errors.push('E-mail is required');
+      !this.$v.email.email && errors.push("Must be valid e-mail"); // !this.$v.email.required && errors.push("E-mail is required");
+
       return errors;
     }
   },
@@ -469,8 +480,8 @@ __webpack_require__.r(__webpack_exports__);
     },
     clear: function clear() {
       this.$v.$reset();
-      this.name = '';
-      this.email = '';
+      this.name = "";
+      this.email = "";
       this.select = null;
       this.checkbox = false;
     }
@@ -1970,44 +1981,104 @@ var render = function() {
       { staticClass: "pa-5", attrs: { id: "_wrapper" } },
       [
         _c(
-          "v-content",
+          "v-main",
           [
             _c(
-              "v-row",
+              "v-card",
               [
-                _c("v-col", [
+                _c("v-card-title", { attrs: { primary: "" } }, [
+                  _vm._v("\n          Create Patient\n        ")
+                ]),
+                _vm._v(" "),
+                _c("v-card-text", [
                   _c(
                     "form",
                     [
-                      _c("v-text-field", {
-                        attrs: {
-                          "error-messages": _vm.nameErrors,
-                          counter: 10,
-                          label: "Name",
-                          required: ""
-                        },
-                        on: {
-                          input: function($event) {
-                            return _vm.$v.name.$touch()
-                          },
-                          blur: function($event) {
-                            return _vm.$v.name.$touch()
-                          }
-                        },
-                        model: {
-                          value: _vm.name,
-                          callback: function($$v) {
-                            _vm.name = $$v
-                          },
-                          expression: "name"
-                        }
-                      }),
+                      _c(
+                        "v-row",
+                        [
+                          _c(
+                            "v-col",
+                            [
+                              _c("v-text-field", {
+                                attrs: {
+                                  "error-messages": _vm.lastnameErrors,
+                                  label: "Lastname",
+                                  required: ""
+                                },
+                                on: {
+                                  input: function($event) {
+                                    return _vm.$v.lastname.$touch()
+                                  },
+                                  blur: function($event) {
+                                    return _vm.$v.lastname.$touch()
+                                  }
+                                },
+                                model: {
+                                  value: _vm.lastname,
+                                  callback: function($$v) {
+                                    _vm.lastname = $$v
+                                  },
+                                  expression: "lastname"
+                                }
+                              })
+                            ],
+                            1
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "v-col",
+                            [
+                              _c("v-text-field", {
+                                attrs: {
+                                  "error-messages": _vm.firstnameErrors,
+                                  label: "Firstname",
+                                  required: ""
+                                },
+                                on: {
+                                  input: function($event) {
+                                    return _vm.$v.firstname.$touch()
+                                  },
+                                  blur: function($event) {
+                                    return _vm.$v.firstname.$touch()
+                                  }
+                                },
+                                model: {
+                                  value: _vm.firstname,
+                                  callback: function($$v) {
+                                    _vm.firstname = $$v
+                                  },
+                                  expression: "firstname"
+                                }
+                              })
+                            ],
+                            1
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "v-col",
+                            [
+                              _c("v-text-field", {
+                                attrs: { label: "Middlename" },
+                                model: {
+                                  value: _vm.middlename,
+                                  callback: function($$v) {
+                                    _vm.middlename = $$v
+                                  },
+                                  expression: "middlename"
+                                }
+                              })
+                            ],
+                            1
+                          )
+                        ],
+                        1
+                      ),
                       _vm._v(" "),
                       _c("v-text-field", {
                         attrs: {
                           "error-messages": _vm.emailErrors,
-                          label: "E-mail",
-                          required: ""
+                          label: "E-mail"
                         },
                         on: {
                           input: function($event) {
@@ -2050,29 +2121,6 @@ var render = function() {
                         }
                       }),
                       _vm._v(" "),
-                      _c("v-checkbox", {
-                        attrs: {
-                          "error-messages": _vm.checkboxErrors,
-                          label: "Do you agree?",
-                          required: ""
-                        },
-                        on: {
-                          change: function($event) {
-                            return _vm.$v.checkbox.$touch()
-                          },
-                          blur: function($event) {
-                            return _vm.$v.checkbox.$touch()
-                          }
-                        },
-                        model: {
-                          value: _vm.checkbox,
-                          callback: function($$v) {
-                            _vm.checkbox = $$v
-                          },
-                          expression: "checkbox"
-                        }
-                      }),
-                      _vm._v(" "),
                       _c(
                         "v-btn",
                         {
@@ -2080,7 +2128,7 @@ var render = function() {
                           attrs: { color: "primary" },
                           on: { click: _vm.submit }
                         },
-                        [_vm._v("\n              submit\n            ")]
+                        [_vm._v(" submit ")]
                       ),
                       _vm._v(" "),
                       _c(
@@ -2089,7 +2137,7 @@ var render = function() {
                           attrs: { color: "#E0E0E0" },
                           on: { click: _vm.clear }
                         },
-                        [_vm._v("\n              clear\n            ")]
+                        [_vm._v(" clear ")]
                       )
                     ],
                     1
@@ -63331,8 +63379,8 @@ var opts = {};
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! C:\laragon\www\happypatient-vuetify\resources\js\app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! C:\laragon\www\happypatient-vuetify\resources\sass\app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! E:\laragon\www\happypatient-vuetify\resources\js\app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! E:\laragon\www\happypatient-vuetify\resources\sass\app.scss */"./resources/sass/app.scss");
 
 
 /***/ })
