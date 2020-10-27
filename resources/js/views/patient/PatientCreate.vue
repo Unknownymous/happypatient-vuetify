@@ -3,14 +3,15 @@
     <div id="_wrapper" class="pa-5">
       <v-main>
         <v-card>
-          <v-card-title>
+          <v-card-title class="grey darken-4  text-white">
             Create Patient
           </v-card-title>
-          <v-card-text>
-            <form>
+          <v-card-text class="pa-10">
+            <form id="patientform">
               <v-row>
                 <v-col>
                   <v-text-field
+                    name="lastname"
                     v-model="lastname"
                     :error-messages="lastnameErrors"
                     label="Lastname"
@@ -21,6 +22,7 @@
                 </v-col>
                 <v-col>
                   <v-text-field
+                    name="firstname"
                     v-model="firstname"
                     :error-messages="firstnameErrors"
                     label="Firstname"
@@ -31,6 +33,7 @@
                 </v-col>
                 <v-col>
                   <v-text-field
+                    name="middlename"
                     v-model="middlename"
                     label="Middlename"
                   ></v-text-field>
@@ -38,7 +41,7 @@
               </v-row>
               <v-row>
                 <v-col cols="4">
-                  <v-radio-group v-model="gender">
+                  <v-radio-group name="gender" v-model="gender">
                     <template v-slot:label>
                       <div><strong>Gender</strong></div>
                     </template>
@@ -55,7 +58,7 @@
                   </v-radio-group>
                 </v-col>
                 <v-col cols="4">
-                  <v-radio-group v-model="civilstatus">
+                  <v-radio-group name="civilstatus" v-model="civilstatus">
                     <template v-slot:label>
                       <div><strong>Civil Status</strong></div>
                     </template>
@@ -89,6 +92,7 @@
                   >
                     <template v-slot:activator="{ on, attrs }">
                       <v-text-field
+                        name="birthdate"
                         v-model="computedDateFormatted"
                         label="Birthdate"
                         hint="MM/DD/YYYY format"
@@ -114,6 +118,7 @@
               <v-row>
                 <v-col>
                   <v-text-field
+                    name="landline"
                     v-model="landline"
                     label="Landline"
                     prepend-icon="mdi-phone"
@@ -121,6 +126,7 @@
                 </v-col>
                 <v-col>
                   <v-text-field
+                    name="mobile"
                     v-model="mobile"
                     label="Mobile"
                     prepend-icon="mdi-cellphone"
@@ -128,6 +134,7 @@
                 </v-col>
                 <v-col>
                   <v-text-field
+                    name="email"
                     v-model="email"
                     prepend-icon="mdi-email"
                     :error-messages="emailErrors"
@@ -139,7 +146,8 @@
               </v-row>
               <v-row class="mb-6">
                 <v-col>
-                  <v-select
+                  <v-autocomplete
+                    name="province"
                     v-model="province"
                     :items="provinces"
                     item-value="province_id"
@@ -150,10 +158,13 @@
                     @change="$v.province.$touch()"
                     @blur="$v.province.$touch()"
                     v-on:change="getCities($v.province.$model)"
-                  ></v-select>
+                  >
+                  </v-autocomplete>
+                  
                 </v-col>
                 <v-col>
-                  <v-select
+                  <v-autocomplete
+                    name="city"
                     v-model="city"
                     :items="cities"
                     item-value="city_id"
@@ -164,10 +175,11 @@
                     @change="$v.city.$touch()"
                     @blur="$v.city.$touch()"
                     v-on:change="getBarangays($v.city.$model)"
-                  ></v-select>
+                  ></v-autocomplete>
                 </v-col>
                 <v-col>
-                  <v-select
+                  <v-autocomplete
+                    name="barangay"
                     v-model="barangay"
                     :items="barangays"
                     item-value="id"
@@ -177,10 +189,11 @@
                     :error-messages="barangayErrors"
                     @change="$v.barangay.$touch()"
                     @blur="$v.barangay.$touch()"
-                  ></v-select>
+                    
+                  ></v-autocomplete>
                 </v-col>
               </v-row>
-              <v-btn class="mr-4" color="primary" @click="submit"> submit </v-btn>
+              <v-btn class="mr-4" color="primary" @click="createPatient"> submit </v-btn>
               <v-btn color="#E0E0E0" @click="clear"> clear </v-btn>
             </form>
           </v-card-text>
@@ -206,11 +219,7 @@ export default {
     province: { required },
     city: { required },
     barangay: { required },
-    checkbox: {
-      checked(val) {
-        return val;
-      },
-    },
+    
   },
 
   data: () => ({
@@ -297,8 +306,37 @@ export default {
     },
   },
   methods: {
-    submit() {
+    createPatient() {
       this.$v.$touch();
+
+      if(!this.$v.$error)
+      {
+        
+        let myForm = document.getElementById('patientform');
+        let formData = new FormData(myForm);
+        const data = {};
+
+        for(let [key, val] of formData.entries())
+        {
+          Object.assign(data ,{[key]: val});
+        }
+
+        Axios.post('/patient/store', data).then((response) => {
+          console.log(response.data);
+
+          if(response.data.success)
+          {
+            this.clear();
+          }
+
+
+        }, (error) => {
+          console.log(error);
+        });
+
+
+      }
+      
     },
     clear() {
       this.$v.$reset();
@@ -335,6 +373,10 @@ export default {
       Axios.get('/cities/'+province_id).then((response) => {
         this.cities = response.data.cities;
         this.barangays = [];
+        this.city = null;
+        this.barangay = null;
+        this.$v.city.$reset();
+        this.$v.barangay.$reset();
         console.log(this.cities);
       });
     },
@@ -343,7 +385,7 @@ export default {
         this.barangays = response.data.barangays;
         console.log(this.barangays);
       });
-    }
+    },
   },
   mounted () {
     Axios.get('/provinces').then((response) => {

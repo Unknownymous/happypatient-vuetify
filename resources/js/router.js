@@ -8,12 +8,12 @@ const routes = [
   {
     path: '/dashboard',
     name: 'dashboard',
-    component: PatientCreate
+    // component: PatientCreate
   },
   {
     path: '/transactions',
     name: 'transactions',
-    component: PatientCreate
+    // component: PatientCreate
   },
   {
     path: '/patient/create',

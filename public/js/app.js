@@ -2155,18 +2155,35 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vuelidate__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(vuelidate__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! vuelidate/lib/validators */ "./node_modules/vuelidate/lib/validators/index.js");
 /* harmony import */ var vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_2__);
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
 
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
-
-function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
-
-function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
 function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return; var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
 
 function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
 
+function _createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e2) { throw _e2; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e3) { didErr = true; err = _e3; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -2385,11 +2402,6 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
     },
     barangay: {
       required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_2__["required"]
-    },
-    checkbox: {
-      checked: function checked(val) {
-        return val;
-      }
     }
   },
   data: function data() {
@@ -2477,8 +2489,43 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
     }
   },
   methods: {
-    submit: function submit() {
+    createPatient: function createPatient() {
+      var _this = this;
+
       this.$v.$touch();
+
+      if (!this.$v.$error) {
+        var myForm = document.getElementById('patientform');
+        var formData = new FormData(myForm);
+        var data = {};
+
+        var _iterator = _createForOfIteratorHelper(formData.entries()),
+            _step;
+
+        try {
+          for (_iterator.s(); !(_step = _iterator.n()).done;) {
+            var _step$value = _slicedToArray(_step.value, 2),
+                key = _step$value[0],
+                val = _step$value[1];
+
+            Object.assign(data, _defineProperty({}, key, val));
+          }
+        } catch (err) {
+          _iterator.e(err);
+        } finally {
+          _iterator.f();
+        }
+
+        axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('/patient/store', data).then(function (response) {
+          console.log(response.data);
+
+          if (response.data.success) {
+            _this.clear();
+          }
+        }, function (error) {
+          console.log(error);
+        });
+      }
     },
     clear: function clear() {
       this.$v.$reset();
@@ -2521,29 +2568,36 @@ function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
       return "".concat(year, "-").concat(month.padStart(2, '0'), "-").concat(day.padStart(2, '0'));
     },
     getCities: function getCities(province_id) {
-      var _this = this;
+      var _this2 = this;
 
       axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/cities/' + province_id).then(function (response) {
-        _this.cities = response.data.cities;
-        _this.barangays = [];
-        console.log(_this.cities);
+        _this2.cities = response.data.cities;
+        _this2.barangays = [];
+        _this2.city = null;
+        _this2.barangay = null;
+
+        _this2.$v.city.$reset();
+
+        _this2.$v.barangay.$reset();
+
+        console.log(_this2.cities);
       });
     },
     getBarangays: function getBarangays(city_id) {
-      var _this2 = this;
+      var _this3 = this;
 
       axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/barangays/' + city_id).then(function (response) {
-        _this2.barangays = response.data.barangays;
-        console.log(_this2.barangays);
+        _this3.barangays = response.data.barangays;
+        console.log(_this3.barangays);
       });
     }
   },
   mounted: function mounted() {
-    var _this3 = this;
+    var _this4 = this;
 
     axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/provinces').then(function (response) {
-      _this3.provinces = response.data.provinces;
-      console.log(_this3.provinces);
+      _this4.provinces = response.data.provinces;
+      console.log(_this4.provinces);
     });
   }
 });
@@ -4046,13 +4100,16 @@ var render = function() {
             _c(
               "v-card",
               [
-                _c("v-card-title", [
-                  _vm._v("\n          Create Patient\n        ")
-                ]),
+                _c(
+                  "v-card-title",
+                  { staticClass: "grey darken-4  text-white" },
+                  [_vm._v("\n          Create Patient\n        ")]
+                ),
                 _vm._v(" "),
-                _c("v-card-text", [
+                _c("v-card-text", { staticClass: "pa-10" }, [
                   _c(
                     "form",
+                    { attrs: { id: "patientform" } },
                     [
                       _c(
                         "v-row",
@@ -4062,6 +4119,7 @@ var render = function() {
                             [
                               _c("v-text-field", {
                                 attrs: {
+                                  name: "lastname",
                                   "error-messages": _vm.lastnameErrors,
                                   label: "Lastname",
                                   required: ""
@@ -4091,6 +4149,7 @@ var render = function() {
                             [
                               _c("v-text-field", {
                                 attrs: {
+                                  name: "firstname",
                                   "error-messages": _vm.firstnameErrors,
                                   label: "Firstname",
                                   required: ""
@@ -4119,7 +4178,10 @@ var render = function() {
                             "v-col",
                             [
                               _c("v-text-field", {
-                                attrs: { label: "Middlename" },
+                                attrs: {
+                                  name: "middlename",
+                                  label: "Middlename"
+                                },
                                 model: {
                                   value: _vm.middlename,
                                   callback: function($$v) {
@@ -4145,6 +4207,7 @@ var render = function() {
                               _c(
                                 "v-radio-group",
                                 {
+                                  attrs: { name: "gender" },
                                   scopedSlots: _vm._u([
                                     {
                                       key: "label",
@@ -4207,6 +4270,7 @@ var render = function() {
                               _c(
                                 "v-radio-group",
                                 {
+                                  attrs: { name: "civilstatus" },
                                   scopedSlots: _vm._u([
                                     {
                                       key: "label",
@@ -4308,6 +4372,7 @@ var render = function() {
                                               _vm._b(
                                                 {
                                                   attrs: {
+                                                    name: "birthdate",
                                                     label: "Birthdate",
                                                     hint: "MM/DD/YYYY format",
                                                     "persistent-hint": "",
@@ -4390,6 +4455,7 @@ var render = function() {
                             [
                               _c("v-text-field", {
                                 attrs: {
+                                  name: "landline",
                                   label: "Landline",
                                   "prepend-icon": "mdi-phone"
                                 },
@@ -4410,6 +4476,7 @@ var render = function() {
                             [
                               _c("v-text-field", {
                                 attrs: {
+                                  name: "mobile",
                                   label: "Mobile",
                                   "prepend-icon": "mdi-cellphone"
                                 },
@@ -4430,6 +4497,7 @@ var render = function() {
                             [
                               _c("v-text-field", {
                                 attrs: {
+                                  name: "email",
                                   "prepend-icon": "mdi-email",
                                   "error-messages": _vm.emailErrors,
                                   label: "E-mail"
@@ -4464,8 +4532,9 @@ var render = function() {
                           _c(
                             "v-col",
                             [
-                              _c("v-select", {
+                              _c("v-autocomplete", {
                                 attrs: {
+                                  name: "province",
                                   items: _vm.provinces,
                                   "item-value": "province_id",
                                   "item-text": "name",
@@ -4503,8 +4572,9 @@ var render = function() {
                           _c(
                             "v-col",
                             [
-                              _c("v-select", {
+                              _c("v-autocomplete", {
                                 attrs: {
+                                  name: "city",
                                   items: _vm.cities,
                                   "item-value": "city_id",
                                   "item-text": "name",
@@ -4542,8 +4612,9 @@ var render = function() {
                           _c(
                             "v-col",
                             [
-                              _c("v-select", {
+                              _c("v-autocomplete", {
                                 attrs: {
+                                  name: "barangay",
                                   items: _vm.barangays,
                                   "item-value": "id",
                                   "item-text": "name",
@@ -4579,7 +4650,7 @@ var render = function() {
                         {
                           staticClass: "mr-4",
                           attrs: { color: "primary" },
-                          on: { click: _vm.submit }
+                          on: { click: _vm.createPatient }
                         },
                         [_vm._v(" submit ")]
                       ),
@@ -65692,12 +65763,12 @@ __webpack_require__.r(__webpack_exports__);
 vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(vue_router__WEBPACK_IMPORTED_MODULE_1__["default"]);
 var routes = [{
   path: '/dashboard',
-  name: 'dashboard',
-  component: _views_patient_PatientCreate_vue__WEBPACK_IMPORTED_MODULE_2__["default"]
+  name: 'dashboard' // component: PatientCreate
+
 }, {
   path: '/transactions',
-  name: 'transactions',
-  component: _views_patient_PatientCreate_vue__WEBPACK_IMPORTED_MODULE_2__["default"]
+  name: 'transactions' // component: PatientCreate
+
 }, {
   path: '/patient/create',
   name: 'patient.create',
@@ -65832,8 +65903,8 @@ var opts = {};
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! C:\laragon\www\happypatient-vuetify\resources\js\app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! C:\laragon\www\happypatient-vuetify\resources\sass\app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! E:\laragon\www\happypatient-vuetify\resources\js\app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! E:\laragon\www\happypatient-vuetify\resources\sass\app.scss */"./resources/sass/app.scss");
 
 
 /***/ })

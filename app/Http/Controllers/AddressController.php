@@ -12,7 +12,7 @@ class AddressController extends Controller
 {
     public function provinces()
     {
-        $provinces = Province::all();
+        $provinces = Province::all()->sortBy('name')->values();
 
         return response()->json(['provinces' => $provinces], 200);
     }
