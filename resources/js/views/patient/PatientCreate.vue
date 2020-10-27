@@ -37,7 +37,7 @@
                 </v-col>
               </v-row>
               <v-row>
-                <v-col cols="2">
+                <v-col cols="4">
                   <v-radio-group v-model="gender">
                     <template v-slot:label>
                       <div><strong>Gender</strong></div>
@@ -54,7 +54,7 @@
                     </v-radio>
                   </v-radio-group>
                 </v-col>
-                <v-col>
+                <v-col cols="4">
                   <v-radio-group v-model="civilstatus">
                     <template v-slot:label>
                       <div><strong>Civil Status</strong></div>
@@ -76,23 +76,110 @@
                     </v-radio>
                   </v-radio-group>
                 </v-col>
+                <v-col
+                cols="4"
+                >
+                  <v-menu
+                    v-model="input"
+                    :close-on-content-click="false"
+                    transition="scale-transition"
+                    offset-y
+                    max-width="290px"
+                    min-width="290px"
+                  >
+                    <template v-slot:activator="{ on, attrs }">
+                      <v-text-field
+                        v-model="computedDateFormatted"
+                        label="Birthdate"
+                        hint="MM/DD/YYYY format"
+                        persistent-hint
+                        prepend-icon="mdi-calendar"
+                        required
+                        readonly
+                        v-bind="attrs"
+                        v-on="on"
+                        :error-messages="birthdateErrors"
+                        @input="$v.birthdate.$touch()"
+                        @blur="$v.birthdate.$touch()"
+                      ></v-text-field>
+                    </template>
+                    <v-date-picker
+                      v-model="birthdate"
+                      no-title
+                      @input="input = false"
+                    ></v-date-picker>
+                  </v-menu>
+                </v-col>
               </v-row>
-              <v-text-field
-                v-model="email"
-                :error-messages="emailErrors"
-                label="E-mail"
-                @input="$v.email.$touch()"
-                @blur="$v.email.$touch()"
-              ></v-text-field>
-              <v-select
-                v-model="select"
-                :items="items"
-                :error-messages="selectErrors"
-                label="Item"
-                required
-                @change="$v.select.$touch()"
-                @blur="$v.select.$touch()"
-              ></v-select>
+              <v-row>
+                <v-col>
+                  <v-text-field
+                    v-model="landline"
+                    label="Landline"
+                    prepend-icon="mdi-phone"
+                  ></v-text-field>
+                </v-col>
+                <v-col>
+                  <v-text-field
+                    v-model="mobile"
+                    label="Mobile"
+                    prepend-icon="mdi-cellphone"
+                  ></v-text-field>
+                </v-col>
+                <v-col>
+                  <v-text-field
+                    v-model="email"
+                    prepend-icon="mdi-email"
+                    :error-messages="emailErrors"
+                    label="E-mail"
+                    @input="$v.email.$touch()"
+                    @blur="$v.email.$touch()"
+                  ></v-text-field>
+                </v-col>
+              </v-row>
+              <v-row class="mb-6">
+                <v-col>
+                  <v-select
+                    v-model="province"
+                    :items="provinces"
+                    item-value="province_id"
+                    item-text="name"
+                    label="Province"
+                    required
+                    :error-messages="provinceErrors"
+                    @change="$v.province.$touch()"
+                    @blur="$v.province.$touch()"
+                    v-on:change="getCities($v.province.$model)"
+                  ></v-select>
+                </v-col>
+                <v-col>
+                  <v-select
+                    v-model="city"
+                    :items="cities"
+                    item-value="city_id"
+                    item-text="name"
+                    label="City/Municipality"
+                    required
+                    :error-messages="cityErrors"
+                    @change="$v.city.$touch()"
+                    @blur="$v.city.$touch()"
+                    v-on:change="getBarangays($v.city.$model)"
+                  ></v-select>
+                </v-col>
+                <v-col>
+                  <v-select
+                    v-model="barangay"
+                    :items="barangays"
+                    item-value="id"
+                    item-text="name"
+                    label="Barangay"
+                    required
+                    :error-messages="barangayErrors"
+                    @change="$v.barangay.$touch()"
+                    @blur="$v.barangay.$touch()"
+                  ></v-select>
+                </v-col>
+              </v-row>
               <v-btn class="mr-4" color="primary" @click="submit"> submit </v-btn>
               <v-btn color="#E0E0E0" @click="clear"> clear </v-btn>
             </form>
@@ -104,6 +191,7 @@
 </template>
 
 <script>
+import Axios from 'axios';
 import { validationMixin } from "vuelidate";
 import { required, maxLength, email } from "vuelidate/lib/validators";
 
@@ -113,8 +201,11 @@ export default {
   validations: {
     lastname: { required },
     firstname: { required },
+    birthdate: { required },
     email: { email },
-    select: { required },
+    province: { required },
+    city: { required },
+    barangay: { required },
     checkbox: {
       checked(val) {
         return val;
@@ -128,9 +219,18 @@ export default {
     middlename: "",
     gender: "male",
     civilstatus: "single",
+    birthdate: "",
+    input: false,
+    landline: "",
+    mobile: "",
     email: "",
-    select: null,
-    items: ["Item 1", "Item 2", "Item 3", "Item 4"],
+    regions: "",
+    province: null,
+    city: null,
+    barangay: null,
+    provinces: [],
+    cities: [],  
+    barangays: [],
     checkbox: false,
   }),
 
@@ -139,12 +239,6 @@ export default {
       const errors = [];
       if (!this.$v.checkbox.$dirty) return errors;
       !this.$v.checkbox.checked && errors.push("You must agree to continue!");
-      return errors;
-    },
-    selectErrors() {
-      const errors = [];
-      if (!this.$v.select.$dirty) return errors;
-      !this.$v.select.required && errors.push("Item is required");
       return errors;
     },
     lastnameErrors() {
@@ -161,6 +255,16 @@ export default {
       !this.$v.firstname.required && errors.push("Firstname is required.");
       return errors;
     },
+    birthdateErrors() {
+      const errors = [];
+      if (!this.$v.birthdate.$dirty) return errors;
+      !this.$v.birthdate.required && errors.push("Birthdate is required");
+      // !this.$v.email.required && errors.push("E-mail is required");
+      return errors;
+    },
+    computedDateFormatted () {
+      return this.formatDate(this.birthdate)
+    },
     emailErrors() {
       const errors = [];
       if (!this.$v.email.$dirty) return errors;
@@ -168,19 +272,86 @@ export default {
       // !this.$v.email.required && errors.push("E-mail is required");
       return errors;
     },
+    provinceErrors() {
+      const errors = [];
+      if (!this.$v.province.$dirty) return errors;
+      !this.$v.province.required && errors.push("Province is required");
+      return errors;
+    },
+    cityErrors() {
+      const errors = [];
+      if (!this.$v.city.$dirty) return errors;
+      !this.$v.city.required && errors.push("City is required");
+      return errors;
+    },
+    barangayErrors() {
+      const errors = [];
+      if (!this.$v.barangay.$dirty) return errors;
+      !this.$v.barangay.required && errors.push("Barangay is required");
+      return errors;
+    },
   },
-
+  watch: {
+    date (val) {
+      this.dateFormatted = this.formatDate(this.birthdate)
+    },
+  },
   methods: {
     submit() {
       this.$v.$touch();
     },
     clear() {
       this.$v.$reset();
-      this.name = "";
+      this.lastname = "";
+      this.firstname=  "";
+      this.middlename = "";
+      this.gender = "male";
+      this.civilstatus = "single";
+      this.birthdate = "";
+      this.landline = "";
+      this.mobile = "";
       this.email = "";
-      this.select = null;
-      this.checkbox = false;
+      this.province = null;
+      this.city = null;
+      this.barangay = null;
+      this.provinces = [];
+      this.cities = []; 
+      this.barangays = [];
+
     },
+    formatDate (birthdate) {
+      if (!birthdate) return null
+
+      const [year, month, day] = birthdate.split('-')
+      return `${month}/${day}/${year}`
+    },
+    parseDate (birthdate) {
+      if (!birthdate) return null
+
+      const [month, day, year] = birthdate.split('/')
+      return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`
+    },
+    getCities(province_id) {
+      Axios.get('/cities/'+province_id).then((response) => {
+        this.cities = response.data.cities;
+        this.barangays = [];
+        console.log(this.cities);
+      });
+    },
+    getBarangays(city_id) {
+      Axios.get('/barangays/'+city_id).then((response) => {
+        this.barangays = response.data.barangays;
+        console.log(this.barangays);
+      });
+    }
   },
+  mounted () {
+    Axios.get('/provinces').then((response) => {
+        this.provinces = response.data.provinces;
+        console.log(this.provinces);
+      });
+
+      
+  }
 };
 </script>

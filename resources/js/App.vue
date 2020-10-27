@@ -29,7 +29,6 @@
       v-model="drawer"
       :mini-variant.sync="mini"
       dark
-      permanent
       app
     >
       <v-list-item>

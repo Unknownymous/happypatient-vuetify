@@ -17,6 +17,10 @@ Route::get('/', function () {
     return view('layouts.app');
 });
 
+Route::get('/provinces', 'AddressController@provinces')->name('provinces');
+Route::get('/cities/{province_id}', 'AddressController@cities')->name('cities');
+Route::get('/barangays/{city_id}', 'AddressController@barangays')->name('barangays');
+
 Auth::routes();
 
 Route::get('/home', 'HomeController@index')->name('home');
