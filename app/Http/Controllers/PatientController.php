@@ -12,7 +12,9 @@ class PatientController extends Controller
     
     public function index()
     {
-        //
+        $patients = Patient::all();
+
+        return response()->json(['patients' => $patients], 200);
     }
 
    

@@ -17,10 +17,14 @@ Route::get('/', function () {
     return view('layouts.app');
 });
 
+
+//Addresses Routes
 Route::get('/provinces', 'AddressController@provinces')->name('provinces');
 Route::get('/cities/{province_id}', 'AddressController@cities')->name('cities');
 Route::get('/barangays/{city_id}', 'AddressController@barangays')->name('barangays');
 
+//Patient Routes
+Route::get('/patient/index', 'PatientController@index')->name('patient.index');
 Route::post('/patient/store', 'PatientController@store')->name('patient.store');
 
 
