@@ -2423,7 +2423,8 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       provinces: [],
       cities: [],
       barangays: [],
-      checkbox: false
+      checkbox: false,
+      disabled: false
     };
   },
   computed: {
@@ -2495,6 +2496,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       this.$v.$touch();
 
       if (!this.$v.$error) {
+        this.disabled = true;
         var myForm = document.getElementById('patientform');
         var formData = new FormData(myForm);
         var data = {};
@@ -2521,6 +2523,10 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 
           if (response.data.success) {
             _this.clear();
+
+            _this.getProvinces();
+
+            _this.disabled = false;
           }
         }, function (error) {
           console.log(error);
@@ -2567,38 +2573,41 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 
       return "".concat(year, "-").concat(month.padStart(2, '0'), "-").concat(day.padStart(2, '0'));
     },
-    getCities: function getCities(province_id) {
+    getProvinces: function getProvinces() {
       var _this2 = this;
 
+      axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/provinces').then(function (response) {
+        _this2.provinces = response.data.provinces;
+        console.log(_this2.provinces);
+      });
+    },
+    getCities: function getCities(province_id) {
+      var _this3 = this;
+
       axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/cities/' + province_id).then(function (response) {
-        _this2.cities = response.data.cities;
-        _this2.barangays = [];
-        _this2.city = null;
-        _this2.barangay = null;
+        _this3.cities = response.data.cities;
+        _this3.barangays = [];
+        _this3.city = null;
+        _this3.barangay = null;
 
-        _this2.$v.city.$reset();
+        _this3.$v.city.$reset();
 
-        _this2.$v.barangay.$reset();
+        _this3.$v.barangay.$reset();
 
-        console.log(_this2.cities);
+        console.log(_this3.cities);
       });
     },
     getBarangays: function getBarangays(city_id) {
-      var _this3 = this;
+      var _this4 = this;
 
       axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/barangays/' + city_id).then(function (response) {
-        _this3.barangays = response.data.barangays;
-        console.log(_this3.barangays);
+        _this4.barangays = response.data.barangays;
+        console.log(_this4.barangays);
       });
     }
   },
   mounted: function mounted() {
-    var _this4 = this;
-
-    axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/provinces').then(function (response) {
-      _this4.provinces = response.data.provinces;
-      console.log(_this4.provinces);
-    });
+    this.getProvinces();
   }
 });
 
@@ -4649,7 +4658,7 @@ var render = function() {
                         "v-btn",
                         {
                           staticClass: "mr-4",
-                          attrs: { color: "primary" },
+                          attrs: { color: "primary", disabled: _vm.disabled },
                           on: { click: _vm.createPatient }
                         },
                         [_vm._v(" submit ")]
@@ -65903,8 +65912,8 @@ var opts = {};
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! E:\laragon\www\happypatient-vuetify\resources\js\app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! E:\laragon\www\happypatient-vuetify\resources\sass\app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! C:\laragon\www\happypatient-vuetify\resources\js\app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! C:\laragon\www\happypatient-vuetify\resources\sass\app.scss */"./resources/sass/app.scss");
 
 
 /***/ })

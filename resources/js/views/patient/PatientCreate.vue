@@ -193,7 +193,7 @@
                   ></v-autocomplete>
                 </v-col>
               </v-row>
-              <v-btn class="mr-4" color="primary" @click="createPatient"> submit </v-btn>
+              <v-btn class="mr-4" color="primary" @click="createPatient" :disabled="disabled"> submit </v-btn>
               <v-btn color="#E0E0E0" @click="clear"> clear </v-btn>
             </form>
           </v-card-text>
@@ -241,6 +241,7 @@ export default {
     cities: [],  
     barangays: [],
     checkbox: false,
+    disabled: false,
   }),
 
   computed: {
@@ -312,6 +313,8 @@ export default {
       if(!this.$v.$error)
       {
         
+        this.disabled = true;
+
         let myForm = document.getElementById('patientform');
         let formData = new FormData(myForm);
         const data = {};
@@ -327,6 +330,8 @@ export default {
           if(response.data.success)
           {
             this.clear();
+            this.getProvinces();
+            this.disabled = false;
           }
 
 
@@ -369,6 +374,12 @@ export default {
       const [month, day, year] = birthdate.split('/')
       return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`
     },
+    getProvinces(){
+      Axios.get('/provinces').then((response) => {
+        this.provinces = response.data.provinces;
+        console.log(this.provinces);
+      });
+    },
     getCities(province_id) {
       Axios.get('/cities/'+province_id).then((response) => {
         this.cities = response.data.cities;
@@ -388,12 +399,7 @@ export default {
     },
   },
   mounted () {
-    Axios.get('/provinces').then((response) => {
-        this.provinces = response.data.provinces;
-        console.log(this.provinces);
-      });
-
-      
+    this.getProvinces();
   }
 };
 </script>
