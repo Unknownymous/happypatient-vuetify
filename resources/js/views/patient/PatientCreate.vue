@@ -207,7 +207,10 @@
 import Axios from 'axios';
 import { validationMixin } from "vuelidate";
 import { required, maxLength, email } from "vuelidate/lib/validators";
-
+const options = {
+  confirmButtonColor: '#41b882',
+  cancelButtonColor: '#ff7674',
+};
 export default {
   mixins: [validationMixin],
 
@@ -397,9 +400,34 @@ export default {
         console.log(this.barangays);
       });
     },
+    showAlert() {
+      // Use sweetalert2
+      
+      this.$swal({
+          title: "Delete this order status?",
+          text: "Are you sure? You won't be able to revert this!",
+          type: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#3085d6",
+          confirmButtonText: "Yes, Delete it!"
+      }).then((result) => { // <--
+          if (result.value) { // <-- if confirmed
+              this.$swal({
+                position: 'center',
+                icon: 'success',
+                title: 'Record has successfully added',
+                showConfirmButton: false,
+                timer: 2500
+              });
+          }
+      });
+
+
+    },
   },
   mounted () {
     this.getProvinces();
+    this.showAlert();
   }
 };
 </script>
