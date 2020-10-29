@@ -3,7 +3,7 @@
     <div id="_wrapper" class="pa-5">
       <v-main>
         <v-card>
-          <v-card-title class="grey darken-4  text-white">
+          <v-card-title class="grey darken-2  text-white">
             Create Patient
           </v-card-title>
           <v-card-text class="pa-10">
@@ -144,6 +144,15 @@
                   ></v-text-field>
                 </v-col>
               </v-row>
+              <v-row>
+                <v-col>
+                  <v-text-field
+                    name="address"
+                    v-model="address"
+                    label="Address"
+                  ></v-text-field>
+                </v-col>
+              </v-row>
               <v-row class="mb-6">
                 <v-col>
                   <v-autocomplete
@@ -233,7 +242,7 @@ export default {
     landline: "",
     mobile: "",
     email: "",
-    regions: "",
+    address: "",
     province: null,
     city: null,
     barangay: null,
@@ -355,6 +364,7 @@ export default {
       this.landline = "";
       this.mobile = "";
       this.email = "";
+      this.address = "";
       this.province = null;
       this.city = null;
       this.barangay = null;

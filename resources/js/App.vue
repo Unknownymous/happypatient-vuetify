@@ -44,7 +44,7 @@
 
       <v-divider></v-divider>
 
-      <v-list rounded>
+      <v-list>
         <v-list-item link :to="{name: 'dashboard'}">
           <v-list-item-icon>
             <v-icon>mdi-view-dashboard</v-icon>

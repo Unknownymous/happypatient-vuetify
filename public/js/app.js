@@ -2376,6 +2376,15 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
@@ -2416,7 +2425,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       landline: "",
       mobile: "",
       email: "",
-      regions: "",
+      address: "",
       province: null,
       city: null,
       barangay: null,
@@ -2546,6 +2555,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       this.landline = "";
       this.mobile = "";
       this.email = "";
+      this.address = "";
       this.province = null;
       this.city = null;
       this.barangay = null;
@@ -2690,14 +2700,43 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   data: function data() {
     return {
       search: "",
       headers: [{
-        text: "Lastname",
+        text: "#",
         align: "start",
+        value: "rows",
+        sortable: false
+      }, {
+        text: "Lastname",
         value: "lastname"
       }, {
         text: "Firstname",
@@ -2734,12 +2773,13 @@ __webpack_require__.r(__webpack_exports__);
         _this.patients = response.data.patients;
       });
     },
-    editItem: function editItem(item) {
-      this.editedIndex = this.desserts.indexOf(item);
+    editPatient: function editPatient(item) {
+      this.editedIndex = this.patients.indexOf(item);
       this.editedItem = Object.assign({}, item);
+      console.log(item);
     },
-    deleteItem: function deleteItem(item) {
-      this.editedIndex = this.desserts.indexOf(item);
+    deletePatient: function deletePatient(item) {
+      this.editedIndex = this.patients.indexOf(item);
       this.editedItem = Object.assign({}, item);
     },
     showAlert: function showAlert() {
@@ -2774,6 +2814,9 @@ __webpack_require__.r(__webpack_exports__);
           });
         }
       });
+    },
+    index: function index(item) {
+      return this.patients.indexOf(item);
     }
   },
   mounted: function mounted() {
@@ -10967,7 +11010,6 @@ var render = function() {
           _vm._v(" "),
           _c(
             "v-list",
-            { attrs: { rounded: "" } },
             [
               _c(
                 "v-list-item",
@@ -11127,7 +11169,7 @@ var render = function() {
               [
                 _c(
                   "v-card-title",
-                  { staticClass: "grey darken-4  text-white" },
+                  { staticClass: "grey darken-2  text-white" },
                   [_vm._v("\n          Create Patient\n        ")]
                 ),
                 _vm._v(" "),
@@ -11552,6 +11594,29 @@ var render = function() {
                       _vm._v(" "),
                       _c(
                         "v-row",
+                        [
+                          _c(
+                            "v-col",
+                            [
+                              _c("v-text-field", {
+                                attrs: { name: "address", label: "Address" },
+                                model: {
+                                  value: _vm.address,
+                                  callback: function($$v) {
+                                    _vm.address = $$v
+                                  },
+                                  expression: "address"
+                                }
+                              })
+                            ],
+                            1
+                          )
+                        ],
+                        1
+                      ),
+                      _vm._v(" "),
+                      _c(
+                        "v-row",
                         { staticClass: "mb-6" },
                         [
                           _c(
@@ -11766,14 +11831,12 @@ var render = function() {
                         staticClass: "mb-2",
                         attrs: {
                           color: "primary",
+                          fab: "",
                           dark: "",
                           to: { name: "patient.create" }
                         }
                       },
-                      [
-                        _c("v-icon", [_vm._v("mdi-plus ")]),
-                        _vm._v("\n            Create New\n          ")
-                      ],
+                      [_c("v-icon", [_vm._v("mdi-plus")])],
                       1
                     )
                   ],
@@ -11785,7 +11848,60 @@ var render = function() {
                     headers: _vm.headers,
                     items: _vm.patients,
                     search: _vm.search
-                  }
+                  },
+                  scopedSlots: _vm._u([
+                    {
+                      key: "item.rows",
+                      fn: function(ref) {
+                        var item = ref.item
+                        return [
+                          _vm._v(
+                            "\n            " +
+                              _vm._s(_vm.index(item)) +
+                              "\n          "
+                          )
+                        ]
+                      }
+                    },
+                    {
+                      key: "item.actions",
+                      fn: function(ref) {
+                        var item = ref.item
+                        return [
+                          _c(
+                            "v-icon",
+                            {
+                              staticClass: "mr-2",
+                              attrs: { small: "", color: "green" },
+                              on: {
+                                click: function($event) {
+                                  return _vm.editPatient(item)
+                                }
+                              }
+                            },
+                            [
+                              _vm._v(
+                                "\n              mdi-pencil\n              \n            "
+                              )
+                            ]
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "v-icon",
+                            {
+                              attrs: { small: "", color: "red" },
+                              on: {
+                                click: function($event) {
+                                  return _vm.deletePatient(item)
+                                }
+                              }
+                            },
+                            [_vm._v("\n              mdi-delete\n            ")]
+                          )
+                        ]
+                      }
+                    }
+                  ])
                 })
               ],
               1
@@ -72915,9 +73031,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vuelidate__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! vuelidate */ "./node_modules/vuelidate/lib/index.js");
 /* harmony import */ var vuelidate__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(vuelidate__WEBPACK_IMPORTED_MODULE_3__);
 /* harmony import */ var _router__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./router */ "./resources/js/router.js");
-/* harmony import */ var vue_sweetalert2__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! vue-sweetalert2 */ "./node_modules/vue-sweetalert2/dist/index.js");
-/* harmony import */ var sweetalert2_dist_sweetalert2_min_css__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! sweetalert2/dist/sweetalert2.min.css */ "./node_modules/sweetalert2/dist/sweetalert2.min.css");
-/* harmony import */ var sweetalert2_dist_sweetalert2_min_css__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(sweetalert2_dist_sweetalert2_min_css__WEBPACK_IMPORTED_MODULE_7__);
+/* harmony import */ var vue_sweetalert2__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! vue-sweetalert2 */ "./node_modules/vue-sweetalert2/dist/index.js");
+/* harmony import */ var sweetalert2_dist_sweetalert2_min_css__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! sweetalert2/dist/sweetalert2.min.css */ "./node_modules/sweetalert2/dist/sweetalert2.min.css");
+/* harmony import */ var sweetalert2_dist_sweetalert2_min_css__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(sweetalert2_dist_sweetalert2_min_css__WEBPACK_IMPORTED_MODULE_6__);
 
 
 
@@ -72925,7 +73041,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(vue_sweetalert2__WEBPACK_IMPORTED_MODULE_6__["default"]);
+vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(vue_sweetalert2__WEBPACK_IMPORTED_MODULE_5__["default"]);
 vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(_plugins_vuetify__WEBPACK_IMPORTED_MODULE_1__["default"]);
 vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(vuelidate__WEBPACK_IMPORTED_MODULE_3___default.a);
 var app = new vue__WEBPACK_IMPORTED_MODULE_0___default.a({
@@ -73173,8 +73289,8 @@ var opts = {};
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! G:\laragon\www\happypatient-vuetify\resources\js\app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! G:\laragon\www\happypatient-vuetify\resources\sass\app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! C:\laragon\www\happypatient-vuetify\resources\js\app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! C:\laragon\www\happypatient-vuetify\resources\sass\app.scss */"./resources/sass/app.scss");
 
 
 /***/ })
