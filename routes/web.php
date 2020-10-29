@@ -26,6 +26,7 @@ Route::get('/barangays/{city_id}', 'AddressController@barangays')->name('baranga
 //Patient Routes
 Route::get('/patient/index', 'PatientController@index')->name('patient.index');
 Route::post('/patient/store', 'PatientController@store')->name('patient.store');
+Route::get('/patient/edit/{id}', 'PatientController@edit')->name('patient.edit');
 
 
 

@@ -112,9 +112,19 @@ class PatientController extends Controller
     }
 
     
-    public function edit(Patient $patient)
+    public function edit($patientid)
     {
-        //
+        $patient = Patient::find($patientid);
+
+        //  //if record is empty then display error page
+        //  if(empty($patient->id))
+        //  {
+        //      return abort(404, 'Not Found');
+        //  }
+ 
+
+        $birthdate = Carbon::parse($patient->birthdate)->format('Y-m-d');
+        return response()->json(['patient' => $patient, 'birthdate' => $birthdate], 200);
     }
 
     

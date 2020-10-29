@@ -30,9 +30,9 @@
             :search="search"
           > 
           
-            <template v-slot:item.rows="{item}">
+            <!-- <template v-slot:item.rows="{item}">
               {{ index(item) }}
-            </template>
+            </template> -->
 
             <template v-slot:item.actions="{ item }">
               <v-icon
@@ -67,12 +67,12 @@
       return {
         search: "",
         headers: [
-          {
-            text: "#",
-            align: "start",
-            value: "rows",
-            sortable: false
-          },
+          // {
+          //   text: "#",
+          //   align: "start",
+          //   value: "rows",
+          //   sortable: false
+          // },
           {
             text: "Lastname",
             value: "lastname",
@@ -98,9 +98,7 @@
       },
 
       editPatient (item) {
-        this.editedIndex = this.patients.indexOf(item)
-        this.editedItem = Object.assign({}, item)
-        console.log(item);
+        this.$router.push({ name: 'patient.edit', params: { patientid: item.id} });
       },
 
       deletePatient (item) {
@@ -139,7 +137,7 @@
         });
       },
       index(item){
-        return this.patients.indexOf(item);
+        return this.patients.indexOf(item) + 1;
       }
     },
     mounted() {

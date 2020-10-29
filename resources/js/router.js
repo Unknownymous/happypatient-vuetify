@@ -2,6 +2,8 @@ import Vue from 'vue';
 import Router from 'vue-router';
 import PatientCreate from './views/patient/PatientCreate.vue';
 import PatientIndex from './views/patient/PatientIndex.vue';
+import PatientEdit from './views/patient/PatientEdit.vue';
+
 Vue.use(Router);
 
 
@@ -25,6 +27,11 @@ const routes = [
     path: '/patient/index',
     name: 'patient.index',
     component: PatientIndex
+  },
+  {
+    path: '/patient/edit/:patientid',
+    name: 'patient.edit',
+    component: PatientEdit
   }
 ];
 
