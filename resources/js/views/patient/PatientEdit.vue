@@ -324,6 +324,8 @@ export default {
         
         this.disabled = true;
 
+        const patientid = this.$route.params.patientid;
+
         let myForm = document.getElementById('patientform');
         let formData = new FormData(myForm);
         const data = {};
@@ -333,7 +335,7 @@ export default {
           Object.assign(data ,{[key]: val});
         }
 
-        Axios.post('/patient/store', data).then((response) => {
+        Axios.post('/patient/update/'+patientid, data).then( (response) => {
           console.log(response.data);
 
           if(response.data.success)

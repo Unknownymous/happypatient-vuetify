@@ -47,7 +47,7 @@
               <v-icon
                 small
                 color="red"
-                @click="deletePatient(item)"
+                @click="showConfirmAlert(item)"
               >
                 mdi-delete
               </v-icon>
@@ -91,7 +91,7 @@
 
     methods: {
       getPatients(){
-        Axios.get('/patient/index').then((response) => {
+        Axios.get('/patient/index').then( (response) => {
           console.log(response.data.patients);
           this.patients = response.data.patients;
         });
@@ -101,9 +101,16 @@
         this.$router.push({ name: 'patient.edit', params: { patientid: item.id} });
       },
 
-      deletePatient (item) {
-        this.editedIndex = this.patients.indexOf(item)
-        this.editedItem = Object.assign({}, item)
+      deletePatient (patientid) {
+
+        const data = { patientid: patientid };
+
+        Axios.post('/patient/delete', data).then( (response) => {
+          console.log(response.data);
+        }, (error) => {
+          console.log(error)
+        });
+
       },
 
       showAlert() {
@@ -116,16 +123,29 @@
         });
       },
 
-      showConfirmAlert() {
+      showConfirmAlert(item) {
         this.$swal({
-          title: "Delete this order status?",
-          text: "Are you sure? You won't be able to revert this!",
-          type: "warning",
+          title: 'Are you sure?',
+          text: "You won't be able to revert this!",
+          icon: 'warning',
           showCancelButton: true,
-          confirmButtonColor: "#3085d6",
-          confirmButtonText: "Yes, Delete it!"
+          confirmButtonColor: '#d33',
+          cancelButtonColor: '#6c757d',
+          confirmButtonText: 'Delete record!'
         }).then((result) => { // <--
+
             if (result.value) { // <-- if confirmed
+                
+                
+                const patientid = item.id;
+                const index = this.patients.indexOf(item);
+
+                //Call delete Patient function
+                this.deletePatient(patientid);
+
+                //Remove item from array patients
+                this.patients.splice(index, 1);
+
                 this.$swal({
                   position: 'center',
                   icon: 'success',

@@ -27,7 +27,15 @@ Route::get('/barangays/{city_id}', 'AddressController@barangays')->name('baranga
 Route::get('/patient/index', 'PatientController@index')->name('patient.index');
 Route::post('/patient/store', 'PatientController@store')->name('patient.store');
 Route::get('/patient/edit/{id}', 'PatientController@edit')->name('patient.edit');
+Route::post('/patient/update/{id}', 'PatientController@update')->name('patient.update');
+Route::post('/patient/delete', 'PatientController@delete')->name('patient.delete');
 
+//Service Routes
+Route::get('/service/index', 'ServiceController@index')->name('service.index');
+Route::post('/service/store', 'ServiceController@store')->name('service.store');
+Route::get('/service/edit/{id}', 'ServiceController@edit')->name('service.edit');
+Route::post('/service/update/{id}', 'ServiceController@update')->name('service.update');
+Route::post('/service/delete', 'ServiceController@delete')->name('service.delete');
 
 
 

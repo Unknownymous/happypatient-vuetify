@@ -3,6 +3,7 @@ import Router from 'vue-router';
 import PatientCreate from './views/patient/PatientCreate.vue';
 import PatientIndex from './views/patient/PatientIndex.vue';
 import PatientEdit from './views/patient/PatientEdit.vue';
+import ServiceIndex from './views/service/ServiceIndex.vue';
 
 Vue.use(Router);
 
@@ -32,7 +33,12 @@ const routes = [
     path: '/patient/edit/:patientid',
     name: 'patient.edit',
     component: PatientEdit
-  }
+  },
+  {
+    path: '/service/index',
+    name: 'service.index',
+    component: ServiceIndex
+  },
 ];
 
 const router = new Router({

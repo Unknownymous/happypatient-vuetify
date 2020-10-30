@@ -317,6 +317,7 @@ export default {
   },
   methods: {
     createPatient() {
+      
       this.$v.$touch();
 
       if(!this.$v.$error)

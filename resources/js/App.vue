@@ -132,8 +132,10 @@
           {
             icon: 'fa-cog',
             items: [
-              { title: 'Create User' },
-              { title: 'Users Record' },
+              { title: 'Services' , link: '/service/index'},
+              { title: 'Service Procedures' },
+              { title: 'Permissions' },
+              { title: 'Roles' },
             ],
             title: 'Settings',
           },

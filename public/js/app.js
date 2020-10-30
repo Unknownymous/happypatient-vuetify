@@ -2126,9 +2126,14 @@ __webpack_require__.r(__webpack_exports__);
       }, {
         icon: 'fa-cog',
         items: [{
-          title: 'Create User'
+          title: 'Services',
+          link: '/service/index'
         }, {
-          title: 'Users Record'
+          title: 'Service Procedures'
+        }, {
+          title: 'Permissions'
+        }, {
+          title: 'Roles'
         }],
         title: 'Settings'
       }],
@@ -3019,6 +3024,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 
       if (!this.$v.$error) {
         this.disabled = true;
+        var patientid = this.$route.params.patientid;
         var myForm = document.getElementById('patientform');
         var formData = new FormData(myForm);
         var data = {};
@@ -3040,7 +3046,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
           _iterator.f();
         }
 
-        axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('/patient/store', data).then(function (response) {
+        axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('/patient/update/' + patientid, data).then(function (response) {
           console.log(response.data);
 
           if (response.data.success) {
@@ -3304,9 +3310,15 @@ __webpack_require__.r(__webpack_exports__);
         }
       });
     },
-    deletePatient: function deletePatient(item) {
-      this.editedIndex = this.patients.indexOf(item);
-      this.editedItem = Object.assign({}, item);
+    deletePatient: function deletePatient(patientid) {
+      var data = {
+        patientid: patientid
+      };
+      axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('/patient/delete', data).then(function (response) {
+        console.log(response.data);
+      }, function (error) {
+        console.log(error);
+      });
     },
     showAlert: function showAlert() {
       this.$swal({
@@ -3317,20 +3329,31 @@ __webpack_require__.r(__webpack_exports__);
         timer: 2500
       });
     },
-    showConfirmAlert: function showConfirmAlert() {
+    showConfirmAlert: function showConfirmAlert(item) {
       var _this2 = this;
 
       this.$swal({
-        title: "Delete this order status?",
-        text: "Are you sure? You won't be able to revert this!",
-        type: "warning",
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
         showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        confirmButtonText: "Yes, Delete it!"
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Delete record!'
       }).then(function (result) {
         // <--
         if (result.value) {
           // <-- if confirmed
+          var patientid = item.id;
+
+          var index = _this2.patients.indexOf(item); //Call delete Patient function
+
+
+          _this2.deletePatient(patientid); //Remove item from array patients
+
+
+          _this2.patients.splice(index, 1);
+
           _this2.$swal({
             position: 'center',
             icon: 'success',
@@ -3347,6 +3370,340 @@ __webpack_require__.r(__webpack_exports__);
   },
   mounted: function mounted() {
     this.getPatients();
+  }
+});
+
+/***/ }),
+
+/***/ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/views/service/ServiceIndex.vue?vue&type=script&lang=js&":
+/*!**************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib??ref--4-0!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/views/service/ServiceIndex.vue?vue&type=script&lang=js& ***!
+  \**************************************************************************************************************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var vuelidate__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vuelidate */ "./node_modules/vuelidate/lib/index.js");
+/* harmony import */ var vuelidate__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(vuelidate__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! vuelidate/lib/validators */ "./node_modules/vuelidate/lib/validators/index.js");
+/* harmony import */ var vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_2__);
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+
+
+
+/* harmony default export */ __webpack_exports__["default"] = ({
+  mixins: [vuelidate__WEBPACK_IMPORTED_MODULE_1__["validationMixin"]],
+  validations: {
+    editedItem: {
+      service: {
+        required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_2__["required"]
+      }
+    }
+  },
+  data: function data() {
+    return {
+      search: "",
+      headers: [{
+        text: "Service",
+        value: "service"
+      }, {
+        text: "Status",
+        value: "status"
+      }, {
+        text: "Actions",
+        value: "actions",
+        sortable: false
+      }],
+      disabled: false,
+      dialog: false,
+      services: [],
+      editedIndex: -1,
+      editedItem: {
+        service: '',
+        status: 'active'
+      },
+      defaultItem: {
+        service: '',
+        status: 'active'
+      }
+    };
+  },
+  methods: {
+    getService: function getService() {
+      var _this = this;
+
+      axios__WEBPACK_IMPORTED_MODULE_0___default.a.get('/service/index').then(function (response) {
+        console.log(response.data.services);
+        _this.services = response.data.services;
+      });
+    },
+    editService: function editService(item) {
+      this.editedIndex = this.services.indexOf(item);
+      this.editedItem = Object.assign({}, item);
+      this.dialog = true;
+    },
+    deleteService: function deleteService(serviceid) {
+      var data = {
+        serviceid: serviceid
+      };
+      axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('/service/delete', data).then(function (response) {
+        console.log(response.data);
+      }, function (error) {
+        console.log(error);
+      });
+    },
+    showAlert: function showAlert() {
+      this.$swal({
+        position: 'center',
+        icon: 'success',
+        title: 'Record has been saved',
+        showConfirmButton: false,
+        timer: 2500
+      });
+    },
+    showConfirmAlert: function showConfirmAlert(item) {
+      var _this2 = this;
+
+      this.$swal({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#6c757d',
+        confirmButtonText: 'Delete record!'
+      }).then(function (result) {
+        // <--
+        if (result.value) {
+          // <-- if confirmed
+          var serviceid = item.id;
+
+          var index = _this2.services.indexOf(item); //Call delete Patient function
+
+
+          _this2.deleteService(serviceid); //Remove item from array services
+
+
+          _this2.services.splice(index, 1);
+
+          _this2.$swal({
+            position: 'center',
+            icon: 'success',
+            title: 'Record has been deleted',
+            showConfirmButton: false,
+            timer: 2500
+          });
+        }
+      });
+    },
+    close: function close() {
+      var _this3 = this;
+
+      this.dialog = false;
+      this.$nextTick(function () {
+        _this3.editedItem = Object.assign({}, _this3.defaultItem);
+        _this3.editedIndex = -1;
+      });
+    },
+    save: function save() {
+      var _this4 = this;
+
+      this.$v.$touch();
+
+      if (!this.$v.$error) {
+        this.disabled = true;
+
+        if (this.editedIndex > -1) {
+          Object.assign(this.services[this.editedIndex], this.editedItem);
+          var data = this.editedItem;
+          var serviceid = this.editedItem.id;
+          axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('/service/update/' + serviceid, data).then(function (response) {
+            console.log(response.data);
+
+            if (response.data.success) {
+              _this4.disabled = false;
+
+              _this4.clear();
+
+              _this4.showAlert();
+            }
+          }, function (error) {
+            console.log(error);
+          });
+        } else {
+          var _data = this.editedItem;
+          axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('/service/store', _data).then(function (response) {
+            console.log(response.data);
+
+            if (response.data.success) {
+              _this4.disabled = false;
+
+              _this4.clear();
+
+              _this4.showAlert(); //push recently added data from database
+
+
+              _this4.services.push(response.data.service);
+            }
+          }, function (error) {
+            console.log(error);
+          });
+        }
+      }
+
+      this.close();
+    },
+    clear: function clear() {
+      this.$v.$reset();
+      this.editedItem.service = "", this.editedItem.status = "active";
+    }
+  },
+  computed: {
+    formTitle: function formTitle() {
+      return this.editedIndex === -1 ? 'New Service' : 'Edit Service';
+    },
+    serviceErrors: function serviceErrors() {
+      var errors = [];
+      if (!this.$v.editedItem.service.$dirty) return errors;
+      !this.$v.editedItem.service.required && errors.push("Service is required.");
+      return errors;
+    }
+  },
+  mounted: function mounted() {
+    this.getService();
   }
 });
 
@@ -13039,7 +13396,385 @@ var render = function() {
                               attrs: { small: "", color: "red" },
                               on: {
                                 click: function($event) {
-                                  return _vm.deletePatient(item)
+                                  return _vm.showConfirmAlert(item)
+                                }
+                              }
+                            },
+                            [_vm._v("\n              mdi-delete\n            ")]
+                          )
+                        ]
+                      }
+                    }
+                  ])
+                })
+              ],
+              1
+            )
+          ],
+          1
+        )
+      ],
+      1
+    )
+  ])
+}
+var staticRenderFns = []
+render._withStripped = true
+
+
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/views/service/ServiceIndex.vue?vue&type=template&id=28e33256&":
+/*!******************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib??vue-loader-options!./resources/js/views/service/ServiceIndex.vue?vue&type=template&id=28e33256& ***!
+  \******************************************************************************************************************************************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "render", function() { return render; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return staticRenderFns; });
+var render = function() {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("div", { staticClass: "flex column" }, [
+    _c(
+      "div",
+      { staticClass: "pa-5", attrs: { id: "_wrapper" } },
+      [
+        _c(
+          "v-main",
+          [
+            _c(
+              "v-card",
+              [
+                _c(
+                  "v-card-title",
+                  [
+                    _vm._v("\n          Services Record\n          "),
+                    _c("v-spacer"),
+                    _vm._v(" "),
+                    _c("v-text-field", {
+                      attrs: {
+                        "append-icon": "mdi-magnify",
+                        label: "Search",
+                        "single-line": "",
+                        "hide-details": ""
+                      },
+                      model: {
+                        value: _vm.search,
+                        callback: function($$v) {
+                          _vm.search = $$v
+                        },
+                        expression: "search"
+                      }
+                    }),
+                    _vm._v(" "),
+                    [
+                      _c(
+                        "v-toolbar",
+                        { attrs: { flat: "" } },
+                        [
+                          _c("v-spacer"),
+                          _vm._v(" "),
+                          _c(
+                            "v-dialog",
+                            {
+                              attrs: { "max-width": "500px" },
+                              scopedSlots: _vm._u([
+                                {
+                                  key: "activator",
+                                  fn: function(ref) {
+                                    var on = ref.on
+                                    var attrs = ref.attrs
+                                    return [
+                                      _c(
+                                        "v-btn",
+                                        _vm._g(
+                                          _vm._b(
+                                            {
+                                              staticClass: "mb-2",
+                                              attrs: {
+                                                color: "primary",
+                                                fab: "",
+                                                dark: ""
+                                              }
+                                            },
+                                            "v-btn",
+                                            attrs,
+                                            false
+                                          ),
+                                          on
+                                        ),
+                                        [_c("v-icon", [_vm._v("mdi-plus")])],
+                                        1
+                                      )
+                                    ]
+                                  }
+                                }
+                              ]),
+                              model: {
+                                value: _vm.dialog,
+                                callback: function($$v) {
+                                  _vm.dialog = $$v
+                                },
+                                expression: "dialog"
+                              }
+                            },
+                            [
+                              _vm._v(" "),
+                              _c(
+                                "v-card",
+                                [
+                                  _c("v-card-title", [
+                                    _c("span", { staticClass: "headline" }, [
+                                      _vm._v(_vm._s(_vm.formTitle))
+                                    ])
+                                  ]),
+                                  _vm._v(" "),
+                                  _c(
+                                    "v-card-text",
+                                    [
+                                      _c(
+                                        "v-container",
+                                        [
+                                          _c(
+                                            "v-row",
+                                            [
+                                              _c(
+                                                "v-col",
+                                                [
+                                                  _c("v-text-field", {
+                                                    attrs: {
+                                                      name: "service",
+                                                      label: "Service",
+                                                      required: "",
+                                                      "error-messages":
+                                                        _vm.serviceErrors
+                                                    },
+                                                    on: {
+                                                      input: function($event) {
+                                                        return _vm.$v.editedItem.service.$touch()
+                                                      },
+                                                      blur: function($event) {
+                                                        return _vm.$v.editedItem.service.$touch()
+                                                      }
+                                                    },
+                                                    model: {
+                                                      value:
+                                                        _vm.editedItem.service,
+                                                      callback: function($$v) {
+                                                        _vm.$set(
+                                                          _vm.editedItem,
+                                                          "service",
+                                                          $$v
+                                                        )
+                                                      },
+                                                      expression:
+                                                        "editedItem.service"
+                                                    }
+                                                  })
+                                                ],
+                                                1
+                                              )
+                                            ],
+                                            1
+                                          ),
+                                          _vm._v(" "),
+                                          _c(
+                                            "v-row",
+                                            [
+                                              _c(
+                                                "v-col",
+                                                [
+                                                  _c(
+                                                    "v-radio-group",
+                                                    {
+                                                      attrs: { name: "status" },
+                                                      scopedSlots: _vm._u([
+                                                        {
+                                                          key: "label",
+                                                          fn: function() {
+                                                            return [
+                                                              _c("div", [
+                                                                _c("strong", [
+                                                                  _vm._v(
+                                                                    "Status"
+                                                                  )
+                                                                ])
+                                                              ])
+                                                            ]
+                                                          },
+                                                          proxy: true
+                                                        }
+                                                      ]),
+                                                      model: {
+                                                        value:
+                                                          _vm.editedItem.status,
+                                                        callback: function(
+                                                          $$v
+                                                        ) {
+                                                          _vm.$set(
+                                                            _vm.editedItem,
+                                                            "status",
+                                                            $$v
+                                                          )
+                                                        },
+                                                        expression:
+                                                          "editedItem.status"
+                                                      }
+                                                    },
+                                                    [
+                                                      _vm._v(" "),
+                                                      _c("v-radio", {
+                                                        attrs: {
+                                                          value: "active"
+                                                        },
+                                                        scopedSlots: _vm._u([
+                                                          {
+                                                            key: "label",
+                                                            fn: function() {
+                                                              return [
+                                                                _c("div", [
+                                                                  _vm._v(
+                                                                    "Active"
+                                                                  )
+                                                                ])
+                                                              ]
+                                                            },
+                                                            proxy: true
+                                                          }
+                                                        ])
+                                                      }),
+                                                      _vm._v(" "),
+                                                      _c("v-radio", {
+                                                        attrs: {
+                                                          value: "inactive"
+                                                        },
+                                                        scopedSlots: _vm._u([
+                                                          {
+                                                            key: "label",
+                                                            fn: function() {
+                                                              return [
+                                                                _c("div", [
+                                                                  _vm._v(
+                                                                    "Inactive"
+                                                                  )
+                                                                ])
+                                                              ]
+                                                            },
+                                                            proxy: true
+                                                          }
+                                                        ])
+                                                      })
+                                                    ],
+                                                    1
+                                                  )
+                                                ],
+                                                1
+                                              )
+                                            ],
+                                            1
+                                          )
+                                        ],
+                                        1
+                                      )
+                                    ],
+                                    1
+                                  ),
+                                  _vm._v(" "),
+                                  _c(
+                                    "v-card-actions",
+                                    [
+                                      _c("v-spacer"),
+                                      _vm._v(" "),
+                                      _c(
+                                        "v-btn",
+                                        {
+                                          staticClass: "mb-4",
+                                          attrs: { color: "#E0E0E0" },
+                                          on: { click: _vm.close }
+                                        },
+                                        [
+                                          _vm._v(
+                                            "\n                      Cancel\n                    "
+                                          )
+                                        ]
+                                      ),
+                                      _vm._v(" "),
+                                      _c(
+                                        "v-btn",
+                                        {
+                                          staticClass: "mb-4 mr-4",
+                                          attrs: {
+                                            color: "primary",
+                                            disabled: _vm.disabled
+                                          },
+                                          on: { click: _vm.save }
+                                        },
+                                        [
+                                          _vm._v(
+                                            "\n                      Save\n                    "
+                                          )
+                                        ]
+                                      )
+                                    ],
+                                    1
+                                  )
+                                ],
+                                1
+                              )
+                            ],
+                            1
+                          )
+                        ],
+                        1
+                      )
+                    ]
+                  ],
+                  2
+                ),
+                _vm._v(" "),
+                _c("v-data-table", {
+                  attrs: {
+                    headers: _vm.headers,
+                    items: _vm.services,
+                    search: _vm.search
+                  },
+                  scopedSlots: _vm._u([
+                    {
+                      key: "item.actions",
+                      fn: function(ref) {
+                        var item = ref.item
+                        return [
+                          _c(
+                            "v-icon",
+                            {
+                              staticClass: "mr-2",
+                              attrs: { small: "", color: "green" },
+                              on: {
+                                click: function($event) {
+                                  return _vm.editService(item)
+                                }
+                              }
+                            },
+                            [
+                              _vm._v(
+                                "\n              mdi-pencil\n              \n            "
+                              )
+                            ]
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "v-icon",
+                            {
+                              attrs: { small: "", color: "red" },
+                              on: {
+                                click: function($event) {
+                                  return _vm.showConfirmAlert(item)
                                 }
                               }
                             },
@@ -74217,6 +74952,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _views_patient_PatientCreate_vue__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./views/patient/PatientCreate.vue */ "./resources/js/views/patient/PatientCreate.vue");
 /* harmony import */ var _views_patient_PatientIndex_vue__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./views/patient/PatientIndex.vue */ "./resources/js/views/patient/PatientIndex.vue");
 /* harmony import */ var _views_patient_PatientEdit_vue__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./views/patient/PatientEdit.vue */ "./resources/js/views/patient/PatientEdit.vue");
+/* harmony import */ var _views_service_ServiceIndex_vue__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./views/service/ServiceIndex.vue */ "./resources/js/views/service/ServiceIndex.vue");
+
 
 
 
@@ -74243,6 +74980,10 @@ var routes = [{
   path: '/patient/edit/:patientid',
   name: 'patient.edit',
   component: _views_patient_PatientEdit_vue__WEBPACK_IMPORTED_MODULE_4__["default"]
+}, {
+  path: '/service/index',
+  name: 'service.index',
+  component: _views_service_ServiceIndex_vue__WEBPACK_IMPORTED_MODULE_5__["default"]
 }];
 var router = new vue_router__WEBPACK_IMPORTED_MODULE_1__["default"]({
   routes: routes
@@ -74458,6 +75199,75 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/js/views/service/ServiceIndex.vue":
+/*!*****************************************************!*\
+  !*** ./resources/js/views/service/ServiceIndex.vue ***!
+  \*****************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _ServiceIndex_vue_vue_type_template_id_28e33256___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./ServiceIndex.vue?vue&type=template&id=28e33256& */ "./resources/js/views/service/ServiceIndex.vue?vue&type=template&id=28e33256&");
+/* harmony import */ var _ServiceIndex_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./ServiceIndex.vue?vue&type=script&lang=js& */ "./resources/js/views/service/ServiceIndex.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport *//* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+
+var component = Object(_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _ServiceIndex_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _ServiceIndex_vue_vue_type_template_id_28e33256___WEBPACK_IMPORTED_MODULE_0__["render"],
+  _ServiceIndex_vue_vue_type_template_id_28e33256___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"],
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/views/service/ServiceIndex.vue"
+/* harmony default export */ __webpack_exports__["default"] = (component.exports);
+
+/***/ }),
+
+/***/ "./resources/js/views/service/ServiceIndex.vue?vue&type=script&lang=js&":
+/*!******************************************************************************!*\
+  !*** ./resources/js/views/service/ServiceIndex.vue?vue&type=script&lang=js& ***!
+  \******************************************************************************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_ServiceIndex_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/babel-loader/lib??ref--4-0!../../../../node_modules/vue-loader/lib??vue-loader-options!./ServiceIndex.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/views/service/ServiceIndex.vue?vue&type=script&lang=js&");
+/* empty/unused harmony star reexport */ /* harmony default export */ __webpack_exports__["default"] = (_node_modules_babel_loader_lib_index_js_ref_4_0_node_modules_vue_loader_lib_index_js_vue_loader_options_ServiceIndex_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
+/***/ "./resources/js/views/service/ServiceIndex.vue?vue&type=template&id=28e33256&":
+/*!************************************************************************************!*\
+  !*** ./resources/js/views/service/ServiceIndex.vue?vue&type=template&id=28e33256& ***!
+  \************************************************************************************/
+/*! exports provided: render, staticRenderFns */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_ServiceIndex_vue_vue_type_template_id_28e33256___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../../node_modules/vue-loader/lib??vue-loader-options!./ServiceIndex.vue?vue&type=template&id=28e33256& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js?!./node_modules/vue-loader/lib/index.js?!./resources/js/views/service/ServiceIndex.vue?vue&type=template&id=28e33256&");
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "render", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_ServiceIndex_vue_vue_type_template_id_28e33256___WEBPACK_IMPORTED_MODULE_0__["render"]; });
+
+/* harmony reexport (safe) */ __webpack_require__.d(__webpack_exports__, "staticRenderFns", function() { return _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_ServiceIndex_vue_vue_type_template_id_28e33256___WEBPACK_IMPORTED_MODULE_0__["staticRenderFns"]; });
+
+
+
+/***/ }),
+
 /***/ "./resources/plugins/vuetify.js":
 /*!**************************************!*\
   !*** ./resources/plugins/vuetify.js ***!
@@ -74511,8 +75321,8 @@ var opts = {};
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! G:\laragon\www\happypatient-vuetify\resources\js\app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! G:\laragon\www\happypatient-vuetify\resources\sass\app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! C:\laragon\www\happypatient-vuetify\resources\js\app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! C:\laragon\www\happypatient-vuetify\resources\sass\app.scss */"./resources/sass/app.scss");
 
 
 /***/ })
