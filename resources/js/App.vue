@@ -45,13 +45,13 @@
       <v-divider></v-divider>
 
       <v-list>
-        <v-list-item link :to="{name: 'dashboard'}">
+        <v-list-item link :to="{ name: 'dashboard' }">
           <v-list-item-icon>
             <v-icon>mdi-view-dashboard</v-icon>
           </v-list-item-icon>
           <v-list-item-title>Dashboard</v-list-item-title>
         </v-list-item>
-        <v-list-item link :to="{name: 'transactions'}" >
+        <v-list-item link :to="{ name: 'transactions' }" >
           <v-list-item-icon>
             <v-icon>mdi-currency-usd</v-icon>
           </v-list-item-icon>
@@ -81,7 +81,7 @@
             </v-list-item-content>
           </v-list-item>
         </v-list-group>
-        <v-list-item link>
+        <v-list-item link :to="{ name: 'activity_logs' }">
           <v-list-item-icon>
             <v-icon>mdi-history</v-icon>
           </v-list-item-icon>
@@ -124,8 +124,8 @@
           {
             icon: 'mdi-account-arrow-right-outline',
             items: [
-              { title: 'Create User' },
-              { title: 'Users Record' },
+              { title: 'Create User', link: '/user/create'},
+              { title: 'Users Record', link: '/user/index'},
             ],
             title: 'Users',
           },
