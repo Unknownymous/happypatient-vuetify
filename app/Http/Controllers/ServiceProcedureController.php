@@ -31,7 +31,9 @@ class ServiceProcedureController extends Controller
 
     
     public function store(Request $request)
-    {
+    {   
+        return $request->all();
+
         $rules = [
             'service.required' => 'Please enter service',   
             'procedure.required' => 'Please add at least 1 service procedure on the table'

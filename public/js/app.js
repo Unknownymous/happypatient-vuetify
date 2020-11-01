@@ -3899,6 +3899,112 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vuelidate__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(vuelidate__WEBPACK_IMPORTED_MODULE_1__);
 /* harmony import */ var vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! vuelidate/lib/validators */ "./node_modules/vuelidate/lib/validators/index.js");
 /* harmony import */ var vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_2__);
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
+
+function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
+
+function _iterableToArrayLimit(arr, i) { if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return; var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
+
+function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
+
+function _createForOfIteratorHelper(o, allowArrayLike) { var it; if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (it = _unsupportedIterableToArray(o)) || allowArrayLike && o && typeof o.length === "number") { if (it) o = it; var i = 0; var F = function F() {}; return { s: F, n: function n() { if (i >= o.length) return { done: true }; return { done: false, value: o[i++] }; }, e: function e(_e2) { throw _e2; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var normalCompletion = true, didErr = false, err; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); normalCompletion = step.done; return step; }, e: function e(_e3) { didErr = true; err = _e3; }, f: function f() { try { if (!normalCompletion && it["return"] != null) it["return"](); } finally { if (didErr) throw err; } } }; }
+
+function _unsupportedIterableToArray(o, minLen) { if (!o) return; if (typeof o === "string") return _arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); if (n === "Object" && o.constructor) n = o.constructor.name; if (n === "Map" || n === "Set") return Array.from(o); if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen); }
+
+function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
+
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -3956,13 +4062,22 @@ __webpack_require__.r(__webpack_exports__);
     },
     procedure: {
       required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_2__["required"]
+    },
+    price: {
+      required: vuelidate_lib_validators__WEBPACK_IMPORTED_MODULE_2__["required"]
     }
   },
   data: function data() {
     return {
+      procedureHasError: false,
+      priceHasError: false,
       disabled: false,
+      procedure: "",
+      price: "",
       service: "",
       services: [],
+      procedures: [],
+      ctr: 0,
       items: [{
         text: "Home",
         disabled: false,
@@ -3993,9 +4108,27 @@ __webpack_require__.r(__webpack_exports__);
 
       if (!this.$v.$error) {
         this.disabled = true;
-        var myForm = document.getElementById('userform');
+        var myForm = document.getElementById('procedureform');
         var formData = new FormData(myForm);
         var data = {};
+
+        var _iterator = _createForOfIteratorHelper(formData.entries()),
+            _step;
+
+        try {
+          for (_iterator.s(); !(_step = _iterator.n()).done;) {
+            var _step$value = _slicedToArray(_step.value, 2),
+                key = _step$value[0],
+                val = _step$value[1];
+
+            Object.assign(data, _defineProperty({}, key, val));
+          }
+        } catch (err) {
+          _iterator.e(err);
+        } finally {
+          _iterator.f();
+        }
+
         axios__WEBPACK_IMPORTED_MODULE_0___default.a.post('/procedure/store', data).then(function (response) {
           console.log(response.data);
 
@@ -4027,6 +4160,33 @@ __webpack_require__.r(__webpack_exports__);
         console.log(response.data.services);
         _this2.services = response.data.services;
       });
+    },
+    addRow: function addRow() {
+      this.ctr = this.ctr + 1;
+      this.procedures.push({
+        id: this.ctr
+      });
+    },
+    removeRow: function removeRow() {},
+    procedureValidate: function procedureValidate(id) {
+      var procedure = document.querySelector("input[name=procedure" + id + "]").value;
+      this.procedure = procedure;
+
+      if (procedure) {
+        this.procedureHasError = false;
+      } else {
+        this.procedureHasError = true;
+      }
+    },
+    priceValidate: function priceValidate(id) {
+      var price = document.querySelector("input[name=price" + id + "]").value;
+      this.price = price;
+
+      if (price) {
+        this.priceHasError = false;
+      } else {
+        this.priceHasError = true;
+      }
     }
   },
   mounted: function mounted() {
@@ -15586,7 +15746,7 @@ var render = function() {
                         [
                           _c(
                             "v-col",
-                            { attrs: { cols: "4" } },
+                            { attrs: { cols: "6" } },
                             [
                               _c("v-autocomplete", {
                                 attrs: {
@@ -15622,9 +15782,243 @@ var render = function() {
                       ),
                       _vm._v(" "),
                       _c(
+                        "v-row",
+                        [
+                          _c(
+                            "v-col",
+                            { attrs: { cols: "6" } },
+                            [
+                              _c(
+                                "v-card",
+                                [
+                                  _c("v-card-title", [
+                                    _vm._v(
+                                      "\n                    Service Procedures\n                  "
+                                    )
+                                  ]),
+                                  _vm._v(" "),
+                                  _c("v-simple-table", {
+                                    scopedSlots: _vm._u([
+                                      {
+                                        key: "default",
+                                        fn: function() {
+                                          return [
+                                            _c("thead", [
+                                              _c("tr", [
+                                                _c(
+                                                  "th",
+                                                  { staticClass: "text-left" },
+                                                  [
+                                                    _vm._v(
+                                                      "\n                            Procedure\n                          "
+                                                    )
+                                                  ]
+                                                ),
+                                                _vm._v(" "),
+                                                _c(
+                                                  "th",
+                                                  { staticClass: "text-left" },
+                                                  [
+                                                    _vm._v(
+                                                      "\n                            Price (PHP)\n                          "
+                                                    )
+                                                  ]
+                                                ),
+                                                _vm._v(" "),
+                                                _c("th")
+                                              ])
+                                            ]),
+                                            _vm._v(" "),
+                                            _c(
+                                              "tbody",
+                                              _vm._l(_vm.procedures, function(
+                                                item
+                                              ) {
+                                                return _c(
+                                                  "tr",
+                                                  { key: item.id },
+                                                  [
+                                                    _c(
+                                                      "td",
+                                                      [
+                                                        _c("v-text-field", {
+                                                          key: item.id,
+                                                          staticClass: "mt-5",
+                                                          attrs: {
+                                                            name:
+                                                              "procedure" +
+                                                              item.id,
+                                                            dense: "",
+                                                            required: ""
+                                                          },
+                                                          on: {
+                                                            keyup: function(
+                                                              $event
+                                                            ) {
+                                                              return _vm.procedureValidate(
+                                                                item.id
+                                                              )
+                                                            },
+                                                            blur: function(
+                                                              $event
+                                                            ) {
+                                                              return _vm.procedureValidate(
+                                                                item.id
+                                                              )
+                                                            }
+                                                          }
+                                                        })
+                                                      ],
+                                                      1
+                                                    ),
+                                                    _vm._v(" "),
+                                                    _c(
+                                                      "td",
+                                                      [
+                                                        _c("v-text-field", {
+                                                          staticClass: "mt-5",
+                                                          attrs: {
+                                                            name:
+                                                              "price" + item.id,
+                                                            placeholder: "0.00",
+                                                            prefix: "₱",
+                                                            dense: "",
+                                                            required: ""
+                                                          },
+                                                          on: {
+                                                            "": function(
+                                                              $event
+                                                            ) {
+                                                              return _vm.priceValidate(
+                                                                item.id
+                                                              )
+                                                            },
+                                                            blur: function(
+                                                              $event
+                                                            ) {
+                                                              return _vm.priceValidate(
+                                                                item.id
+                                                              )
+                                                            }
+                                                          }
+                                                        })
+                                                      ],
+                                                      1
+                                                    ),
+                                                    _vm._v(" "),
+                                                    _c(
+                                                      "td",
+                                                      [
+                                                        _c(
+                                                          "v-btn",
+                                                          {
+                                                            staticClass: "mx-2",
+                                                            attrs: {
+                                                              fab: "",
+                                                              dark: "",
+                                                              small: "",
+                                                              color: "red"
+                                                            }
+                                                          },
+                                                          [
+                                                            _c(
+                                                              "v-icon",
+                                                              {
+                                                                attrs: {
+                                                                  dark: ""
+                                                                }
+                                                              },
+                                                              [
+                                                                _vm._v(
+                                                                  "\n                                  mdi-minus\n                                "
+                                                                )
+                                                              ]
+                                                            )
+                                                          ],
+                                                          1
+                                                        )
+                                                      ],
+                                                      1
+                                                    )
+                                                  ]
+                                                )
+                                              }),
+                                              0
+                                            ),
+                                            _vm._v(" "),
+                                            _c("tfoot", [
+                                              _c("tr", [
+                                                _c("td", {
+                                                  attrs: { colspan: "1" }
+                                                }),
+                                                _vm._v(" "),
+                                                _c("td"),
+                                                _c(
+                                                  "td",
+                                                  [
+                                                    _c(
+                                                      "v-btn",
+                                                      {
+                                                        staticClass:
+                                                          "mx-2 mb-5 mt-5",
+                                                        attrs: {
+                                                          fab: "",
+                                                          dark: "",
+                                                          small: "",
+                                                          color: "primary"
+                                                        },
+                                                        on: {
+                                                          click: _vm.addRow
+                                                        }
+                                                      },
+                                                      [
+                                                        _c(
+                                                          "v-icon",
+                                                          {
+                                                            attrs: { dark: "" }
+                                                          },
+                                                          [
+                                                            _vm._v(
+                                                              "\n                                  mdi-plus\n                                "
+                                                            )
+                                                          ]
+                                                        )
+                                                      ],
+                                                      1
+                                                    )
+                                                  ],
+                                                  1
+                                                )
+                                              ])
+                                            ])
+                                          ]
+                                        },
+                                        proxy: true
+                                      }
+                                    ])
+                                  })
+                                ],
+                                1
+                              ),
+                              _vm._v(" "),
+                              _vm.procedureHasError || _vm.priceHasError
+                                ? _c(
+                                    "span",
+                                    { staticClass: "v-messages error--text" },
+                                    [_vm._v("Procedure and Price required")]
+                                  )
+                                : _vm._e()
+                            ],
+                            1
+                          )
+                        ],
+                        1
+                      ),
+                      _vm._v(" "),
+                      _c(
                         "v-btn",
                         {
-                          staticClass: "mr-4",
+                          staticClass: "mr-4 mt-5",
                           attrs: { color: "primary", disabled: _vm.disabled },
                           on: { click: _vm.createProcedure }
                         },
@@ -15634,6 +16028,7 @@ var render = function() {
                       _c(
                         "v-btn",
                         {
+                          staticClass: "mt-5",
                           attrs: {
                             color: "#E0E0E0",
                             to: { name: "procedure.index" }
@@ -78925,8 +79320,8 @@ var opts = {};
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! C:\laragon\www\happypatient-vuetify\resources\js\app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! C:\laragon\www\happypatient-vuetify\resources\sass\app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! G:\laragon\www\happypatient-vuetify\resources\js\app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! G:\laragon\www\happypatient-vuetify\resources\sass\app.scss */"./resources/sass/app.scss");
 
 
 /***/ })
