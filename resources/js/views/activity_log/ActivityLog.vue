@@ -2,6 +2,16 @@
   <div class="flex column">
     <div id="_wrapper" class="pa-5">
       <v-main>
+        <v-breadcrumbs :items="items">
+          <template v-slot:item="{ item }">
+            <v-breadcrumbs-item
+              :to="item.link"
+              :disabled="item.disabled"
+            >
+              {{ item.text.toUpperCase() }}
+            </v-breadcrumbs-item>
+          </template>
+        </v-breadcrumbs>
         <v-card>
           <v-card-title>
             Activity Logs
@@ -41,6 +51,17 @@
           { text: "User", value: "username" },
         ],
         activity_logs: [],
+        items: [
+          { 
+            text: 'Home', 
+            disabled: false, 
+            link: '/dashboard',
+          },
+          { 
+            text: 'Activity Logs', 
+            disabled: true, 
+          }
+        ]
       }
     },
 

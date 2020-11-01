@@ -2,6 +2,16 @@
   <div class="flex column">
     <div id="_wrapper" class="pa-5">
       <v-main>
+        <v-breadcrumbs :items="items">
+          <template v-slot:item="{ item }">
+            <v-breadcrumbs-item
+              :to="item.link"
+              :disabled="item.disabled"
+            >
+              {{ item.text.toUpperCase() }}
+            </v-breadcrumbs-item>
+          </template>
+        </v-breadcrumbs>
         <v-card>
           <v-card-title>
             Patients Record
@@ -86,6 +96,17 @@
           { text: "Actions", value: "actions", sortable: false },
         ],
         patients: [],
+        items: [
+          { 
+            text: 'Home', 
+            disabled: false, 
+            link: '/dashboard',
+          },
+          { 
+            text: 'Patients Record', 
+            disabled: true, 
+          }
+        ]
       }
     },
 

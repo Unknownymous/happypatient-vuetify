@@ -2,6 +2,16 @@
   <div class="flex column">
     <div id="_wrapper" class="pa-5">
       <v-main>
+        <v-breadcrumbs :items="items">
+          <template v-slot:item="{ item }">
+            <v-breadcrumbs-item
+              :to="item.link"
+              :disabled="item.disabled"
+            >
+              {{ item.text.toUpperCase() }}
+            </v-breadcrumbs-item>
+          </template>
+        </v-breadcrumbs>
         <v-card>
           <v-card-title class="grey darken-2  text-white">
             Create Patient
@@ -202,7 +212,7 @@
                   ></v-autocomplete>
                 </v-col>
               </v-row>
-              <v-btn class="mr-4" color="primary" @click="createPatient" :disabled="disabled"> submit </v-btn>
+              <v-btn class="mr-4" color="primary" @click="createPatient" :disabled="disabled"> add </v-btn>
               <v-btn color="#E0E0E0" @click="clear"> clear </v-btn>
             </form>
           </v-card-text>
@@ -251,6 +261,17 @@ export default {
     barangays: [],
     checkbox: false,
     disabled: false,
+    items: [
+        { 
+          text: 'Home', 
+          disabled: false, 
+          link: '/dashboard',
+        },
+        { 
+          text: 'Create Patient', 
+          disabled: true, 
+        }
+      ]
   }),
 
   computed: {
@@ -341,10 +362,10 @@ export default {
           {
             this.clear();
             this.getProvinces();
-            this.disabled = false;
             this.showAlert(); 
           }
 
+          this.disabled = false;
 
         }, (error) => {
           console.log(error);

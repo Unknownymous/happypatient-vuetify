@@ -2,6 +2,16 @@
   <div class="flex column">
     <div id="_wrapper" class="pa-5">
       <v-main>
+        <v-breadcrumbs :items="items">
+          <template v-slot:item="{ item }">
+            <v-breadcrumbs-item
+              :to="item.link"
+              :disabled="item.disabled"
+            >
+              {{ item.text.toUpperCase() }}
+            </v-breadcrumbs-item>
+          </template>
+        </v-breadcrumbs>
         <v-card>
           <v-card-title>
             Users Record
@@ -69,12 +79,25 @@
         headers: [
 
           { text: "Name", value: "name" },
+          { text: "Description", value: "description" },
+          { text: "License", value: "license" },
           { text: "Username", value: "username" },
           { text: "Email", value: "email" },
           { text: "Roles", value: "roles" },
           { text: "Actions", value: "actions", sortable: false },
         ],
         users: [],
+        items: [
+          { 
+            text: 'Home', 
+            disabled: false, 
+            link: '/dashboard',
+          },
+          { 
+            text: 'Users Record', 
+            disabled: true, 
+          }
+        ]
       }
     },
 
@@ -92,7 +115,7 @@
 
       deleteUser (userid) {
 
-        const data = { patientid: patientid };
+        const data = { userid: userid };
 
         Axios.post('/user/delete', data).then( (response) => {
           console.log(response.data);
@@ -130,7 +153,7 @@
                 const index = this.users.indexOf(item);
 
                 //Call delete Patient function
-                this.deleteUser(patientid);
+                this.deleteUser(userid);
 
                 //Remove item from array users
                 this.users.splice(index, 1);

@@ -2,6 +2,16 @@
   <div class="flex column">
     <div id="_wrapper" class="pa-5">
       <v-main>
+        <v-breadcrumbs :items="items">
+          <template v-slot:item="{ item }">
+            <v-breadcrumbs-item
+              :to="item.link"
+              :disabled="item.disabled"
+            >
+              {{ item.text.toUpperCase() }}
+            </v-breadcrumbs-item>
+          </template>
+        </v-breadcrumbs>
         <v-card>
           <v-card-title class="grey darken-2  text-white">
             Create User
@@ -107,7 +117,7 @@
                   ></v-combobox>
                 </v-col>
               </v-row>
-              <v-btn class="mr-4" color="primary" @click="createUser" :disabled="disabled"> submit </v-btn>
+              <v-btn class="mr-4" color="primary" @click="createUser" :disabled="disabled"> add </v-btn>
               <v-btn color="#E0E0E0" @click="clear"> clear </v-btn>
             </form>
           </v-card-text>
@@ -144,6 +154,17 @@ export default {
     role: "",
     roles: ['Role 1', 'Role 2', 'Role 3', 'Role 4'],
     disabled: false,
+    items: [
+        { 
+          text: 'Home', 
+          disabled: false, 
+          link: '/dashboard',
+        },
+        { 
+          text: 'Create User', 
+          disabled: true, 
+        }
+      ]
   }),
 
   computed: {
@@ -209,10 +230,10 @@ export default {
           if(response.data.success)
           {
             this.clear();
-            this.disabled = false;
             this.showAlert(); 
           }
 
+          this.disabled = false;
 
         }, (error) => {
           console.log(error);

@@ -4,6 +4,8 @@ import PatientCreate from './views/patient/PatientCreate.vue';
 import PatientIndex from './views/patient/PatientIndex.vue';
 import PatientEdit from './views/patient/PatientEdit.vue';
 import ServiceIndex from './views/service/ServiceIndex.vue';
+import ProcedureIndex from './views/service_procedure/ProcedureIndex.vue';
+import ProcedureCreate from './views/service_procedure/ProcedureCreate.vue';
 import ActivityLog from './views/activity_log/ActivityLog.vue';
 import UserCreate from './views/user/UserCreate.vue';
 import UserIndex from './views/user/UserIndex.vue';
@@ -42,6 +44,16 @@ const routes = [
     path: '/service/index',
     name: 'service.index',
     component: ServiceIndex
+  },
+  {
+    path: '/procedure/create',
+    name: 'procedure.create',
+    component: ProcedureCreate
+  },
+  {
+    path: '/procedure/index',
+    name: 'procedure.index',
+    component: ProcedureIndex
   },
   {
     path:'/activity_logs',

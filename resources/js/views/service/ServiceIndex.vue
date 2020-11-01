@@ -2,6 +2,16 @@
   <div class="flex column">
     <div id="_wrapper" class="pa-5">
       <v-main>
+        <v-breadcrumbs :items="items">
+          <template v-slot:item="{ item }">
+            <v-breadcrumbs-item
+              :to="item.link"
+              :disabled="item.disabled"
+            >
+              {{ item.text.toUpperCase() }}
+            </v-breadcrumbs-item>
+          </template>
+        </v-breadcrumbs>
         <v-card>
           <v-card-title>
             Services Record
@@ -163,6 +173,17 @@
           service: '',
           status: 'active',
         },
+        items: [
+          { 
+            text: 'Home', 
+            disabled: false, 
+            link: '/dashboard',
+          },
+          { 
+            text: 'Services Record', 
+            disabled: true, 
+          }
+        ]
       }
     },
 
@@ -265,10 +286,11 @@
 
               if(response.data.success)
               {
-                this.disabled = false;
                 this.clear();
                 this.showAlert();
               }
+
+              this.disabled = false;
 
             }, (error) => { 
               console.log(error);

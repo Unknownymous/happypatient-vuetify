@@ -132,8 +132,8 @@
           {
             icon: 'fa-cog',
             items: [
-              { title: 'Services' , link: '/service/index'},
-              { title: 'Service Procedures' },
+              { title: 'Services', link: '/service/index' },
+              { title: 'Service Procedures', link: '/procedure/index' },
               { title: 'Permissions' },
               { title: 'Roles' },
             ],

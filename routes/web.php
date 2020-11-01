@@ -44,6 +44,13 @@ Route::get('/service/edit/{id}', 'ServiceController@edit')->name('service.edit')
 Route::post('/service/update/{id}', 'ServiceController@update')->name('service.update');
 Route::post('/service/delete', 'ServiceController@delete')->name('service.delete');
 
+// Service Procedure Routes
+Route::get('/procedure/index', 'ServiceProcedureController@index')->name('procedure.index');
+Route::post('/procedure/store', 'ServiceProcedureController@store')->name('procedure.store');
+Route::get('/procedure/edit/{id}', 'ServiceProcedureController@edit')->name('procedure.edit');
+Route::post('/procedure/update/{id}', 'ServiceProcedureController@update')->name('procedure.update');
+Route::post('/procedure/delete', 'ServiceProcedureController@delete')->name('procedure.delete');
+
 // Actity Logs Routes
 Route::get('/activity_logs', 'ActivityLogController@index')->name('activity_logs');
 

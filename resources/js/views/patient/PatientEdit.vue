@@ -2,6 +2,16 @@
   <div class="flex column">
     <div id="_wrapper" class="pa-5">
       <v-main>
+        <v-breadcrumbs :items="items">
+          <template v-slot:item="{ item }">
+            <v-breadcrumbs-item
+              :to="item.link"
+              :disabled="item.disabled"
+            >
+              {{ item.text.toUpperCase() }}
+            </v-breadcrumbs-item>
+          </template>
+        </v-breadcrumbs>
         <v-card>
           <v-card-title class="grey darken-2  text-white">
             Update Patient
@@ -202,8 +212,8 @@
                   ></v-autocomplete>
                 </v-col>
               </v-row>
-              <v-btn class="mr-4" color="primary" @click="createPatient" :disabled="disabled"> submit </v-btn>
-              <v-btn color="#E0E0E0" @click="clear"> clear </v-btn>
+              <v-btn class="mr-4" color="primary" @click="updatePatient" :disabled="disabled"> update </v-btn>
+              <v-btn color="#E0E0E0" :to="{name: 'patient.index'}"> cancel </v-btn>
             </form>
           </v-card-text>
         </v-card>
@@ -251,6 +261,22 @@ export default {
     barangays: [],
     checkbox: false,
     disabled: false,
+    items: [
+        { 
+          text: 'Home', 
+          disabled: false, 
+          link: '/dashboard',
+        },
+        { 
+          text: 'Patients Record', 
+          disabled: false, 
+          link: '/patient/index' ,
+        },
+        { 
+          text: 'Update Patient', 
+          disabled: true,
+        }
+      ]
   }),
 
   computed: {
@@ -316,7 +342,7 @@ export default {
     },
   },
   methods: {
-    createPatient() {
+    updatePatient() {
       this.$v.$touch();
 
       if(!this.$v.$error)
@@ -340,10 +366,10 @@ export default {
 
           if(response.data.success)
           {
-            this.disabled = false;
             this.showAlert(); 
           }
 
+          this.disabled = false;
 
         }, (error) => {
           console.log(error);
