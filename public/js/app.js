@@ -4051,6 +4051,7 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 //
 //
 //
+//
 
 
 
@@ -4106,7 +4107,12 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 
       this.$v.$touch();
 
-      if (!this.$v.$error) {
+      if (this.ctr == 0) {
+        this.procedureHasError = true;
+        this.priceHasError = true;
+      }
+
+      if (!this.$v.$error && !this.procedureHasError && !this.priceHasError) {
         this.disabled = true;
         var myForm = document.getElementById('procedureform');
         var formData = new FormData(myForm);
@@ -4162,10 +4168,38 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
       });
     },
     addRow: function addRow() {
-      this.ctr = this.ctr + 1;
-      this.procedures.push({
-        id: this.ctr
-      });
+      //Validate if last row has valid values
+      if (this.ctr > 0) {
+        var id = this.ctr;
+        var procedure = document.querySelector("input[name=procedure" + id + "]").value;
+        var price = document.querySelector("input[name=price" + id + "]").value;
+
+        if (!procedure) {
+          this.procedureHasError = true;
+        }
+
+        if (!price) {
+          this.priceHasError = true;
+        }
+      }
+
+      if (this.procedureHasError == false && this.priceHasError == false) {
+        this.ctr = this.ctr + 1;
+        var _id = this.ctr;
+        this.procedures.push({
+          id: _id
+        });
+      }
+
+      if (this.ctr == 0) {
+        this.ctr = this.ctr + 1;
+        var _id2 = this.ctr;
+        this.procedures.push({
+          id: _id2
+        });
+        this.procedureHasError = false;
+        this.priceHasError = false;
+      }
     },
     removeRow: function removeRow() {},
     procedureValidate: function procedureValidate(id) {
@@ -15883,10 +15917,12 @@ var render = function() {
                                                             placeholder: "0.00",
                                                             prefix: "₱",
                                                             dense: "",
-                                                            required: ""
+                                                            required: "",
+                                                            pattern:
+                                                              "^([0-1]?[0-9]|2[0-4]):([0-5][0-9])(:[0-5][0-9])?$"
                                                           },
                                                           on: {
-                                                            "": function(
+                                                            keyup: function(
                                                               $event
                                                             ) {
                                                               return _vm.priceValidate(
@@ -79320,8 +79356,8 @@ var opts = {};
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-__webpack_require__(/*! G:\laragon\www\happypatient-vuetify\resources\js\app.js */"./resources/js/app.js");
-module.exports = __webpack_require__(/*! G:\laragon\www\happypatient-vuetify\resources\sass\app.scss */"./resources/sass/app.scss");
+__webpack_require__(/*! C:\laragon\www\happypatient-vuetify\resources\js\app.js */"./resources/js/app.js");
+module.exports = __webpack_require__(/*! C:\laragon\www\happypatient-vuetify\resources\sass\app.scss */"./resources/sass/app.scss");
 
 
 /***/ })

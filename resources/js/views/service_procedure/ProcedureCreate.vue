@@ -79,7 +79,8 @@
                                 prefix="₱"
                                 dense
                                 required
-                                @="priceValidate(item.id)"
+                                pattern="^([0-1]?[0-9]|2[0-4]):([0-5][0-9])(:[0-5][0-9])?$"
+                                @keyup="priceValidate(item.id)"
                                 @blur="priceValidate(item.id)"
                               ></v-text-field>
                             </td>
@@ -149,7 +150,6 @@ export default {
   },
 
   data: () => ({
-  
     procedureHasError: false,
     priceHasError: false,
     disabled: false,
@@ -191,8 +191,14 @@ export default {
     createProcedure() {
       
       this.$v.$touch();
+      
+      if(this.ctr == 0)
+      {
+        this.procedureHasError = true;
+        this.priceHasError = true;
+      }
 
-      if(!this.$v.$error)
+      if(!this.$v.$error && !this.procedureHasError && !this.priceHasError )
       {
         this.disabled = true;
 
@@ -242,9 +248,43 @@ export default {
     },
 
     addRow() {
+
+      //Validate if last row has valid values
+      if(this.ctr > 0)
+      { 
+        const id = this.ctr;
+        const procedure = document.querySelector("input[name=procedure"+id+"]").value;
+        const price = document.querySelector("input[name=price"+id+"]").value;
+
+        if(!procedure)
+        {
+          this.procedureHasError = true;
+        }
+
+        if(!price)
+        {
+          this.priceHasError = true;
+        }
+
+      }
       
-      this.ctr = this.ctr + 1;
-      this.procedures.push({id: this.ctr});
+      if(this.procedureHasError == false && this.priceHasError == false)
+      {
+        this.ctr = this.ctr + 1;
+        const id = this.ctr;
+        this.procedures.push({id: id});
+      }
+
+      if(this.ctr == 0)
+      {
+        this.ctr = this.ctr + 1;
+        const id = this.ctr;
+        this.procedures.push({id: id});
+        
+        this.procedureHasError = false;
+        this.priceHasError = false;
+
+      }
 
     },
 
