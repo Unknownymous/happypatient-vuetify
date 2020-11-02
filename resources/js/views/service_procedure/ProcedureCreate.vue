@@ -19,7 +19,7 @@
           <v-card-text class="pa-10">
             <form id="procedureform">
               <v-row>
-                <v-col cols="6">
+                <v-col cols="4">
                   <v-autocomplete
                     name="service"
                     v-model="service"
@@ -35,22 +35,22 @@
                 </v-col>
               </v-row>
               <v-row>
-                <v-col cols="6">
+                <v-col>
                   <v-card>
                     <v-card-title>
                       Service Procedures
                     </v-card-title>
-                    <v-simple-table>
+                    <v-simple-table id="procedureTable">
                       <template v-slot:default>
                         <thead>
                           <tr>
                             <th class="text-left">
                               Procedure
                             </th>
-                            <th class="text-left">
+                            <th class="text-left" width="150px">
                               Price (PHP)
                             </th>
-                            <th>
+                            <th width="100px">
                               
                             </th>
                           </tr>
@@ -62,27 +62,40 @@
                           >
                             <td>
                               <v-text-field
+                                v-model="procedure"
                                 class="mt-5"
-                                :name="'procedure'+item.id"
-                                :key="item.id"
+                                id="procedure"
                                 dense
                                 required
-                                @keyup="procedureValidate(item.id)"
-                                @blur="procedureValidate(item.id)"
                               ></v-text-field>
+                              {{ item.procedure }}
                             </td>
                             <td>
-                              <v-text-field
+
+                              <!-- <v-text-field
                                 class="mt-5"
                                 :name="'price'+item.id"
                                 placeholder="0.00"
                                 prefix="₱"
                                 dense
                                 required
-                                pattern="^([0-1]?[0-9]|2[0-4]):([0-5][0-9])(:[0-5][0-9])?$"
-                                @keyup="priceValidate(item.id)"
-                                @blur="priceValidate(item.id)"
-                              ></v-text-field>
+                              ></v-text-field> -->
+                              <v-text-field-money
+                                class="mt-2"
+                                v-model="price"
+                                v-bind:properties="{
+                                  prefix: '₱',
+                                  placeholder: '0.00',
+                                }"
+                                v-bind:options="{
+                                  length: 11,
+                                  precision: 2,
+                                  empty: null,
+                                }"
+                                dense
+                                required
+                              >
+                              </v-text-field-money>
                             </td>
                             <td>
                               <v-btn
@@ -158,6 +171,7 @@ export default {
     service: "",
     services: [],
     procedures: [],
+    indexes: [],
     ctr: 0,
     items: [
         {
@@ -248,43 +262,45 @@ export default {
     },
 
     addRow() {
+      
 
-      //Validate if last row has valid values
+      // Validate if last row has valid values
       if(this.ctr > 0)
       { 
         const id = this.ctr;
-        const procedure = document.querySelector("input[name=procedure"+id+"]").value;
-        const price = document.querySelector("input[name=price"+id+"]").value;
-
-        if(!procedure)
-        {
-          this.procedureHasError = true;
-        }
-
-        if(!price)
-        {
-          this.priceHasError = true;
-        }
-
+        this.procedureValidate();
+        this.priceValidate();
+        
       }
       
       if(this.procedureHasError == false && this.priceHasError == false)
       {
-        this.ctr = this.ctr + 1;
-        const id = this.ctr;
-        this.procedures.push({id: id});
-      }
-
-      if(this.ctr == 0)
-      {
-        this.ctr = this.ctr + 1;
-        const id = this.ctr;
-        this.procedures.push({id: id});
+         
+        if(this.ctr > 0)
+        {
+          this.procedures.push({id: id, procedure: this.procedure, price: this.price});
+          console.log(this.procedures);
         
-        this.procedureHasError = false;
-        this.priceHasError = false;
+        }
+        
+        this.ctr = this.ctr + 1;
+        const id = this.ctr;
+        this.procedures.push({id: id, procedure: this.procedure, price: this.price});
 
+        this.procedure = "";
+        this.price = "";
       }
+
+      // if(this.ctr == 0)
+      // {
+      //   this.ctr = this.ctr + 1;
+      //   const id = this.ctr;
+      //   this.indexes.push({id: id});
+        
+      //   this.procedureHasError = false;
+      //   this.priceHasError = false;
+
+      // }
 
     },
 
@@ -292,12 +308,11 @@ export default {
 
     },
 
-    procedureValidate(id) {
+    procedureValidate() {
       
-      const procedure = document.querySelector("input[name=procedure"+id+"]").value;
-      this.procedure = procedure;
+      // const procedure = document.getElementById("procedure").value;
 
-      if(procedure)
+      if(this.procedure)
       {
         this.procedureHasError = false;
       }
@@ -308,12 +323,11 @@ export default {
     
     },
 
-    priceValidate(id) {
+    priceValidate() {
       
-      const price = document.querySelector("input[name=price"+id+"]").value;
-      this.price = price;
+      // const price = document.getElementById("input-73").value;
 
-      if(price)
+      if(this.price)
       {
         this.priceHasError = false;
       }
