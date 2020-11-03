@@ -67,8 +67,13 @@
                                 id="procedure"
                                 dense
                                 required
-                              ></v-text-field>
+                                v-if="procedures.indexOf(item) == (procedures.length - 1) && !item.procedure"
+                              ></v-text-field>   
+
                               {{ item.procedure }}
+
+                              {{ getIndex(procedures.indexOf(item)) }}
+
                             </td>
                             <td>
 
@@ -94,8 +99,16 @@
                                 }"
                                 dense
                                 required
+                                v-if="procedures.indexOf(item) == (procedures.length - 1) && !item.price"
                               >
                               </v-text-field-money>
+
+                              <strong v-if="item.price">
+                                ₱
+                              </strong> 
+
+                              {{ item.price }}
+
                             </td>
                             <td>
                               <v-btn
@@ -104,11 +117,12 @@
                                   dark
                                   small
                                   color="red"
+                                  @click="removeRow(item)"
                                 >
                                   <v-icon dark>
                                     mdi-minus
                                   </v-icon>
-                                </v-btn>
+                              </v-btn>
                             </td>
                           </tr>
                         </tbody>
@@ -117,7 +131,7 @@
                             <td colspan="1"></td>
                             <td>
                               <td>
-                              <v-btn
+                                <v-btn
                                   class="mx-2 mb-5 mt-5"
                                   fab
                                   dark
@@ -135,7 +149,7 @@
                       </template>
                     </v-simple-table>
                   </v-card>
-                  <span class="v-messages error--text" v-if="procedureHasError || priceHasError">Procedure and Price required</span>
+                  <span class="v-messages error--text" v-if="procedureHasError || priceHasError">Procedure and Price are required</span>
                 </v-col>
               </v-row>
               <v-btn class="mr-4 mt-5" color="primary" @click="createProcedure" :disabled="disabled"> add </v-btn>
@@ -163,6 +177,7 @@ export default {
   },
 
   data: () => ({
+    LastIndexIsRemoved: false,
     procedureHasError: false,
     priceHasError: false,
     disabled: false,
@@ -171,7 +186,7 @@ export default {
     service: "",
     services: [],
     procedures: [],
-    indexes: [],
+    index: "",
     ctr: 0,
     items: [
         {
@@ -205,8 +220,15 @@ export default {
     createProcedure() {
       
       this.$v.$touch();
-      
-      if(this.ctr == 0)
+
+      //if last index was removed then don't validate fields
+      if(!this.LastIndexIsRemoved)
+      {
+        this.procedureValidate();
+        this.priceValidate();
+      }
+
+      if(this.procedures.length == 0)
       {
         this.procedureHasError = true;
         this.priceHasError = true;
@@ -214,16 +236,25 @@ export default {
 
       if(!this.$v.$error && !this.procedureHasError && !this.priceHasError )
       {
+        const procedure_data = { procedure: this.procedure, price: this.price };
+        //Assign data from last row textfield value of procedure and price 
+        Object.assign(this.procedures[this.index], procedure_data);
+
         this.disabled = true;
 
         let myForm = document.getElementById('procedureform');
         let formData = new FormData(myForm);
         const data = {};
+        const procedures = {};
 
         for(let [key, val] of formData.entries())
         {
           Object.assign(data ,{[key]: val});
         }
+
+        //Assign procedures data into data variable
+        data['procedures'] = this.procedures;
+
         Axios.post('/procedure/store', data).then((response) => {
           console.log(response.data);
 
@@ -231,6 +262,7 @@ export default {
           {
             this.clear();
             this.showAlert(); 
+            this.getService();
           }
 
           this.disabled = false;
@@ -261,50 +293,75 @@ export default {
       });
     },
 
-    addRow() {
-      
+    getIndex(index) {
+      this.index = index;
+    },
 
-      // Validate if last row has valid values
-      if(this.ctr > 0)
-      { 
-        const id = this.ctr;
-        this.procedureValidate();
-        this.priceValidate();
-        
-      }
-      
-      if(this.procedureHasError == false && this.priceHasError == false)
+    addRow() {
+
+      if(this.procedures.length == 0)
       {
-         
-        if(this.ctr > 0)
-        {
-          this.procedures.push({id: id, procedure: this.procedure, price: this.price});
-          console.log(this.procedures);
+
+        this.procedures.push({ procedure: this.procedure, price: this.price });
+        this.procedureHasError = false;
+        this.priceHasError = false;
+
+      }
+      else
+      { 
         
+        //if last index was removed then don't validate fields
+        if(!this.LastIndexIsRemoved)
+        {
+          this.procedureValidate();
+          this.priceValidate();
         }
         
-        this.ctr = this.ctr + 1;
-        const id = this.ctr;
-        this.procedures.push({id: id, procedure: this.procedure, price: this.price});
+        if(this.procedureHasError == false && this.priceHasError == false)
+        {
+          
+          const data = { procedure: this.procedure, price: this.price };
+
+          //if last index was removed and procedures has only 1 row data, don't assign data on procedures
+          if(!this.LastIndexIsRemoved)
+          {
+            Object.assign(this.procedures[this.index], data);
+          }
+          else if(this.procedures.length == 1)
+          {
+            Object.assign(this.procedures[this.index], data);
+          }
+
+          this.procedure = "";
+          this.price = "";
+          this.LastIndexIsRemoved = false;
+
+          this.procedures.push({ procedure: this.procedure, price: this.price });
+          console.log(this.procedures);
+
+        }
+        
+      }
+    },
+
+    removeRow(item) {
+
+      const index = this.procedures.indexOf(item);
+      const last_index = this.procedures.length - 1;
+
+      //Delete rows on the object procedures
+      this.procedures.splice(index, 1);
+
+      if(index == last_index)
+      { 
+        this.procedureHasError = false;
+        this.priceHasError = false;
 
         this.procedure = "";
         this.price = "";
-      }
-
-      // if(this.ctr == 0)
-      // {
-      //   this.ctr = this.ctr + 1;
-      //   const id = this.ctr;
-      //   this.indexes.push({id: id});
         
-      //   this.procedureHasError = false;
-      //   this.priceHasError = false;
-
-      // }
-
-    },
-
-    removeRow() {
+        this.LastIndexIsRemoved = true;
+      }
 
     },
 
@@ -335,8 +392,21 @@ export default {
       {
         this.priceHasError = true;
       }
-    
-    },
+    }, 
+
+    clear() {
+      this.$v.$reset();
+      this.LastIndexIsRemoved = false;
+      this.procedureHasError = false;
+      this.priceHasError = false;
+      this.disabled = false;
+      this.procedure = "";
+      this.price = "";
+      this.service = "";
+      this.services = [];
+      this.procedures = [];
+      this.index = "";
+    }
   },
   mounted () {
     this.getService();

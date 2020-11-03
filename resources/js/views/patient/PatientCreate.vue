@@ -355,21 +355,23 @@ export default {
           Object.assign(data ,{[key]: val});
         }
 
-        Axios.post('/patient/store', data).then((response) => {
-          console.log(response.data);
+        console.log(data);
 
-          if(response.data.success)
-          {
-            this.clear();
-            this.getProvinces();
-            this.showAlert(); 
-          }
+        // Axios.post('/patient/store', data).then((response) => {
+        //   console.log(response.data);
 
-          this.disabled = false;
+        //   if(response.data.success)
+        //   {
+        //     this.clear();
+        //     this.getProvinces();
+        //     this.showAlert(); 
+        //   }
 
-        }, (error) => {
-          console.log(error);
-        });
+        //   this.disabled = false;
+
+        // }, (error) => {
+        //   console.log(error);
+        // });
 
 
       }

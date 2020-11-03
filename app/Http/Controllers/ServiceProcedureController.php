@@ -32,16 +32,16 @@ class ServiceProcedureController extends Controller
     
     public function store(Request $request)
     {   
-        return $request->all();
+        // return $request->get('procedures')[0]['procedure'];
 
         $rules = [
             'service.required' => 'Please enter service',   
-            'procedure.required' => 'Please add at least 1 service procedure on the table'
+            'procedures.required' => 'Please add at least 1 service procedure on the table'
         ];
 
         $validator = Validator::make($request->all(),[
             'service' => 'required',
-            'procedure' => 'required'
+            'procedures' => 'required'
         ], $rules);
 
         if($validator->fails())
@@ -49,21 +49,22 @@ class ServiceProcedureController extends Controller
             return response()->json($validator->errors(), 200);
         }
 
-        $ctr = count($request->get('procedure'));
-        $procedure = $request->get('procedure');
+        $ctr = count($request->get('procedures'));
+        $procedure = $request->get('procedures');
         $price = $request->get('price');
         $procedureIsNull = false;
         $priceIsNull = false;
 
+        // return $procedure[0]['procedure'];
         //Validate procedure and price if null
         for($x=0; $x < $ctr; $x++)
         {
-            if(empty($procedure[$x]))
+            if(empty($procedure[$x]['procedure']))
             {
                 $procedureIsNull = true;
             }
 
-            if(empty($price[$x]))
+            if(empty($procedure[$x]['price']))
             {
                 $priceIsNull = true;
             }
@@ -80,8 +81,8 @@ class ServiceProcedureController extends Controller
         {
             $service = new ServiceProcedure();
             $service->serviceid = $request->get('service');
-            $service->procedure = $procedure[$x];
-            $service->price = $price[$x];
+            $service->procedure = $procedure[$x]['procedure'];
+            $service->price = $price[$x]['price'];
             $service->save();
 
 
@@ -103,7 +104,7 @@ class ServiceProcedureController extends Controller
         }
 
         //PUSHER - send data/message if service procedure is created
-        event(new EventNotification('create-procedure', 'service_procedures'));
+        // event(new EventNotification('create-procedure', 'service_procedures'));
 
         return response()->json(['success' => 'Record has successfully added'], 200);
     }
