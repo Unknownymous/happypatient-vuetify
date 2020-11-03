@@ -267,8 +267,8 @@ export default {
 
           this.disabled = false;
 
-        }, (error) => {
-          console.log(error);
+        }, (errors) => {
+          console.log(errors);
         });
 
       }
