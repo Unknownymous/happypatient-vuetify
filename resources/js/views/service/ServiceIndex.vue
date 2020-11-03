@@ -288,6 +288,7 @@
               {
                 this.clear();
                 this.showAlert();
+                this.close();
               }
 
               this.disabled = false;
@@ -309,6 +310,7 @@
                 this.disabled = false;
                 this.clear();
                 this.showAlert();
+                this.close();
                 
                 //push recently added data from database
                 this.services.push(response.data.service);
@@ -321,7 +323,7 @@
 
           }
         }
-        this.close()
+        
       },
       clear () {
         this.$v.$reset();

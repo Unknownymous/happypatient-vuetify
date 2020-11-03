@@ -18,7 +18,7 @@ class ServiceProcedureController extends Controller
     {   
         $procedures = DB::table('services')
                                ->join('service_procedures', 'services.id', '=', 'service_procedures.serviceid')
-                               ->select('service_procedures.id', 'services.service', 'service_procedures.procedure', 'service_procedures.price')
+                               ->select('service_procedures.id', 'service_procedures.serviceid', 'services.service', 'service_procedures.procedure', 'service_procedures.price')
                                ->get();
         return response()->json(['procedures' => $procedures], 200);
     }
@@ -55,7 +55,6 @@ class ServiceProcedureController extends Controller
         $procedureIsNull = false;
         $priceIsNull = false;
 
-        // return $procedure[0]['procedure'];
         //Validate procedure and price if null
         for($x=0; $x < $ctr; $x++)
         {
@@ -76,13 +75,14 @@ class ServiceProcedureController extends Controller
         {
             return response()->json(['procedures' => 'Procedure and Price is required'], 200);
         }
+        
 
         for($x=0; $x < $ctr; $x++)
         {
             $service = new ServiceProcedure();
             $service->serviceid = $request->get('service');
             $service->procedure = $procedure[$x]['procedure'];
-            $service->price = $price[$x]['price'];
+            $service->price = $procedure[$x]['price'];
             $service->save();
 
 
@@ -122,14 +122,57 @@ class ServiceProcedureController extends Controller
     }
 
     
-    public function update(Request $request, ServiceProcedure $serviceProcedure)
+    public function update(Request $request, $procedureid)
     {
-        //
+        
+        $procedure = ServiceProcedure::find($procedureid);
+        $procedure->serviceid = $request->get('serviceid');
+        $procedure->procedure = $request->get('procedure');
+        $procedure->price = $request->get('price');
+        $procedure->save();
+
+        //PUSHER - send data/message if service procedure is updated
+        // event(new EventNotification('edit-procedure', 'service_procedures'));
+
+
+        //Activity Log
+        $activity_log = new ActivityLog();
+        $activity_log->object_id = $procedure->id;
+        $activity_log->table_name = 'service_procedures';
+        $activity_log->description = 'Update Service Procedure';
+        $activity_log->action = 'update';
+        // $activity_log->userid = auth()->user()->id;
+        $activity_log->save();
+
+        return response()->json(['success' => 'Record has been updated'], 200);
     }
 
     
-    public function destroy(ServiceProcedure $serviceProcedure)
+    public function delete(Request $request)
     {
-        //
+        $procedure_id = $request->get('procedureid');
+        $procedure = ServiceProcedure::find($procedure_id);
+
+        //if record is empty then display error page
+        if(empty($procedure->id))
+        {
+            return abort(404, 'Not Found');
+        }
+
+        $procedure->delete();
+
+        //PUSHER - send data/message if service procedure is deleted
+        // event(new EventNotification('delete-procedure', 'service_procedures'));
+
+        //Activity Log
+        $activity_log = new ActivityLog();
+        $activity_log->object_id = $procedure->id;
+        $activity_log->table_name = 'service_procedures';
+        $activity_log->description = 'Delete Service Procedure';
+        $activity_log->action = 'delete';
+        // $activity_log->userid = auth()->user()->id;
+        $activity_log->save();
+
+        return response()->json(['success' => 'Record has been deleted'], 200);
     }
 }

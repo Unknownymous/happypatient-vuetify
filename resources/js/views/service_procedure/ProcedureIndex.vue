@@ -48,15 +48,15 @@
                           <v-col>
                             <v-autocomplete
                               name="service"
-                              v-model="editedItem.service"
+                              v-model="editedItem.serviceid"
                               :items="services"
                               item-value="id"
                               item-text="service"
                               label="Service"
                               required
                               :error-messages="serviceErrors"
-                              @change="$v.editedItem.service.$touch()"
-                              @blur="$v.editedItem.service.$touch()"
+                              @change="$v.editedItem.serviceid.$touch()"
+                              @blur="$v.editedItem.serviceid.$touch()"
                             ></v-autocomplete>
                           </v-col>
                         </v-row>
@@ -71,11 +71,12 @@
                               @input="$v.editedItem.procedure.$touch()"
                               @blur="$v.editedItem.procedure.$touch()"
                             ></v-text-field>
+                            
                           </v-col>
                         </v-row>
                         <v-row>
                           <v-col>
-                            <v-text-field
+                            <!-- <v-text-field
                               name="price"
                               v-model="editedItem.price"
                               label="Price"
@@ -83,7 +84,28 @@
                               :error-messages="priceErrors"
                               @input="$v.editedItem.price.$touch()"
                               @blur="$v.editedItem.price.$touch()"
-                            ></v-text-field>
+                            ></v-text-field> -->
+                            <v-text-field-money
+                              class="mt-2"
+                              label="Price"
+                              v-model="editedItem.price"
+                              v-bind:properties="{
+                              prefix: '₱',
+                                placeholder: '0.00',
+                              }"
+                              v-bind:options="{
+                                length: 11,
+                                precision: 2,
+                                empty: null,
+                              }"
+                              dense
+                              required
+                              :error-messages="priceErrors"
+                              @input="$v.editedItem.price.$touch()"
+                              @blur="$v.editedItem.price.$touch()"
+                            >
+                            </v-text-field-money>
+                            <div class="v-messages error--text" v-if="!editedItem.price">Price is required</div>
                           </v-col>
                         </v-row>
                       </v-container>
@@ -118,9 +140,21 @@
               >
                 mdi-pencil
               </v-icon>
-              <v-icon small color="red" @click="showConfirmAlert(item)">
+              <v-icon 
+                small 
+                color="red" 
+                @click="showConfirmAlert(item)"
+              >
                 mdi-delete
               </v-icon>
+              <v-btn
+                color="primary"
+                dark
+                x-small
+                class="ml-2"
+              >
+                <v-icon x-small>mdi-plus</v-icon> Template
+              </v-btn>
             </template>
           </v-data-table>
         </v-card>
@@ -138,7 +172,7 @@ export default {
 
   validations: {
     editedItem: {
-      service: { required },
+      serviceid: { required },
       procedure: { required },
       price: { required },
     },
@@ -158,11 +192,13 @@ export default {
       procedures: [],
       editedIndex: -1,
       editedItem: {
+        serviceid: "",
         service: "",
         procedure: "",
         price: "",
       },
       defaultItem: {
+        serviceid: "",
         service: "",
         procedure: "",
         price: "",
@@ -196,13 +232,15 @@ export default {
       });
     },
 
-    editService(item) {
+    editProcedure(item) {
+      
       this.editedIndex = this.procedures.indexOf(item);
       this.editedItem = Object.assign({}, item);
+      console.log(this.editedItem);
       this.dialog = true;
     },
 
-    deleteService(procedureid) {
+    deleteProcedure(procedureid) {
       const data = { procedureid: procedureid };
 
       Axios.post("/procedure/delete", data).then(
@@ -240,14 +278,14 @@ export default {
         if (result.value) {
           // <-- if confirmed
 
-          const serviceid = item.id;
+          const procedureid = item.id;
           const index = this.services.indexOf(item);
 
           //Call delete Patient function
-          this.deleteService(serviceid);
+          this.deleteProcedure(procedureid);
 
           //Remove item from array services
-          this.services.splice(index, 1);
+          this.procedures.splice(index, 1);
 
           this.$swal({
             position: "center",
@@ -261,16 +299,12 @@ export default {
     },
     close() {
       this.dialog = false;
-      this.$nextTick(() => {
-        this.editedItem = Object.assign({}, this.defaultItem);
-        this.editedIndex = -1;
-      });
     },
     save() {
 
       this.$v.$touch();
 
-      if (!this.$v.$error) {
+      if (!this.$v.$error && this.editedItem.price) {
         this.disabled = true;
 
         Object.assign(this.procedures[this.editedIndex], this.editedItem);
@@ -280,11 +314,10 @@ export default {
 
         Axios.post("/procedure/update/" + procedureid, data).then(
           (response) => {
-            console.log(response.data);
 
             if (response.data.success) {
-              this.clear();
               this.showAlert();
+              this.close();
             }
 
             this.disabled = false;
@@ -294,14 +327,14 @@ export default {
           }
         );
       }
-      this.close();
+      
     },
   },
   computed: {
     serviceErrors() {
       const errors = [];
-      if (!this.$v.editedItem.service.$dirty) return errors;
-      !this.$v.editedItem.service.required &&
+      if (!this.$v.editedItem.serviceid.$dirty) return errors;
+      !this.$v.editedItem.serviceid.required &&
         errors.push("Service is required.");
       return errors;
     },
@@ -322,6 +355,7 @@ export default {
   },
   mounted() {
     this.getServiceProcedures();
+    this.getService();
   },
 };
 </script>
