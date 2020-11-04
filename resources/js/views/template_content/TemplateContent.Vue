@@ -19,7 +19,8 @@
           <v-card-text class="pa-10">
             <form id="templateform">
               <v-row>
-                <v-col cols="4">
+                <v-col>
+                  <vue-editor v-model="content"></vue-editor>
                 </v-col>
               </v-row>
               
@@ -37,10 +38,14 @@
 import Axios from 'axios';
 import { validationMixin } from "vuelidate";
 import { required, maxLength, email, minLength, sameAs } from "vuelidate/lib/validators";
+// Advanced Use - Hook into Quill's API for Custom Functionality
+import { VueEditor, Quill } from "vue2-editor";
 
 export default {
   mixins: [validationMixin],
-
+  components: {
+    VueEditor
+  },
   validations: {
     service: { required },   
     procedure: { required },    
@@ -66,6 +71,7 @@ export default {
         },
       ],
       template: [],
+      content: "<h1>Some initial content</h1>",
   }),
 
   computed: {
