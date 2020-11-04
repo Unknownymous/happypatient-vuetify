@@ -187,7 +187,7 @@ class ServiceProcedureController extends Controller
         }
 
 
-        return view('pages.template_content.create', compact('template_content'));
+        return response()->json(['template_content' => $template_content], 200);
     }
 
     public function content_update(Request $request, $procedure_id)

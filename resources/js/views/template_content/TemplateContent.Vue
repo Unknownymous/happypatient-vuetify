@@ -20,7 +20,6 @@
             <form id="templateform">
               <v-row>
                 <v-col cols="4">
-                  
                 </v-col>
               </v-row>
               
@@ -66,6 +65,7 @@ export default {
           disabled: true,
         },
       ],
+      template: [],
   }),
 
   computed: {
@@ -80,7 +80,7 @@ export default {
   },
   methods: {
     saveTemplate() {
-      
+
       this.$v.$touch();      
      
       if(!this.$v.$error && !this.procedureHasError && !this.priceHasError)
@@ -96,7 +96,8 @@ export default {
           Object.assign(data ,{[key]: val});
         }
 
-        Axios.post('/procedure/content/create', data).then((response) => {
+        const procedureid = this.template.procedureid;
+        Axios.post('/procedure/content/update/'+procedureid, data).then((response) => {
 
           console.log(response.data);
           
@@ -125,11 +126,13 @@ export default {
     },
 
     getTemplateContent() {
-      Axios.get("/service/index").then((response) => {
-        this.services = response.data.services;
+      Axios.get(this.$route.path).then((response) => {
+        this.template = response.data.template_content;
+        console.log(this.template);
       });
     },
   },
+
   mounted () {
     this.getTemplateContent();
   }

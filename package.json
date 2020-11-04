@@ -27,8 +27,14 @@
         "vue-template-compiler": "^2.6.10"
     },
     "dependencies": {
+        "@baoshishu/vue-editor": "^0.3.0",
         "moment": "^2.29.1",
+        "prosemirror-utils": "^0.9.6",
+        "rich-text-editor-vuetify": "^1.1.6",
+        "tiptap": "^1.30.0",
+        "tiptap-extensions": "^1.33.2",
         "v-mask": "^2.2.3",
+        "v-tooltip": "^2.0.3",
         "vue-router": "^3.4.7",
         "vue-sweetalert2": "^4.1.1",
         "vue-the-mask": "^0.11.1",
