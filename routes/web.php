@@ -50,6 +50,8 @@ Route::post('/procedure/store', 'ServiceProcedureController@store')->name('proce
 Route::get('/procedure/edit/{id}', 'ServiceProcedureController@edit')->name('procedure.edit');
 Route::post('/procedure/update/{id}', 'ServiceProcedureController@update')->name('procedure.update');
 Route::post('/procedure/delete', 'ServiceProcedureController@delete')->name('procedure.delete');
+Route::get('/procedure/template/create/{id}', 'ServiceProcedureController@content_create')->name('content.create');
+Route::post('/procedure/template/update/{id}', 'ServiceProcedureController@content_update')->name('content.update');
 
 // Actity Logs Routes
 Route::get('/activity_logs', 'ActivityLogController@index')->name('activity_logs');

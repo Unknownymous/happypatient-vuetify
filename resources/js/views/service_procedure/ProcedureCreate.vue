@@ -221,11 +221,14 @@ export default {
       
       this.$v.$touch();
 
-      //if last index was removed then don't validate fields
       if(!this.LastIndexIsRemoved)
       {
         this.procedureValidate();
         this.priceValidate();
+      }
+      else
+      {
+        this.$v.$reset();
       }
 
       if(this.procedures.length == 0)
@@ -233,12 +236,17 @@ export default {
         this.procedureHasError = true;
         this.priceHasError = true;
       }
-
-      if(!this.$v.$error && !this.procedureHasError && !this.priceHasError )
+      
+     
+      if(!this.$v.$error && !this.procedureHasError && !this.priceHasError)
       {
         const procedure_data = { procedure: this.procedure, price: this.price };
-        //Assign data from last row textfield value of procedure and price 
-        Object.assign(this.procedures[this.index], procedure_data);
+
+        //Assign data from last row textfield value of procedure and price; if last index was not removed
+        if(!this.LastIndexIsRemoved)
+        {
+          Object.assign(this.procedures[this.index], procedure_data);
+        }
 
         this.disabled = true;
 
@@ -256,13 +264,15 @@ export default {
         data['procedures'] = this.procedures;
 
         Axios.post('/procedure/store', data).then((response) => {
-          console.log(response.data);
 
+          console.log(response.data);
+          
           if(response.data.success)
           {
             this.clear();
             this.showAlert(); 
             this.getService();
+            
           }
 
           this.disabled = false;
@@ -288,7 +298,6 @@ export default {
 
     getService() {
       Axios.get("/service/index").then((response) => {
-        console.log(response.data.services);
         this.services = response.data.services;
       });
     },
@@ -337,7 +346,6 @@ export default {
           this.LastIndexIsRemoved = false;
 
           this.procedures.push({ procedure: this.procedure, price: this.price });
-          console.log(this.procedures);
 
         }
         

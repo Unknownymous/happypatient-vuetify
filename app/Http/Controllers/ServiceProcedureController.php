@@ -87,10 +87,10 @@ class ServiceProcedureController extends Controller
 
 
             //Template Content
-            // $template_content = new TemplateContent();
-            // $template_content->procedureid = $service->id;
-            // $template_content->content = '';
-            // $template_content->save();
+            $template_content = new TemplateContent();
+            $template_content->procedureid = $service->id;
+            $template_content->content = '';
+            $template_content->save();
 
             //Activity Log
             $activity_log = new ActivityLog();
@@ -174,5 +174,29 @@ class ServiceProcedureController extends Controller
         $activity_log->save();
 
         return response()->json(['success' => 'Record has been deleted'], 200);
+    }
+
+    public function content_create($procedure_id)
+    {   
+        $template_content = TemplateContent::where('procedureid', '=', $procedure_id)->first();
+
+        //if record is empty then display error page
+        if(empty($template_content->id))
+        {
+            return abort(404, 'Not Found');
+        }
+
+
+        return view('pages.template_content.create', compact('template_content'));
+    }
+
+    public function content_update(Request $request, $procedure_id)
+    {   
+        
+        TemplateContent::where('procedureid', '=', $procedure_id)
+                       ->update(['content' => $request->get('content')]);
+        
+
+        return response()->json(['success' => 'Record has been updated'], 200);
     }
 }

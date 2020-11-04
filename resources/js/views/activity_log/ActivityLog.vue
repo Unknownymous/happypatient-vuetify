@@ -47,7 +47,6 @@
         headers: [
           { text: "Date", value: "created_at" },
           { text: "Activity", value: "description" },
-          { text: "Birthdate", value: "birthdate" },
           { text: "User", value: "username" },
         ],
         activity_logs: [],

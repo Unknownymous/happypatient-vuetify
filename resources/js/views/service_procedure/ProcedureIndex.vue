@@ -152,9 +152,14 @@
                 dark
                 x-small
                 class="ml-2"
+                @click="createTemplate(item)"
               >
-                <v-icon x-small>mdi-plus</v-icon> Template
+                Template
               </v-btn>
+            </template>
+            <template v-slot:item.price="{item}">
+              <strong>₱ </strong> 
+              {{ item.price }}              
             </template>
           </v-data-table>
         </v-card>
@@ -220,14 +225,12 @@ export default {
   methods: {
     getServiceProcedures() {
       Axios.get("/procedure/index").then((response) => {
-        console.log(response.data.procedures);
         this.procedures = response.data.procedures;
       });
     },
 
     getService() {
       Axios.get("/service/index").then((response) => {
-        console.log(response.data.services);
         this.services = response.data.services;
       });
     },
@@ -236,7 +239,6 @@ export default {
       
       this.editedIndex = this.procedures.indexOf(item);
       this.editedItem = Object.assign({}, item);
-      console.log(this.editedItem);
       this.dialog = true;
     },
 
@@ -251,6 +253,10 @@ export default {
           console.log(error);
         }
       );
+    },
+
+    createTemplate(item) {
+      this.$router.push({name: 'template.create', params: {procedureid: item.id}})
     },
 
     showAlert() {
@@ -312,8 +318,9 @@ export default {
         const data = this.editedItem;
         const procedureid = this.editedItem.id;
 
-        Axios.post("/procedure/update/" + procedureid, data).then(
-          (response) => {
+        Axios.post("/procedure/update/" + procedureid, data).then( (response) => {
+
+            console.log(response.data);
 
             if (response.data.success) {
               this.showAlert();

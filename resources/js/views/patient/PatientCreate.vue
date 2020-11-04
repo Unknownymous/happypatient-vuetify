@@ -357,21 +357,22 @@ export default {
 
         console.log(data);
 
-        // Axios.post('/patient/store', data).then((response) => {
-        //   console.log(response.data);
+        Axios.post('/patient/store', data).then((response) => {
+          
+          console.log(response.data);
 
-        //   if(response.data.success)
-        //   {
-        //     this.clear();
-        //     this.getProvinces();
-        //     this.showAlert(); 
-        //   }
+          if(response.data.success)
+          {
+            this.clear();
+            this.getProvinces();
+            this.showAlert(); 
+          }
 
-        //   this.disabled = false;
+          this.disabled = false;
 
-        // }, (error) => {
-        //   console.log(error);
-        // });
+        }, (error) => {
+          console.log(error);
+        });
 
 
       }

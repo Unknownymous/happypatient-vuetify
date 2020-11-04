@@ -289,6 +289,7 @@
                 this.clear();
                 this.showAlert();
                 this.close();
+                
               }
 
               this.disabled = false;

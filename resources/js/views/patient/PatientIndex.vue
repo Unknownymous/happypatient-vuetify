@@ -44,6 +44,11 @@
               {{ index(item) }}
             </template> -->
 
+
+            <template v-slot:item.birthdate="{ item }">
+              {{ getBirthdate(item.birthdate) }}
+            </template>  
+
             <template v-slot:item.actions="{ item }">
               <v-icon
                 small
@@ -71,7 +76,7 @@
 </template>
 <script>
   import Axios from "axios";
-
+  import moment from 'moment';
   export default {
     data() {
       return {
@@ -116,6 +121,10 @@
           console.log(response.data.patients);
           this.patients = response.data.patients;
         });
+      },
+
+      getBirthdate(birthdate) {
+        return moment(String(birthdate)).format('MM/DD/YYYY');
       },
 
       editPatient (item) {

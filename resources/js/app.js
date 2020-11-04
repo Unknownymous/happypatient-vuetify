@@ -1,14 +1,12 @@
 import Vue from 'vue';
 import Vuetify from '../plugins/vuetify';
 import VuetifyMask from '../plugins/vuetify-mask';
-import VueMask from 'v-mask';
 import App from './App.vue';
 import Vuelidate from 'vuelidate';
 import router from './router';
 import VueSweetalert2 from 'vue-sweetalert2';
 import 'sweetalert2/dist/sweetalert2.min.css';
 
-Vue.use(VueMask);
 Vue.use(VuetifyMask);
 Vue.use(VueSweetalert2);
 Vue.use(Vuetify);
