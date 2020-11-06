@@ -55,7 +55,7 @@ class UserController extends Controller
 
         if($validator->fails())
         {   
-            return response()->json($validator->errors(), 200);
+            return response()->json($validator->errors(), 401);
         }
 
         $user = new User();
@@ -135,7 +135,7 @@ class UserController extends Controller
 
         if($validator->fails())
         {   
-            return response()->json($validator->errors(), 200);
+            return response()->json($validator->errors(), 401);
         }
 
         $user = User::find($userid);

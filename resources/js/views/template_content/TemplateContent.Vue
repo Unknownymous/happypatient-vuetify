@@ -87,6 +87,8 @@ export default {
   methods: {
     saveTemplate() {
 
+      console.log(this.content);
+
       this.$v.$touch();      
      
       if(!this.$v.$error && !this.procedureHasError && !this.priceHasError)

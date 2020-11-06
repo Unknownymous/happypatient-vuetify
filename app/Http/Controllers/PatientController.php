@@ -70,7 +70,7 @@ class PatientController extends Controller
 
         if($validator->fails())
         {
-            return response()->json($validator->errors(), 200);
+            return response()->json($validator->errors(), 401);
         }
 
         $patient = new Patient();

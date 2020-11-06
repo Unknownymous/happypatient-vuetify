@@ -12,11 +12,17 @@ use Illuminate\Support\Facades\Route;
 | contains the "web" middleware group. Now create something great!
 |
 */
-Auth::routes();
+// Auth::routes();
 Route::get('/', function () {
     return view('layouts.app');
 });
 
+Route::prefix('auth')->group(function(){
+    Route::get('init', 'AuthController@init')->name('init');
+    Route::post('login', 'AuthController@login')->name('login');
+    Route::post('register', 'AuthController@register')->name('register');
+    Route::post('logout', 'AuthController@logout')->name('logout');
+});
 
 // Addresses Routes
 Route::get('/provinces', 'AddressController@provinces')->name('provinces');

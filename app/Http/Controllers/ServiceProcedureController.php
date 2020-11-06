@@ -46,7 +46,7 @@ class ServiceProcedureController extends Controller
 
         if($validator->fails())
         {
-            return response()->json($validator->errors(), 200);
+            return response()->json($validator->errors(), 401);
         }
 
         $ctr = count($request->get('procedures'));
@@ -73,7 +73,7 @@ class ServiceProcedureController extends Controller
         //validated if procedure or price is null
         if($procedureIsNull == true || $priceIsNull == true)
         {
-            return response()->json(['procedures' => 'Procedure and Price is required'], 200);
+            return response()->json(['procedures' => 'Procedure and Price is required'], 401);
         }
         
 
@@ -124,7 +124,21 @@ class ServiceProcedureController extends Controller
     
     public function update(Request $request, $procedureid)
     {
-        
+        $rules = [
+            'serviceid.required' => 'Service is required',   
+            'procedure.required' => 'Procedure is required'
+        ];
+
+        $validator = Validator::make($request->all(),[
+            'serviceid' => 'required',
+            'procedure' => 'required'
+        ], $rules);
+
+        if($validator->fails())
+        {
+            return response()->json($validator->errors(), 401);
+        }
+
         $procedure = ServiceProcedure::find($procedureid);
         $procedure->serviceid = $request->get('serviceid');
         $procedure->procedure = $request->get('procedure');

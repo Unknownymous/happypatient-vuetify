@@ -17,7 +17,7 @@
 
       <v-spacer></v-spacer>
 
-      <v-btn>
+      <v-btn @click="logout">
         <v-icon>mdi-logout </v-icon>
         Logout
       </v-btn>
@@ -99,6 +99,8 @@
 
 <script>
 
+  import Axios from 'axios';
+
   export default {
     data () {
       return {
@@ -142,6 +144,36 @@
         ],
         right: null,
         selectedItem: 1,
+        user: null,
+        loading: null,
+        initiated: false,
+
+      }
+    },
+    methods: {
+      init() {
+
+        this.loading = true;
+
+        Axios.get('/auth/init').then( (response) => {
+          console.log(response);
+          this.user = response.data;
+          this.loading = false;
+          this.initiated = true;
+          
+        }, (error) => {
+          console.log(error);
+        });
+      },
+
+      logout() {
+        Axios.post('/auth/logout').then( (response) => {
+          console.log(response);
+          this.user = null; 
+          this.$router.push('/login');
+        }, (error) => {
+          console.log(error);
+        });
       }
     },
   }
