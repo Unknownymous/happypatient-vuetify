@@ -189,7 +189,7 @@
 
     methods: {
       getService(){
-        Axios.get('/service/index').then( (response) => {
+        Axios.get('/api/service/index').then( (response) => {
           console.log(response.data.services);
           this.services = response.data.services;
         });
@@ -206,7 +206,7 @@
 
         const data = { serviceid: serviceid };
 
-        Axios.post('/service/delete', data).then( (response) => {
+        Axios.post('/api/service/delete', data).then( (response) => {
           console.log(response.data);
         }, (error) => {
           console.log(error)
@@ -280,7 +280,7 @@
             const data = this.editedItem
             const serviceid = this.editedItem.id
 
-            Axios.post('/service/update/'+serviceid, data).then( (response) => {
+            Axios.post('/api/service/update/'+serviceid, data).then( (response) => {
 
               console.log(response.data);
 
@@ -302,7 +302,7 @@
             
             const data = this.editedItem
 
-            Axios.post('/service/store', data).then( (response) => {
+            Axios.post('/api/service/store', data).then( (response) => {
 
               console.log(response.data);
 

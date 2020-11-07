@@ -66,7 +66,7 @@
 
     methods: {
       getActivityLogs(){
-        Axios.get('/activity_logs').then( (response) => {
+        Axios.get('/api/activity_logs').then( (response) => {
           console.log(response.data.activity_logs);
           this.activity_logs = response.data.activity_logs;
         });

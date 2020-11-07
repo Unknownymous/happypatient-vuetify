@@ -103,7 +103,7 @@
 
     methods: {
       getUsers(){
-        Axios.get('/user/index').then( (response) => {
+        Axios.get('/api/user/index').then( (response) => {
           console.log(response.data.users);
           this.users = response.data.users;
         });
@@ -117,7 +117,7 @@
 
         const data = { userid: userid };
 
-        Axios.post('/user/delete', data).then( (response) => {
+        Axios.post('/api/user/delete', data).then( (response) => {
           console.log(response.data);
         }, (error) => {
           console.log(error)

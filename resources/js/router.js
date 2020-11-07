@@ -1,5 +1,7 @@
 import Vue from 'vue';
 import Router from 'vue-router';
+import Login from './auth/Login.vue';
+import Register from './auth/Register.vue';
 import PatientCreate from './views/patient/PatientCreate.vue';
 import PatientIndex from './views/patient/PatientIndex.vue';
 import PatientEdit from './views/patient/PatientEdit.vue';
@@ -11,11 +13,27 @@ import TemplateContent from './views/template_content/TemplateContent.vue';
 import UserCreate from './views/user/UserCreate.vue';
 import UserIndex from './views/user/UserIndex.vue';
 import UserEdit from './views/user/UserEdit.vue';
+import PageNotFound from './404/PageNotFound.vue';
 
 Vue.use(Router);
 
 
 const routes = [
+  {
+    path: '/register',
+    name: 'register',
+    component: Register
+  },
+  {
+    path: '/login',
+    name: 'login',
+    component: Login
+  },
+  {
+    path: '/',
+    name: 'dashboard',
+    // component: PatientCreate
+  },
   {
     path: '/dashboard',
     name: 'dashboard',
@@ -80,7 +98,12 @@ const routes = [
     path:'/user/edit/:userid',
     name: 'user.edit',
     component: UserEdit
-  }
+  },
+  {
+    path: '*',
+    component: PageNotFound
+  },
+
 ];
 
 const router = new Router({

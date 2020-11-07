@@ -229,7 +229,7 @@ export default {
           Object.assign(data ,{[key]: val});
         }
 
-        Axios.post('/user/update/'+userid, data).then((response) => {
+        Axios.post('/api/user/update/'+userid, data).then((response) => {
           console.log(response.data);
 
           if(response.data.success)
@@ -270,7 +270,7 @@ export default {
       });
     },
     getUser() {
-      Axios.get(this.$route.path).then( (response) => {
+      Axios.get('/api/'+this.$route.path).then( (response) => {
 
         this.name = response.data.user.name;
         this.description = response.data.user.description;

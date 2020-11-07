@@ -117,7 +117,7 @@
 
     methods: {
       getPatients(){
-        Axios.get('/patient/index').then( (response) => {
+        Axios.get('/api/patient/index').then( (response) => {
           console.log(response.data.patients);
           this.patients = response.data.patients;
         });

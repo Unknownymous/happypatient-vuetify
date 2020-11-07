@@ -1,11 +1,11 @@
 <template>
   <v-app>
-
     <!-- Navbar -->
     <v-app-bar
       dense
       dark
       app
+      v-if="user"
     >
       
       <v-btn
@@ -30,6 +30,7 @@
       :mini-variant.sync="mini"
       dark
       app
+      v-if="user"
     >
       <v-list-item>
         <v-list-item-content>
@@ -92,7 +93,7 @@
 
 
     <!-- Content -->
-    <router-view />
+    <router-view :app="this" />
     
   </v-app>
 </template>
@@ -100,10 +101,17 @@
 <script>
 
   import Axios from 'axios';
+  import Login from './auth/Login.vue';
 
   export default {
+    name: 'app',
+    props: ['login'],
+    components: {
+      Login,
+    },
     data () {
       return {
+        
         drawer: true,
         mini: false,
         items: [
@@ -156,11 +164,16 @@
         this.loading = true;
 
         Axios.get('/auth/init').then( (response) => {
-          console.log(response);
-          this.user = response.data;
+          console.log(response.data.user);
+          this.user = response.data.user;
           this.loading = false;
           this.initiated = true;
-          
+
+          if(!response.data.user)
+          {
+            this.$router.push('/login').catch(()=>{});
+          }
+
         }, (error) => {
           console.log(error);
         });
@@ -170,12 +183,17 @@
         Axios.post('/auth/logout').then( (response) => {
           console.log(response);
           this.user = null; 
-          this.$router.push('/login');
+          this.$router.push('/login').catch(()=>{});
         }, (error) => {
           console.log(error);
         });
       }
     },
+    mounted() {
+      this.init();
+    }
+
+
   }
 
 </script>

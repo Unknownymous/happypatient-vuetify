@@ -224,7 +224,7 @@ export default {
           Object.assign(data ,{[key]: val});
         }
 
-        Axios.post('/user/store', data).then((response) => {
+        Axios.post('/api/user/store', data).then((response) => {
           console.log(response.data);
 
           if(response.data.success)

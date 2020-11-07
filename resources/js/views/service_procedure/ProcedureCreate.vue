@@ -263,7 +263,7 @@ export default {
         //Assign procedures data into data variable
         data['procedures'] = this.procedures;
 
-        Axios.post('/procedure/store', data).then((response) => {
+        Axios.post('/api/procedure/store', data).then((response) => {
 
           console.log(response.data);
           
@@ -297,7 +297,7 @@ export default {
     },
 
     getService() {
-      Axios.get("/service/index").then((response) => {
+      Axios.get("/api/service/index").then((response) => {
         this.services = response.data.services;
       });
     },

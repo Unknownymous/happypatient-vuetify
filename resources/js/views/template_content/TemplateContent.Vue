@@ -105,7 +105,7 @@ export default {
         }
 
         const procedureid = this.template.procedureid;
-        Axios.post('/procedure/content/update/'+procedureid, data).then((response) => {
+        Axios.post('/api/procedure/content/update/'+procedureid, data).then((response) => {
 
           console.log(response.data);
           
@@ -134,7 +134,7 @@ export default {
     },
 
     getTemplateContent() {
-      Axios.get(this.$route.path).then((response) => {
+      Axios.get('/api/'+this.$route.path).then((response) => {
         this.template = response.data.template_content;
         console.log(this.template);
       });

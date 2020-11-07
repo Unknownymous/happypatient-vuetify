@@ -357,7 +357,7 @@ export default {
 
         console.log(data);
 
-        Axios.post('/patient/store', data).then((response) => {
+        Axios.post('/api/patient/store', data).then((response) => {
           
           console.log(response.data);
 
@@ -411,13 +411,13 @@ export default {
       return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`
     },
     getProvinces(){
-      Axios.get('/provinces').then((response) => {
+      Axios.get('/api/provinces').then((response) => {
         this.provinces = response.data.provinces;
         console.log(this.provinces);
       });
     },
     getCities(province_id) {
-      Axios.get('/cities/'+province_id).then((response) => {
+      Axios.get('/api/cities/'+province_id).then((response) => {
         this.cities = response.data.cities;
         this.barangays = [];
         this.city = null;
@@ -428,7 +428,7 @@ export default {
       });
     },
     getBarangays(city_id) {
-      Axios.get('/barangays/'+city_id).then((response) => {
+      Axios.get('/api/barangays/'+city_id).then((response) => {
         this.barangays = response.data.barangays;
         console.log(this.barangays);
       });
