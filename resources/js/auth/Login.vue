@@ -116,7 +116,7 @@
     },
     methods: {
       init() {
-        Axios.get('/auth/init').then( (response) => {
+        Axios.get('/api/auth/init').then( (response) => {
           console.log(response.data.user);
           
           if(response.data.user)
@@ -139,8 +139,8 @@
           const password = this.password;
           const data = {username: username, password: password};
 
-          Axios.post('auth/login', data).then( (response) => {
-            // console.log(response.data);
+          Axios.post('/api/auth/login', data).then( (response) => {
+            console.log(response.data);
 
             if(response.data.user)
             { 

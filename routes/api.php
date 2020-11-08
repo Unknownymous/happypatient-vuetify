@@ -18,12 +18,12 @@ use Illuminate\Support\Facades\Route;
 //     return $request->user();
 // });
 
-// Route::prefix('auth')->group(function(){
-//     Route::get('/init', 'AuthController@init')->name('init');
-//     Route::post('/login', 'AuthController@login')->name('login');
-//     Route::post('/register', 'AuthController@register')->name('register');
-//     Route::post('/logout', 'AuthController@logout')->name('logout');
-// });
+Route::prefix('auth')->group(function(){
+    Route::get('/init', 'AuthController@init')->name('init');
+    Route::post('/login', 'AuthController@login')->name('login');
+    Route::post('/register', 'AuthController@register')->name('register');
+    Route::post('/logout', 'AuthController@logout')->name('logout');
+});
 
 // Addresses Routes
 Route::get('/provinces', 'AddressController@provinces')->name('provinces');

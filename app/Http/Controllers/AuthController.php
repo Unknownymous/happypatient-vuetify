@@ -13,16 +13,33 @@ class AuthController extends Controller
     public function init()
     {   
         $user = Auth::user();
-
-        return response()->json(['user' => $user], 200);
-        
+        return response()->json(['user' => $user], 200);   
     }
 
     public function login(Request $request)
-    {
+    {   
+        $rules = [
+            'username.required' => 'Username is required',
+            'password.required' => 'Password is required',
+        ];
+
+        $valid_fields = [
+            'username' => 'required',
+            'password' => 'required',
+        ];
+
+        $validator = Validator::make($request->all(), $valid_fields, $rules);
+
+        if($validator->fails())
+        {   
+            return response()->json($validator->errors(), 401);
+        }
+
         if(Auth::attempt(['username' => $request->get('username'), 'password' => $request->get('password')], true))
-        {
-            return response()->json(['user' => Auth::user()], 200);
+        {   
+            $accessToken = Auth::user()->createToken('authToken')->accessToken;
+
+            return response()->json(['user' => Auth::user(), 'access_token' => $accessToken], 200);
         }
         else
         {
@@ -70,9 +87,10 @@ class AuthController extends Controller
         $user->password = Hash::make($request->get('password'));
         $user->save();
 
-        Auth::login($user);
+        $accessToken = $user->createToken('authToken')->accessToken;
+        // Auth::login($user);
 
-        return response()->json(['success' => 'You are now registered'], 200);
+        return response()->json(['success' => 'You are now registered', 'user' => $user, 'access_token' => $accessToken], 200);
 
     }
 

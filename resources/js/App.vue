@@ -163,7 +163,7 @@
 
         this.loading = true;
 
-        Axios.get('/auth/init').then( (response) => {
+        Axios.get('/api/auth/init').then( (response) => {
           console.log(response.data.user);
           this.user = response.data.user;
           this.loading = false;
@@ -180,7 +180,7 @@
       },
 
       logout() {
-        Axios.post('/auth/logout').then( (response) => {
+        Axios.post('/api/auth/logout').then( (response) => {
           console.log(response);
           this.user = null; 
           this.$router.push('/login').catch(()=>{});
