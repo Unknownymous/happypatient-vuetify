@@ -31,11 +31,13 @@ Route::get('/cities/{province_id}', 'AddressController@cities')->name('cities');
 Route::get('/barangays/{city_id}', 'AddressController@barangays')->name('barangays');
 
 // Patient Routes
-Route::get('/patient/index', 'PatientController@index')->name('patient.index');
-Route::post('/patient/store', 'PatientController@store')->name('patient.store');
-Route::get('/patient/edit/{id}', 'PatientController@edit')->name('patient.edit');
-Route::post('/patient/update/{id}', 'PatientController@update')->name('patient.update');
-Route::post('/patient/delete', 'PatientController@delete')->name('patient.delete');
+Route::group(['prefix' => 'patient', 'middleware' => ['auth:api']], function(){
+    Route::get('/index', 'PatientController@index')->name('patient.index');
+    Route::post('/store', 'PatientController@store')->name('patient.store');
+    Route::get('/edit/{id}', 'PatientController@edit')->name('patient.edit');
+    Route::post('/update/{id}', 'PatientController@update')->name('patient.update');
+    Route::post('/delete', 'PatientController@delete')->name('patient.delete');
+});
 
 // User Routes
 Route::get('/user/index', 'UserController@index')->name('patient.index');

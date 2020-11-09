@@ -32,7 +32,7 @@ class AuthController extends Controller
 
         if($validator->fails())
         {   
-            return response()->json($validator->errors(), 401);
+            return response()->json($validator->errors(), 200);
         }
 
         if(Auth::attempt(['username' => $request->get('username'), 'password' => $request->get('password')], true))
@@ -75,7 +75,7 @@ class AuthController extends Controller
 
         if($validator->fails())
         {   
-            return response()->json($validator->errors(), 401);
+            return response()->json($validator->errors(), 200);
         }
 
         $user = new User();
