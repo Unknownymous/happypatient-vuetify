@@ -7,6 +7,7 @@ use App\User;
 use Validator;
 use Hash;
 use Auth;
+use Carbon\Carbon;
 
 class AuthController extends Controller
 {
@@ -45,6 +46,9 @@ class AuthController extends Controller
         {
             return response()->json(['error' => 'Invalid credentials'], 200);
         }
+
+        // $accessToken->expires_at = Carbon::now()->addWeeks(1);
+        // $accessToken->save();
         
     }
 

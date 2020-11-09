@@ -1,5 +1,6 @@
 import Vue from 'vue';
 import Router from 'vue-router';
+import Home from './views/Home.vue';
 import Login from './auth/Login.vue';
 import Register from './auth/Register.vue';
 import PatientCreate from './views/patient/PatientCreate.vue';
@@ -20,6 +21,91 @@ Vue.use(Router);
 
 const routes = [
   {
+    path: '/home',
+    name: 'home',
+    component: Home,
+    children: [
+      {
+        path: '/dashboard',
+        name: 'dashboard',
+        // component: PatientCreate
+      },
+      {
+        path: '/transactions',
+        name: 'transactions',
+        // component: PatientCreate
+      },
+      {
+        path: '/patient/create',
+        name: 'patient.create',
+        component: PatientCreate
+      },
+      {
+        path: '/patient/index',
+        name: 'patient.index',
+        component: PatientIndex
+      },
+      {
+        path: '/patient/edit/:patientid',
+        name: 'patient.edit',
+        component: PatientEdit
+      },
+      {
+        path: '/service/index',
+        name: 'service.index',
+        component: ServiceIndex
+      },
+      {
+        path: '/procedure/create',
+        name: 'procedure.create',
+        component: ProcedureCreate
+      },
+      {
+        path: '/procedure/index',
+        name: 'procedure.index',
+        component: ProcedureIndex
+      },
+      {
+        path: '/procedure/template/create/:procedureid',
+        name: 'template.create',
+        component: TemplateContent
+      },
+      {
+        path:'/activity_logs',
+        name: 'activity_logs',
+        component: ActivityLog
+      },
+      {
+        path:'/user/create',
+        name: 'user.create',
+        component: UserCreate
+      },
+      {
+        path:'/user/index',
+        name: 'user.index',
+        component: UserIndex
+      },
+      {
+        path:'/user/edit/:userid',
+        name: 'user.edit',
+        component: UserEdit
+      },
+    ],
+    beforeEnter(to, from, next)
+    { 
+
+      if(localStorage.getItem('access_token'))
+      {
+        next('/home');
+        
+      }
+      else
+      {
+        next('/login');
+      }
+    }
+  },
+  {
     path: '/register',
     name: 'register',
     component: Register
@@ -27,81 +113,24 @@ const routes = [
   {
     path: '/login',
     name: 'login',
-    component: Login
-  },
-  {
-    path: '/',
-    name: 'dashboard',
-    // component: PatientCreate
-  },
-  {
-    path: '/dashboard',
-    name: 'dashboard',
-    // component: PatientCreate
-  },
-  {
-    path: '/transactions',
-    name: 'transactions',
-    // component: PatientCreate
-  },
-  {
-    path: '/patient/create',
-    name: 'patient.create',
-    component: PatientCreate
-  },
-  {
-    path: '/patient/index',
-    name: 'patient.index',
-    component: PatientIndex
-  },
-  {
-    path: '/patient/edit/:patientid',
-    name: 'patient.edit',
-    component: PatientEdit
-  },
-  {
-    path: '/service/index',
-    name: 'service.index',
-    component: ServiceIndex
-  },
-  {
-    path: '/procedure/create',
-    name: 'procedure.create',
-    component: ProcedureCreate
-  },
-  {
-    path: '/procedure/index',
-    name: 'procedure.index',
-    component: ProcedureIndex
-  },
-  {
-    path: '/procedure/template/create/:procedureid',
-    name: 'template.create',
-    component: TemplateContent
-  },
-  {
-    path:'/activity_logs',
-    name: 'activity_logs',
-    component: ActivityLog
-  },
-  {
-    path:'/user/create',
-    name: 'user.create',
-    component: UserCreate
-  },
-  {
-    path:'/user/index',
-    name: 'user.index',
-    component: UserIndex
-  },
-  {
-    path:'/user/edit/:userid',
-    name: 'user.edit',
-    component: UserEdit
+    component: Login,
+    beforeEnter(to, from, next)
+    { 
+
+      if(localStorage.getItem('access_token'))
+      {
+        next('/home');
+      }
+      else
+      {
+        next('/login');
+      }
+    }
   },
   {
     path: '*',
-    component: PageNotFound
+    component: PageNotFound,
+    
   },
 
 ];

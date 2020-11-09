@@ -115,19 +115,6 @@
 
     },
     methods: {
-      init() {
-        Axios.get('/api/auth/init').then( (response) => {
-          console.log(response.data.user);
-          
-          if(response.data.user)
-          { 
-            this.$router.push('/dashboard').catch(()=>{});
-          }
-
-        }, (error) => {
-          console.log(error);
-        });
-      },
 
       login() {
          this.$v.$touch();
@@ -140,12 +127,16 @@
           const data = {username: username, password: password};
 
           Axios.post('/api/auth/login', data).then( (response) => {
-            console.log(response.data);
+            // console.log(response.data);
 
-            if(response.data.user)
+            if(response.data.access_token)
             { 
-              this.app.user = response.data.user;
-              this.$router.push('/');
+
+              // console.log(localStorage.getItem('access_token'));
+
+              localStorage.setItem('access_token', response.data.access_token);
+ 
+              this.$router.push('/home').catch(e => {});
               this.clear();
               this.username = null;
               this.password = null;
@@ -170,7 +161,7 @@
     },
 
     mounted() {
-      this.init();
+
     }
   }
 </script>
