@@ -223,13 +223,18 @@ export default {
         let myForm = document.getElementById('userform');
         let formData = new FormData(myForm);
         const data = {};
+        const access_token = localStorage.getItem('access_token');
 
         for(let [key, val] of formData.entries())
         {
           Object.assign(data ,{[key]: val});
         }
 
-        Axios.post('/api/user/update/'+userid, data).then((response) => {
+        Axios.post('/api/user/update/'+userid, data, {
+            headers: {
+              'Authorization': 'Bearer '+access_token,
+            }
+          }).then((response) => {
           console.log(response.data);
 
           if(response.data.success)
@@ -270,7 +275,14 @@ export default {
       });
     },
     getUser() {
-      Axios.get('/api'+this.$route.path).then( (response) => {
+
+      const access_token = localStorage.getItem('access_token');
+
+      Axios.get('/api'+this.$route.path, {
+            headers: {
+              'Authorization': 'Bearer '+access_token,
+            }
+          }).then( (response) => {
 
         this.name = response.data.user.name;
         this.description = response.data.user.description;

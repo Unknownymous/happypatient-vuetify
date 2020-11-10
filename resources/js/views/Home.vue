@@ -148,8 +148,14 @@
     },
     methods: {  
       logout() {
-        Axios.post('/api/auth/logout').then( (response) => {
-          console.log(response);
+        
+        const access_token = localStorage.getItem('access_token');
+
+        Axios.get('/api/auth/logout',{
+            headers: {
+              'Authorization': 'Bearer '+access_token,
+            }
+          }).then( (response) => {
 
           localStorage.removeItem('access_token');
 

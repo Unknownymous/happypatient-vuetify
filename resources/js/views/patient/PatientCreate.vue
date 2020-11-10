@@ -355,9 +355,13 @@ export default {
           Object.assign(data ,{[key]: val});
         }
 
-        console.log(data);
+        const access_token = localStorage.getItem('access_token');
 
-        Axios.post('/api/patient/store', data).then((response) => {
+        Axios.post('/api/patient/store', data, {
+            headers: {
+              'Authorization': 'Bearer '+access_token,
+            }
+          }).then((response) => {
           
           console.log(response.data);
 

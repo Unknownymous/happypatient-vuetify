@@ -16,7 +16,7 @@ class PatientController extends Controller
     {
         $patients = Patient::all();
 
-        return response()->json(['patients' => $patients], 200);
+        return response()->json(['patients' => $patients , 'auth_check' => Auth::check()], 200);
     }
 
    

@@ -36,16 +36,19 @@ class AuthController extends Controller
             return response()->json($validator->errors(), 200);
         }
 
-        if(Auth::attempt(['username' => $request->get('username'), 'password' => $request->get('password')], true))
+        if(!Auth::attempt(['username' => $request->get('username'), 'password' => $request->get('password')], true))
         {   
-            $accessToken = Auth::user()->createToken('authToken')->accessToken;
-
-            return response()->json(['user' => Auth::user(), 'access_token' => $accessToken], 200);
-        }
-        else
-        {
             return response()->json(['error' => 'Invalid credentials'], 200);
+            
         }
+        
+        $accessToken = Auth::user()->createToken('authToken')->accessToken;
+
+        return response()->json([
+            'user' => Auth::user(), 
+            'access_token' => $accessToken,
+            'token_type' => 'Bearer',
+        ], 200);
 
         // $accessToken->expires_at = Carbon::now()->addWeeks(1);
         // $accessToken->save();
@@ -98,8 +101,10 @@ class AuthController extends Controller
 
     }
 
-    public function logout()
+    public function logout(Request $request)
     {
-        Auth::logout();
+        $request->user()->token()->revoke();
+        
+        return response()->json(['success' => 'You have been successfully logged out'], 200);
     }
 }

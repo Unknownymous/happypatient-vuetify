@@ -90,8 +90,13 @@ export default {
       
         const data = {content: this.content};
         const procedureid = this.template.procedureid;
+        const access_token = localStorage.getItem('access_token');
 
-        Axios.post('/api/procedure/template/update/'+procedureid, data).then((response) => {
+        Axios.post('/api/procedure/template/update/'+procedureid, data, {
+            headers: {
+              'Authorization': 'Bearer '+access_token,
+            }
+          }).then((response) => {
           
           if(response.data.success)
           { 
@@ -117,7 +122,14 @@ export default {
     },
 
     getTemplateContent() {
-      Axios.get('/api'+this.$route.path).then((response) => {
+
+      const access_token = localStorage.getItem('access_token');
+
+      Axios.get('/api'+this.$route.path, {
+            headers: {
+              'Authorization': 'Bearer '+access_token,
+            }
+          }).then((response) => {
         this.template = response.data.template_content;
         this.content = this.template.content;
         console.log(this.template);

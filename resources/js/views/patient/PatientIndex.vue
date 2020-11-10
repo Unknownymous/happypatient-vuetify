@@ -117,7 +117,14 @@
 
     methods: {
       getPatients(){
-        Axios.get('/api/patient/index').then( (response) => {
+
+        const access_token = localStorage.getItem('access_token');
+
+        Axios.get('/api/patient/index', {
+            headers: {
+              'Authorization': 'Bearer '+access_token,
+            }
+          }).then( (response) => {
           console.log(response.data.patients);
           this.patients = response.data.patients;
         });

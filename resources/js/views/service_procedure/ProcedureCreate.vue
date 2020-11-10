@@ -262,8 +262,13 @@ export default {
 
         //Assign procedures data into data variable
         data['procedures'] = this.procedures;
+        const access_token = localStorage.getItem('access_token');
 
-        Axios.post('/api/procedure/store', data).then((response) => {
+        Axios.post('/api/procedure/store', data, {
+            headers: {
+              'Authorization': 'Bearer '+access_token,
+            }
+          }).then((response) => {
 
           console.log(response.data);
           

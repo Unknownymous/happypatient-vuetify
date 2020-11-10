@@ -103,7 +103,14 @@
 
     methods: {
       getUsers(){
-        Axios.get('/api/user/index').then( (response) => {
+
+        const access_token = localStorage.getItem('access_token');
+
+        Axios.get('/api/user/index', {
+            headers: {
+              'Authorization': 'Bearer '+access_token,
+            }
+          }).then( (response) => {
           console.log(response.data.users);
           this.users = response.data.users;
         });
@@ -116,8 +123,13 @@
       deleteUser (userid) {
 
         const data = { userid: userid };
-
-        Axios.post('/api/user/delete', data).then( (response) => {
+        const access_token = localStorage.getItem('access_token');
+        
+        Axios.post('/api/user/delete', data, {
+            headers: {
+              'Authorization': 'Bearer '+access_token,
+            }
+          }).then( (response) => {
           console.log(response.data);
         }, (error) => {
           console.log(error)

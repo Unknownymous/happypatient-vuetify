@@ -189,7 +189,14 @@
 
     methods: {
       getService(){
-        Axios.get('/api/service/index').then( (response) => {
+
+        const access_token = localStorage.getItem('access_token');
+
+        Axios.get('/api/service/index', {
+            headers: {
+              'Authorization': 'Bearer '+access_token,
+            }
+          }).then( (response) => {
           console.log(response.data.services);
           this.services = response.data.services;
         });
@@ -205,8 +212,13 @@
       deleteService (serviceid) {
 
         const data = { serviceid: serviceid };
+        const access_token = localStorage.getItem('access_token');
 
-        Axios.post('/api/service/delete', data).then( (response) => {
+        Axios.post('/api/service/delete', data, {
+            headers: {
+              'Authorization': 'Bearer '+access_token,
+            }
+          }).then( (response) => {
           console.log(response.data);
         }, (error) => {
           console.log(error)
@@ -265,6 +277,8 @@
         })
       },
       save () {
+        
+        const access_token = localStorage.getItem('access_token');
 
         this.$v.$touch();
 
@@ -280,7 +294,11 @@
             const data = this.editedItem
             const serviceid = this.editedItem.id
 
-            Axios.post('/api/service/update/'+serviceid, data).then( (response) => {
+            Axios.post('/api/service/update/'+serviceid, data, {
+                headers: {
+                  'Authorization': 'Bearer '+access_token,
+                }
+              }).then( (response) => {
 
               console.log(response.data);
 
@@ -301,8 +319,12 @@
           } else {
             
             const data = this.editedItem
-
-            Axios.post('/api/service/store', data).then( (response) => {
+            
+            Axios.post('/api/service/store', data, {
+                headers: {
+                  'Authorization': 'Bearer '+access_token,
+                }
+              }).then( (response) => {
 
               console.log(response.data);
 

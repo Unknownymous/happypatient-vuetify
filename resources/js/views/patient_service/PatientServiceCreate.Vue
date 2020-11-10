@@ -358,7 +358,13 @@ export default {
         //Assign procedures data into data variable
         data['procedures'] = this.procedures;
 
-        Axios.post('/api/procedure/store', data).then((response) => {
+        const access_token = localStorage.getItem('access_token');
+
+        Axios.post('/api/procedure/store', data, {
+            headers: {
+              'Authorization': 'Bearer '+access_token,
+            }
+          }).then((response) => {
 
           console.log(response.data);
           
@@ -392,13 +398,27 @@ export default {
     },
 
     getPatient() {
-      Axios.get("/api/patient/index").then((response) => {
+
+      const access_token = localStorage.getItem('access_token');
+
+      Axios.get("/api/patient/index", {
+            headers: {
+              'Authorization': 'Bearer '+access_token,
+            }
+          }).then((response) => {
         this.patients = response.data.patients;
       });
     },
 
     getService() {
-      Axios.get("/api/service/index").then((response) => {
+
+      const access_token = localStorage.getItem('access_token');
+
+      Axios.get("/api/service/index", {
+            headers: {
+              'Authorization': 'Bearer '+access_token,
+            }
+          }).then((response) => {
         this.services = response.data.services;
       });
     },

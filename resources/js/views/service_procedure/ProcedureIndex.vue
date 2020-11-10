@@ -224,13 +224,27 @@ export default {
 
   methods: {
     getServiceProcedures() {
-      Axios.get("/api/procedure/index").then((response) => {
+
+      const access_token = localStorage.getItem('access_token');
+
+      Axios.get("/api/procedure/index", {
+            headers: {
+              'Authorization': 'Bearer '+access_token,
+            }
+          }).then((response) => {
         this.procedures = response.data.procedures;
       });
     },
 
     getService() {
-      Axios.get("/api/service/index").then((response) => {
+      
+      const access_token = localStorage.getItem('access_token');
+
+      Axios.get("/api/service/index", {
+            headers: {
+              'Authorization': 'Bearer '+access_token,
+            }
+          }).then((response) => {
         this.services = response.data.services;
       });
     },
@@ -244,8 +258,13 @@ export default {
 
     deleteProcedure(procedureid) {
       const data = { procedureid: procedureid };
+      const access_token = localStorage.getItem('access_token');
 
-      Axios.post("/api/procedure/delete", data).then(
+      Axios.post("/api/procedure/delete", data, {
+            headers: {
+              'Authorization': 'Bearer '+access_token,
+            }
+          }).then(
         (response) => {
           console.log(response.data);
         },
@@ -317,8 +336,13 @@ export default {
 
         const data = this.editedItem;
         const procedureid = this.editedItem.id;
+        const access_token = localStorage.getItem('access_token');
 
-        Axios.post("/api/procedure/update/" + procedureid, data).then( (response) => {
+        Axios.post("/api/procedure/update/" + procedureid, data, {
+            headers: {
+              'Authorization': 'Bearer '+access_token,
+            }
+          }).then( (response) => {
 
             console.log(response.data);
 

@@ -218,13 +218,19 @@ export default {
         let myForm = document.getElementById('userform');
         let formData = new FormData(myForm);
         const data = {};
+        const access_token = localStorage.getItem('access_token');
 
         for(let [key, val] of formData.entries())
         {
           Object.assign(data ,{[key]: val});
         }
 
-        Axios.post('/api/user/store', data).then((response) => {
+
+        Axios.post('/api/user/store', data, {
+            headers: {
+              'Authorization': 'Bearer '+access_token,
+            }
+          }).then((response) => {
           console.log(response.data);
 
           if(response.data.success)

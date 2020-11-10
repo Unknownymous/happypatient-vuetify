@@ -34,7 +34,7 @@ Route::prefix('auth')->group(function(){
         'as' => 'auth.register'
     ]);
 
-    Route::post('/logout', [
+    Route::get('/logout', [
         'uses' => 'AuthController@logout',
         'as' => 'auth.logout'
     ])->middleware('auth:api');
