@@ -442,7 +442,7 @@ export default {
       });
     },
     getPatient(){
-      Axios.get('/api/'+this.$route.path).then((response) => {  
+      Axios.get('/api'+this.$route.path).then((response) => {  
         
         this.lastname = response.data.patient.lastname;
         this.firstname =  response.data.patient.firstname;

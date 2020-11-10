@@ -71,7 +71,7 @@ export default {
         },
       ],
       template: [],
-      content: "<h1>Some initial content</h1>",
+      content: null,
   }),
 
   computed: {
@@ -85,32 +85,16 @@ export default {
      
   },
   methods: {
-    saveTemplate() {
-
-      console.log(this.content);
-
-      this.$v.$touch();      
+    saveTemplate() { 
      
-      if(!this.$v.$error && !this.procedureHasError && !this.priceHasError)
-      {
-
-        let myForm = document.getElementById('procedureform');
-        let formData = new FormData(myForm);
-        const data = {};
-        const procedures = {};
-
-        for(let [key, val] of formData.entries())
-        {
-          Object.assign(data ,{[key]: val});
-        }
-
+      
+        const data = {content: this.content};
         const procedureid = this.template.procedureid;
-        Axios.post('/api/procedure/content/update/'+procedureid, data).then((response) => {
 
-          console.log(response.data);
+        Axios.post('/api/procedure/template/update/'+procedureid, data).then((response) => {
           
           if(response.data.success)
-          {
+          { 
             this.showAlert();
           }
 
@@ -118,7 +102,6 @@ export default {
           console.log(errors);
         });
 
-      }
       
     },
     
@@ -134,8 +117,9 @@ export default {
     },
 
     getTemplateContent() {
-      Axios.get('/api/'+this.$route.path).then((response) => {
+      Axios.get('/api'+this.$route.path).then((response) => {
         this.template = response.data.template_content;
+        this.content = this.template.content;
         console.log(this.template);
       });
     },

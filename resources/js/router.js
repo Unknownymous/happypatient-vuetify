@@ -6,6 +6,7 @@ import Register from './auth/Register.vue';
 import PatientCreate from './views/patient/PatientCreate.vue';
 import PatientIndex from './views/patient/PatientIndex.vue';
 import PatientEdit from './views/patient/PatientEdit.vue';
+import PatientServiceCreate from './views/patient_service/PatientServiceCreate.vue';
 import ServiceIndex from './views/service/ServiceIndex.vue';
 import ProcedureIndex from './views/service_procedure/ProcedureIndex.vue';
 import ProcedureCreate from './views/service_procedure/ProcedureCreate.vue';
@@ -21,7 +22,7 @@ Vue.use(Router);
 
 const routes = [
   {
-    path: '/home',
+    path: '/',
     name: 'home',
     component: Home,
     children: [
@@ -35,6 +36,8 @@ const routes = [
         name: 'transactions',
         // component: PatientCreate
       },
+      
+      //Patient Route
       {
         path: '/patient/create',
         name: 'patient.create',
@@ -49,6 +52,11 @@ const routes = [
         path: '/patient/edit/:patientid',
         name: 'patient.edit',
         component: PatientEdit
+      },
+      {
+        path: '/patient_service/create',
+        name: 'patient_service.create',
+        component: PatientServiceCreate
       },
       {
         path: '/service/index',
@@ -93,10 +101,10 @@ const routes = [
     ],
     beforeEnter(to, from, next)
     { 
-
+     
       if(localStorage.getItem('access_token'))
       {
-        next('/home');
+        next();
         
       }
       else
@@ -116,14 +124,14 @@ const routes = [
     component: Login,
     beforeEnter(to, from, next)
     { 
-
+      console.log(next);
       if(localStorage.getItem('access_token'))
       {
-        next('/home');
+        next('/');
       }
       else
       {
-        next('/login');
+        next();
       }
     }
   },

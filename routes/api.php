@@ -19,10 +19,25 @@ use Illuminate\Support\Facades\Route;
 // });
 
 Route::prefix('auth')->group(function(){
-    Route::get('/init', 'AuthController@init')->name('init');
-    Route::post('/login', 'AuthController@login')->name('login');
-    Route::post('/register', 'AuthController@register')->name('register');
-    Route::post('/logout', 'AuthController@logout')->name('logout');
+    Route::get('/init', [
+        'uses' => 'AuthController@init',
+        'as' => 'auth.init'
+    ])->middleware('auth:api');
+
+    Route::post('/login', [
+        'uses' => 'AuthController@login',
+        'as' => 'auth.login'
+    ]);
+
+    Route::post('/register', [
+        'uses' => 'AuthController@register',
+        'as' => 'auth.register'
+    ]);
+
+    Route::post('/logout', [
+        'uses' => 'AuthController@logout',
+        'as' => 'auth.logout'
+    ])->middleware('auth:api');
 });
 
 // Addresses Routes
@@ -32,35 +47,180 @@ Route::get('/barangays/{city_id}', 'AddressController@barangays')->name('baranga
 
 // Patient Routes
 Route::group(['prefix' => 'patient', 'middleware' => ['auth:api']], function(){
-    Route::get('/index', 'PatientController@index')->name('patient.index');
-    Route::post('/store', 'PatientController@store')->name('patient.store');
-    Route::get('/edit/{id}', 'PatientController@edit')->name('patient.edit');
-    Route::post('/update/{id}', 'PatientController@update')->name('patient.update');
-    Route::post('/delete', 'PatientController@delete')->name('patient.delete');
+    Route::get('/index', [
+        'uses' => 'PatientController@index',
+        'as' => 'patient.index',
+    ]);
+
+    Route::post('/store', [
+        'uses' => 'PatientController@store',
+        'as' => 'patient.store',
+    ]);
+
+    Route::get('/edit/{id}', [
+        'uses' => 'PatientController@edit',
+        'as' => 'patient.edit',
+    ]);
+
+    Route::post('/update/{id}', [
+        'uses' => 'PatientController@update',
+        'as' => 'patient.update',
+    ]);
+
+    Route::post('/delete', [
+        'uses' => 'PatientController@delete',
+        'as' => 'patient.delete',
+    ]);
+
+});
+
+//Patient Services
+Route::group(['prefix' => 'patientservice', 'middleware' => ['auth:api']], function(){
+    
+    Route::get('/index', [
+        'uses' => 'PatientServiceController@index',
+        'as' => 'patientservice.index',
+    ]);
+
+    Route::get('/create', [
+        'uses' => 'PatientServiceController@create',
+        'as' => 'patientservice.create',
+    ]);
+
+    Route::post('/store', [
+        'uses' => 'PatientServiceController@store',
+        'as' => 'patientservice.store',
+    ]);
+
+    Route::get('/edit/{id}', [
+        'uses' => 'PatientServiceController@edit',
+        'as' => 'patientservice.edit',
+    ]);
+
+    Route::post('/update/{id}', [
+        'uses' => 'PatientServiceController@update',
+        'as' => 'patientservice.update',
+    ]);
+
+    Route::post('/update_price', [
+        'uses' => 'PatientServiceController@update_price',
+        'as' => 'patientservice.update_price',
+    ]);
+
+    Route::post('/cancel/{id}', [
+        'uses' => 'PatientServiceController@cancel',
+        'as' => 'patientservice.cancel',
+    ]);
+
+    Route::get('/services-list-per-user', [
+        'uses' => 'PatientServiceController@servicesperuser',
+        'as' => 'patientservice.servicesperuser',
+    ]);
+
+    Route::get('/services-list', [
+        'uses' => 'PatientServiceController@serviceslist',
+        'as' => 'patientservice.serviceslist',
+    ]);
+
 });
 
 // User Routes
-Route::get('/user/index', 'UserController@index')->name('patient.index');
-Route::post('/user/store', 'UserController@store')->name('patient.store');
-Route::get('/user/edit/{id}', 'UserController@edit')->name('patient.edit');
-Route::post('/user/update/{id}', 'UserController@update')->name('patient.update');
-Route::post('/user/delete', 'UserController@delete')->name('patient.delete');
+Route::group(['prefix' => 'user', 'middleware' => ['auth:api']], function(){
+    Route::get('/index', [
+        'uses' => 'UserController@index',
+        'as' => 'user.index',
+    ]);
+
+    Route::post('/store', [
+        'uses' => 'UserController@store',
+        'as' => 'user.store',
+    ]);
+
+    Route::get('/edit/{id}', [
+        'uses' => 'UserController@edit',
+        'as' => 'user.edit',
+    ]);
+
+    Route::post('/update/{id}', [
+        'uses' => 'UserController@update',
+        'as' => 'user.update',
+    ]);
+
+    Route::post('/delete', [
+        'uses' => 'UserController@delete',
+        'as' => 'user.delete',
+    ]);
+
+});
 
 // Service Routes
-Route::get('/service/index', 'ServiceController@index')->name('service.index');
-Route::post('/service/store', 'ServiceController@store')->name('service.store');
-Route::get('/service/edit/{id}', 'ServiceController@edit')->name('service.edit');
-Route::post('/service/update/{id}', 'ServiceController@update')->name('service.update');
-Route::post('/service/delete', 'ServiceController@delete')->name('service.delete');
+Route::group(['prefix' => 'service', 'middleware' => ['auth:api']], function(){
+    Route::get('/index', [
+        'uses' => 'ServiceController@index',
+        'as' => 'service.index'
+    ]);
+
+    Route::post('/store', [
+        'uses' => 'ServiceController@store',
+        'as' => 'service.store'
+    ]);
+
+    Route::get('/edit/{id}', [
+        'uses' => 'ServiceController@edit',
+        'as' => 'service.edit'
+    ]);
+
+    Route::post('/update/{id}', [
+        'uses' => 'ServiceController@update',
+        'as' => 'service.update'
+    ]);
+
+    Route::post('/delete', [
+        'uses' => 'ServiceController@delete',
+        'as' => 'service.delete'
+    ]);
+    
+
+});
 
 // Service Procedure Routes
-Route::get('/procedure/index', 'ServiceProcedureController@index')->name('procedure.index');
-Route::post('/procedure/store', 'ServiceProcedureController@store')->name('procedure.store');
-Route::get('/procedure/edit/{id}', 'ServiceProcedureController@edit')->name('procedure.edit');
-Route::post('/procedure/update/{id}', 'ServiceProcedureController@update')->name('procedure.update');
-Route::post('/procedure/delete', 'ServiceProcedureController@delete')->name('procedure.delete');
-Route::get('/procedure/template/create/{id}', 'ServiceProcedureController@content_create')->name('content.create');
-Route::post('/procedure/template/update/{id}', 'ServiceProcedureController@content_update')->name('content.update');
+Route::group(['prefix' => 'procedure', 'middleware' => ['auth:api']], function(){
+    Route::get('/index', [
+        'uses' => 'ServiceProcedureController@index',
+        'as' => 'procedure.index'
+    ]);
+
+    Route::post('/store', [
+        'uses' => 'ServiceProcedureController@store',
+        'as' => 'procedure.store'
+    ]);
+    
+    Route::get('/edit/{id}', [
+        'uses' => 'ServiceProcedureController@edit',
+        'as' => 'procedure.edit'
+    ]);
+
+    Route::post('/update/{id}', [
+        'uses' => 'ServiceProcedureController@update',
+        'as' => 'procedure.update'
+    ]);
+    
+    Route::post('/delete', [
+        'uses' => 'ServiceProcedureController@delete',
+        'as' => 'procedure.delete'
+    ]);
+
+    Route::get('/template/create/{id}', [
+        'uses' => 'ServiceProcedureController@content_create',
+        'as' => 'content.create'
+    ]);
+
+    Route::post('/template/update/{id}', [
+        'uses' => 'ServiceProcedureController@content_update',
+        'as' => 'content.update'
+    ]);
+    
+});
 
 // Actity Logs Routes
-Route::get('/activity_logs', 'ActivityLogController@index')->name('activity_logs');
+Route::get('/activity_logs', 'ActivityLogController@index')->middleware('auth:api')->name('activity_logs');

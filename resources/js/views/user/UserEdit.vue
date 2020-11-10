@@ -270,7 +270,7 @@ export default {
       });
     },
     getUser() {
-      Axios.get('/api/'+this.$route.path).then( (response) => {
+      Axios.get('/api'+this.$route.path).then( (response) => {
 
         this.name = response.data.user.name;
         this.description = response.data.user.description;

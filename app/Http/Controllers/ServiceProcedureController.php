@@ -206,11 +206,11 @@ class ServiceProcedureController extends Controller
 
     public function content_update(Request $request, $procedure_id)
     {   
-        
+
         TemplateContent::where('procedureid', '=', $procedure_id)
                        ->update(['content' => $request->get('content')]);
         
 
-        return response()->json(['success' => 'Record has been updated'], 200);
+        return response()->json(['success' => 'Record has been updated', 'data' => $request->all()], 200);
     }
 }

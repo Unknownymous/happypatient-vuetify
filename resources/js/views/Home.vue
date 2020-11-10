@@ -114,8 +114,8 @@
           {
             icon: 'mdi-stethoscope',
             items: [
-              { title: 'Create Services' },
-              { title: 'Services List' },
+              { title: 'Create Services', link: '/patient_service/create' },
+              { title: 'Services List', link: '/patient_service/index' },
             ],
             title: 'Services',
           },
@@ -146,27 +146,7 @@
 
       }
     },
-    methods: {
-      // init() {
-
-      //   this.loading = true;
-
-      //   Axios.get('/api/auth/init').then( (response) => {
-      //     console.log(response.data.user);
-      //     this.user = response.data.user;
-      //     this.loading = false;
-      //     this.initiated = true;
-
-      //     if(!response.data.user)
-      //     {
-      //       this.$router.push('/login').catch(()=>{});
-      //     }
-
-      //   }, (error) => {
-      //     console.log(error);
-      //   });
-      // },
-
+    methods: {  
       logout() {
         Axios.post('/api/auth/logout').then( (response) => {
           console.log(response);
@@ -180,11 +160,6 @@
         });
       }
     },
-    mounted() {
-      // this.init();
-    }
-
-
   }
 
 </script>

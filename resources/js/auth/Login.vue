@@ -136,7 +136,7 @@
 
               localStorage.setItem('access_token', response.data.access_token);
  
-              this.$router.push('/home').catch(e => {});
+              this.$router.push('/').catch(e => {});
               this.clear();
               this.username = null;
               this.password = null;
