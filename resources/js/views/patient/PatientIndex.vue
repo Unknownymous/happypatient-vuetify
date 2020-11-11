@@ -75,6 +75,9 @@
   </div>
 </template>
 <script>
+
+  const access_token = localStorage.getItem('access_token');
+
   import Axios from "axios";
   import moment from 'moment';
   export default {
@@ -117,8 +120,6 @@
 
     methods: {
       getPatients(){
-
-        const access_token = localStorage.getItem('access_token');
 
         Axios.get('/api/patient/index', {
             headers: {

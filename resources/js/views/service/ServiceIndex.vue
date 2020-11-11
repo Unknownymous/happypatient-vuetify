@@ -141,6 +141,8 @@
 </template>
 <script>
 
+  const access_token = localStorage.getItem('access_token');
+
   import Axios from "axios";
   import { validationMixin } from "vuelidate";
   import { required, maxLength, email } from "vuelidate/lib/validators";  
@@ -190,8 +192,6 @@
     methods: {
       getService(){
 
-        const access_token = localStorage.getItem('access_token');
-
         Axios.get('/api/service/index', {
             headers: {
               'Authorization': 'Bearer '+access_token,
@@ -212,7 +212,6 @@
       deleteService (serviceid) {
 
         const data = { serviceid: serviceid };
-        const access_token = localStorage.getItem('access_token');
 
         Axios.post('/api/service/delete', data, {
             headers: {
@@ -277,8 +276,6 @@
         })
       },
       save () {
-        
-        const access_token = localStorage.getItem('access_token');
 
         this.$v.$touch();
 

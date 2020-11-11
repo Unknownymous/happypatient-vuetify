@@ -70,6 +70,9 @@
   </div>
 </template>
 <script>
+
+  const access_token = localStorage.getItem('access_token');
+
   import Axios from "axios";
 
   export default {
@@ -104,8 +107,6 @@
     methods: {
       getUsers(){
 
-        const access_token = localStorage.getItem('access_token');
-
         Axios.get('/api/user/index', {
             headers: {
               'Authorization': 'Bearer '+access_token,
@@ -123,7 +124,6 @@
       deleteUser (userid) {
 
         const data = { userid: userid };
-        const access_token = localStorage.getItem('access_token');
         
         Axios.post('/api/user/delete', data, {
             headers: {

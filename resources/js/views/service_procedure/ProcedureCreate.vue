@@ -163,266 +163,275 @@
 </template>
 
 <script>
-import Axios from 'axios';
-import { validationMixin } from "vuelidate";
-import { required, maxLength, email, minLength, sameAs } from "vuelidate/lib/validators";
 
-export default {
-  mixins: [validationMixin],
+  const access_token = localStorage.getItem('access_token');
 
-  validations: {
-    service: { required },   
-    procedure: { required },    
-    price: { required },
-  },
+  import Axios from 'axios';
+  import { validationMixin } from "vuelidate";
+  import { required, maxLength, email, minLength, sameAs } from "vuelidate/lib/validators";
 
-  data: () => ({
-    LastIndexIsRemoved: false,
-    procedureHasError: false,
-    priceHasError: false,
-    disabled: false,
-    procedure: "",
-    price: "",
-    service: "",
-    services: [],
-    procedures: [],
-    index: "",
-    ctr: 0,
-    items: [
-        {
-          text: "Home",
-          disabled: false,
-          link: "/dashboard",
-        },
-        {
-          text: "Service Procedures Record",
-          disabled: false,
-          link: "/procedure/index"
-        },
-        {
-          text: "Create Service Procedures",
-          disabled: true,
-        },
-      ],
-  }),
+  export default {
+    mixins: [validationMixin],
 
-  computed: {
-
-    serviceErrors() {
-      const errors = [];
-      if (!this.$v.service.$dirty) return errors;
-      !this.$v.service.required && errors.push("Service is required.");
-      return errors;
+    validations: {
+      service: { required },   
+      procedure: { required },    
+      price: { required },
     },
-     
-  },
-  methods: {
-    createProcedure() {
-      
-      this.$v.$touch();
 
-      if(!this.LastIndexIsRemoved)
-      {
-        this.procedureValidate();
-        this.priceValidate();
-      }
-      else
-      {
-        this.$v.$reset();
-      }
-
-      if(this.procedures.length == 0)
-      {
-        this.procedureHasError = true;
-        this.priceHasError = true;
-      }
-      
-     
-      if(!this.$v.$error && !this.procedureHasError && !this.priceHasError)
-      {
-        const procedure_data = { procedure: this.procedure, price: this.price };
-
-        //Assign data from last row textfield value of procedure and price; if last index was not removed
-        if(!this.LastIndexIsRemoved)
-        {
-          Object.assign(this.procedures[this.index], procedure_data);
-        }
-
-        this.disabled = true;
-
-        let myForm = document.getElementById('procedureform');
-        let formData = new FormData(myForm);
-        const data = {};
-        const procedures = {};
-
-        for(let [key, val] of formData.entries())
-        {
-          Object.assign(data ,{[key]: val});
-        }
-
-        //Assign procedures data into data variable
-        data['procedures'] = this.procedures;
-        const access_token = localStorage.getItem('access_token');
-
-        Axios.post('/api/procedure/store', data, {
-            headers: {
-              'Authorization': 'Bearer '+access_token,
-            }
-          }).then((response) => {
-
-          console.log(response.data);
-          
-          if(response.data.success)
+    data: () => ({
+      LastIndexIsRemoved: false,
+      procedureHasError: false,
+      priceHasError: false,
+      disabled: false,
+      procedure: "",
+      price: "",
+      service: "",
+      services: [],
+      procedures: [],
+      index: "",
+      ctr: 0,
+      items: [
           {
-            this.clear();
-            this.showAlert(); 
-            this.getService();
-            
-          }
+            text: "Home",
+            disabled: false,
+            link: "/dashboard",
+          },
+          {
+            text: "Service Procedures Record",
+            disabled: false,
+            link: "/procedure/index"
+          },
+          {
+            text: "Create Service Procedures",
+            disabled: true,
+          },
+        ],
+    }),
 
-          this.disabled = false;
+    computed: {
 
-        }, (errors) => {
-          console.log(errors);
-        });
-
-      }
+      serviceErrors() {
+        const errors = [];
+        if (!this.$v.service.$dirty) return errors;
+        !this.$v.service.required && errors.push("Service is required.");
+        return errors;
+      },
       
     },
-    
-    showAlert() {
-
-      this.$swal({
-        position: 'center',
-        icon: 'success',
-        title: 'Record has successfully added',
-        showConfirmButton: false,
-        timer: 2500
-      });
-    },
-
-    getService() {
-      Axios.get("/api/service/index").then((response) => {
-        this.services = response.data.services;
-      });
-    },
-
-    getIndex(index) {
-      this.index = index;
-    },
-
-    addRow() {
-
-      if(this.procedures.length == 0)
-      {
-
-        this.procedures.push({ procedure: this.procedure, price: this.price });
-        this.procedureHasError = false;
-        this.priceHasError = false;
-
-      }
-      else
-      { 
+    methods: {
+      createProcedure() {
         
-        //if last index was removed then don't validate fields
+        this.$v.$touch();
+
         if(!this.LastIndexIsRemoved)
         {
           this.procedureValidate();
           this.priceValidate();
         }
-        
-        if(this.procedureHasError == false && this.priceHasError == false)
+        else
         {
-          
-          const data = { procedure: this.procedure, price: this.price };
+          this.$v.$reset();
+        }
 
-          //if last index was removed and procedures has only 1 row data, don't assign data on procedures
+        if(this.procedures.length == 0)
+        {
+          this.procedureHasError = true;
+          this.priceHasError = true;
+        }
+        
+      
+        if(!this.$v.$error && !this.procedureHasError && !this.priceHasError)
+        {
+          const procedure_data = { procedure: this.procedure, price: this.price };
+
+          //Assign data from last row textfield value of procedure and price; if last index was not removed
           if(!this.LastIndexIsRemoved)
           {
-            Object.assign(this.procedures[this.index], data);
+            Object.assign(this.procedures[this.index], procedure_data);
           }
-          else if(this.procedures.length == 1)
+
+          this.disabled = true;
+
+          let myForm = document.getElementById('procedureform');
+          let formData = new FormData(myForm);
+          const data = {};
+          const procedures = {};
+
+          for(let [key, val] of formData.entries())
           {
-            Object.assign(this.procedures[this.index], data);
+            Object.assign(data ,{[key]: val});
           }
 
-          this.procedure = "";
-          this.price = "";
-          this.LastIndexIsRemoved = false;
+          //Assign procedures data into data variable
+          data['procedures'] = this.procedures;
 
-          this.procedures.push({ procedure: this.procedure, price: this.price });
+          Axios.post('/api/procedure/store', data, {
+              headers: {
+                'Authorization': 'Bearer '+access_token,
+              }
+            }).then((response) => {
+
+            console.log(response.data);
+            
+            if(response.data.success)
+            {
+              this.clear();
+              this.showAlert(); 
+              this.getService();
+              
+            }
+
+            this.disabled = false;
+
+          }, (errors) => {
+            console.log(errors);
+          });
 
         }
         
-      }
-    },
+      },
+      
+      showAlert() {
 
-    removeRow(item) {
+        this.$swal({
+          position: 'center',
+          icon: 'success',
+          title: 'Record has successfully added',
+          showConfirmButton: false,
+          timer: 2500
+        });
 
-      const index = this.procedures.indexOf(item);
-      const last_index = this.procedures.length - 1;
+      },
 
-      //Delete rows on the object procedures
-      this.procedures.splice(index, 1);
+      getService() {
 
-      if(index == last_index)
-      { 
+        Axios.get("/api/service/index", {
+              headers: {
+                'Authorization': 'Bearer '+access_token,
+              }
+            }).then((response) => {
+          this.services = response.data.services;
+        });
+
+      },
+
+      getIndex(index) {
+        this.index = index;
+      },
+
+      addRow() {
+
+        if(this.procedures.length == 0)
+        {
+
+          this.procedures.push({ procedure: this.procedure, price: this.price });
+          this.procedureHasError = false;
+          this.priceHasError = false;
+
+        }
+        else
+        { 
+          
+          //if last index was removed then don't validate fields
+          if(!this.LastIndexIsRemoved)
+          {
+            this.procedureValidate();
+            this.priceValidate();
+          }
+          
+          if(this.procedureHasError == false && this.priceHasError == false)
+          {
+            
+            const data = { procedure: this.procedure, price: this.price };
+
+            //if last index was removed and procedures has only 1 row data, don't assign data on procedures
+            if(!this.LastIndexIsRemoved)
+            {
+              Object.assign(this.procedures[this.index], data);
+            }
+            else if(this.procedures.length == 1)
+            {
+              Object.assign(this.procedures[this.index], data);
+            }
+
+            this.procedure = "";
+            this.price = "";
+            this.LastIndexIsRemoved = false;
+
+            this.procedures.push({ procedure: this.procedure, price: this.price });
+
+          }
+          
+        }
+      },
+
+      removeRow(item) {
+
+        const index = this.procedures.indexOf(item);
+        const last_index = this.procedures.length - 1;
+
+        //Delete rows on the object procedures
+        this.procedures.splice(index, 1);
+
+        if(index == last_index)
+        { 
+          this.procedureHasError = false;
+          this.priceHasError = false;
+
+          this.procedure = "";
+          this.price = "";
+          
+          this.LastIndexIsRemoved = true;
+        }
+
+      },
+
+      procedureValidate() {
+        
+        // const procedure = document.getElementById("procedure").value;
+
+        if(this.procedure)
+        {
+          this.procedureHasError = false;
+        }
+        else
+        {
+          this.procedureHasError = true;
+        }
+      
+      },
+
+      priceValidate() {
+        
+        // const price = document.getElementById("input-73").value;
+
+        if(this.price)
+        {
+          this.priceHasError = false;
+        }
+        else
+        {
+          this.priceHasError = true;
+        }
+      }, 
+
+      clear() {
+        this.$v.$reset();
+        this.LastIndexIsRemoved = false;
         this.procedureHasError = false;
         this.priceHasError = false;
-
+        this.disabled = false;
         this.procedure = "";
         this.price = "";
-        
-        this.LastIndexIsRemoved = true;
+        this.service = "";
+        this.services = [];
+        this.procedures = [];
+        this.index = "";
       }
-
     },
-
-    procedureValidate() {
-      
-      // const procedure = document.getElementById("procedure").value;
-
-      if(this.procedure)
-      {
-        this.procedureHasError = false;
-      }
-      else
-      {
-        this.procedureHasError = true;
-      }
-    
-    },
-
-    priceValidate() {
-      
-      // const price = document.getElementById("input-73").value;
-
-      if(this.price)
-      {
-        this.priceHasError = false;
-      }
-      else
-      {
-        this.priceHasError = true;
-      }
-    }, 
-
-    clear() {
-      this.$v.$reset();
-      this.LastIndexIsRemoved = false;
-      this.procedureHasError = false;
-      this.priceHasError = false;
-      this.disabled = false;
-      this.procedure = "";
-      this.price = "";
-      this.service = "";
-      this.services = [];
-      this.procedures = [];
-      this.index = "";
+    mounted () {
+      this.getService();
     }
-  },
-  mounted () {
-    this.getService();
-  }
-};
+  };
 </script>

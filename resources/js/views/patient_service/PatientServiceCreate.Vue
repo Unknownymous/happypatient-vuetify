@@ -20,7 +20,7 @@
             <form id="procedureform">
               <v-row>
                 <v-col cols="2">
-                  <v-radio-group name="type" v-model="type">
+                  <v-radio-group name="type" v-model="patientservicesData.type">
                     <template v-slot:label>
                       <div><strong>Type</strong></div>
                     </template>
@@ -40,7 +40,7 @@
                 <v-col cols="4">
                   <v-autocomplete
                     name="patient"
-                    v-model="patient"
+                    v-model="patientservicesData.patient"
                     :items="patients"
                     item-value="id"     
                     label="Patient"
@@ -48,7 +48,7 @@
                     :error-messages="patientErrors"
                     @change="$v.service.$touch()"
                     @blur="$v.service.$touch()"
-                    v-if="type == 'individual'"
+                    v-if="patientservicesData.type == 'individual'"
                   >
                     <template slot="selection" slot-scope="data">
                       {{data.item.id + " - " + data.item.lastname + ", " + data.item.firstname}}&nbsp;<span v-if="data.item.middlename">{{data.item.middlename}}</span>
@@ -60,13 +60,13 @@
 
                   <v-text-field
                     name="organization"
-                    v-model="organization"
+                    v-model="patientservicesData.organization"
                     :error-messages="organizationErrors"
                     label="Organization"
                     required
                     @input="$v.organization.$touch()"
                     @blur="$v.organization.$touch()"
-                    v-if="type == 'group'"
+                    v-if="patientservicesData.type == 'group'"
                   ></v-text-field>
 
                 </v-col>
@@ -74,7 +74,7 @@
                 <v-col cols="3">
                   <v-text-field
                     name="or_number."
-                    v-model="or_number"
+                    v-model="patientservicesData.or_number"
                     label="Official Receipt No."
                   ></v-text-field>
                 </v-col>
@@ -110,6 +110,50 @@
               </v-row>
               <v-divider></v-divider>
               <v-row>
+                <v-col cols="4">
+                  <v-text-field
+                    name="bloodpressure"
+                    v-model="patientservicesData.bloodpressure"
+                    label="Bloodpressure"
+                  ></v-text-field>
+                </v-col>
+                <v-col cols="4">
+                  <v-text-field-money
+                    name="temperature"
+                    v-model="patientservicesData.temperature"
+                    label="Temperature (°C)"
+                    v-bind:properties="{
+                      placeholder: '00.0',
+                    }"
+                    v-bind:options="{
+                      length: 3,
+                      precision: 1,
+                      empty: null,
+                    }"
+
+                  >
+                  </v-text-field-money>
+                </v-col>
+                <v-col cols="4">
+                  <v-text-field-money
+                    name="weight"
+                    v-model="patientservicesData.weight"
+                    label="Weight (Kg)"
+                    v-bind:properties="{
+                      placeholder: '00.0',
+                    }"
+                    v-bind:options="{
+                      length: 4,
+                      precision: 2,
+                      empty: null,
+                    }"
+
+                  >
+                  </v-text-field-money>
+                </v-col>
+              </v-row>
+              <v-divider></v-divider>
+              <v-row>
                 <v-col>
                   <v-card>
                     <v-card-title>
@@ -132,7 +176,7 @@
                         </thead>
                         <tbody>
                           <tr
-                            v-for="item in procedures"
+                            v-for="item in service_procedures"
                             :key="item.id"
                           >
                             <td>
@@ -142,12 +186,12 @@
                                 id="procedure"
                                 dense
                                 required
-                                v-if="procedures.indexOf(item) == (procedures.length - 1) && !item.procedure"
+                                v-if="service_procedures.indexOf(item) == (service_procedures.length - 1) && !item.procedure"
                               ></v-text-field>   
 
                               {{ item.procedure }}
 
-                              {{ getIndex(procedures.indexOf(item)) }}
+                              {{ getIndex(service_procedures.indexOf(item)) }}
 
                             </td>
                             <td>
@@ -218,7 +262,7 @@
                   <span class="v-messages error--text" v-if="procedureHasError || priceHasError">Procedure and Price are required</span>
                 </v-col>
               </v-row>
-              <v-btn class="mr-4 mt-5" color="primary" @click="createProcedure" :disabled="disabled"> add </v-btn>
+              <v-btn class="mr-4 mt-5" color="primary" @click="createPatientService" :disabled="disabled"> add </v-btn>
               <v-btn class="mt-5" color="#E0E0E0" :to="{name: 'procedure.index'}"> cancel </v-btn>
             </form>
           </v-card-text>
@@ -229,326 +273,349 @@
 </template>
 
 <script>
-import Axios from 'axios';
-import { validationMixin } from "vuelidate";
-import { required, maxLength, email, minLength, sameAs } from "vuelidate/lib/validators";
 
-export default {
-  mixins: [validationMixin],
+  const access_token = localStorage.getItem('access_token');
 
-  validations: {
-    patient: { required },   
-    organization: { required },
-    service: { required },
-    procedure: { required },    
-    price: { required },
-  },
+  import Axios from 'axios';
+  import { validationMixin } from "vuelidate";
+  import { required, maxLength, email, minLength, sameAs } from "vuelidate/lib/validators";
 
-  data: vm => ({
-    date: new Date().toISOString().substr(0, 10),
-    dateFormatted: vm.formatDate(new Date().toISOString().substr(0, 10)),
-    input: false,
-    LastIndexIsRemoved: false,
-    procedureHasError: false,
-    priceHasError: false,
-    disabled: false,
-    procedure: "",
-    price: "",
-    service: "",
-    services: [],
-    procedures: [],
-    patient: "",
-    patients: [],
-    type: "individual",
-    organization: "",
-    or_number: "",
-    docdate: "",
-    index: "",
-    ctr: 0,
-    items: [
-        {
-          text: "Home",
-          disabled: false,
-          link: "/dashboard",
-        },
-        {
-          text: "Create Patient Services",
-          disabled: true,
-        },
-      ],
-  }),
+  export default {
+    mixins: [validationMixin],
 
-  computed: {
-
-    serviceErrors() {
-      const errors = [];
-      if (!this.$v.service.$dirty) return errors;
-      !this.$v.service.required && errors.push("Service is required.");
-      return errors;
+    validations: {
+      patientservicesData: {
+        patient: { required },   
+        organization: { required },
+      },
+      service: { required },
+      procedure: { required },    
+      price: { required },
+      discount: { required },
+      discount_amt: { required },
     },
 
-    patientErrors() {
-      const errors = [];
-      if (!this.$v.patient.$dirty) return errors;
-      !this.$v.patient.required && errors.push("Patient is required.");
-      return errors;
-    },
-
-    organizationErrors() {
-      const errors = [];
-      if (!this.$v.organization.$dirty) return errors;
-      !this.$v.organization.required && errors.push("Organization is required.");
-      return errors;
-    },
-
-    computedDateFormatted () {
-      return this.formatDate(this.date)
-    },
-     
-  },
-  watch: {
-    date (val) {
-      this.dateFormatted = this.formatDate(this.date)
-    },
-  },
-  methods: {
-    createProcedure() {
-      
-      this.$v.$touch();
-
-      if(!this.LastIndexIsRemoved)
-      {
-        this.procedureValidate();
-        this.priceValidate();
-      }
-      else
-      {
-        this.$v.$reset();
-      }
-
-      if(this.procedures.length == 0)
-      {
-        this.procedureHasError = true;
-        this.priceHasError = true;
-      }
-      
-     
-      if(!this.$v.$error && !this.procedureHasError && !this.priceHasError)
-      {
-        const procedure_data = { procedure: this.procedure, price: this.price };
-
-        //Assign data from last row textfield value of procedure and price; if last index was not removed
-        if(!this.LastIndexIsRemoved)
-        {
-          Object.assign(this.procedures[this.index], procedure_data);
-        }
-
-        this.disabled = true;
-
-        let myForm = document.getElementById('procedureform');
-        let formData = new FormData(myForm);
-        const data = {};
-        const procedures = {};
-
-        for(let [key, val] of formData.entries())
-        {
-          Object.assign(data ,{[key]: val});
-        }
-
-        //Assign procedures data into data variable
-        data['procedures'] = this.procedures;
-
-        const access_token = localStorage.getItem('access_token');
-
-        Axios.post('/api/procedure/store', data, {
-            headers: {
-              'Authorization': 'Bearer '+access_token,
-            }
-          }).then((response) => {
-
-          console.log(response.data);
-          
-          if(response.data.success)
+    data: vm => ({
+      date: new Date().toISOString().substr(0, 10),
+      dateFormatted: vm.formatDate(new Date().toISOString().substr(0, 10)),
+      input: false,
+      LastIndexIsRemoved: false,
+      procedureHasError: false,
+      priceHasError: false,
+      disabled: false,
+      patients: [],
+      service: "",
+      services: [],
+      procedure: "",
+      procedures: [],
+      service_procedures: [],
+      price: "",
+      prices: [],
+      discount: "",
+      discounts: [],
+      discount_amt: "",
+      discount_amts: [],
+      index: "",
+      ctr: 0,
+      items: [
           {
-            this.clear();
-            this.showAlert(); 
-            this.getService();
-            
-          }
-
-          this.disabled = false;
-
-        }, (errors) => {
-          console.log(errors);
-        });
-
+            text: "Home",
+            disabled: false,
+            link: "/dashboard",
+          },
+          {
+            text: "Create Patient Services",
+            disabled: true,
+          },
+        ],
+      patientservicesData: {
+        type: "individual",
+        patient: "",
+        organization: "",
+        or_number: "",
+        docdate: "",
+        bloodpressure: "",
+        temperature: "",
+        weight: "",
       }
+    }),
+
+    computed: {
+
+      serviceErrors() {
+        const errors = [];
+        if (!this.$v.service.$dirty) return errors;
+        !this.$v.service.required && errors.push("Service is required.");
+        return errors;
+      },
+
+      patientErrors() {
+        const errors = [];
+        if (!this.$v.patientservicesData.patient.$dirty) return errors;
+        !this.$v.patientservicesData.patient.required && errors.push("Patient is required.");
+        return errors;
+      },
+
+      organizationErrors() {
+        const errors = [];
+        if (!this.$v.patientservicesData.organization.$dirty) return errors;
+        !this.$v.patientservicesData.organization.required && errors.push("Organization is required.");
+        return errors;
+      },
+
+      computedDateFormatted () {
+        this.patientservicesData.docdate = this.formatDate(this.date);
+        return this.patientservicesData.docdate
+      },
       
     },
-    
-    showAlert() {
-
-      this.$swal({
-        position: 'center',
-        icon: 'success',
-        title: 'Record has successfully added',
-        showConfirmButton: false,
-        timer: 2500
-      });
+    watch: {
+      date (val) {
+        this.dateFormatted = this.formatDate(this.date)
+      },
     },
-
-    getPatient() {
-
-      const access_token = localStorage.getItem('access_token');
-
-      Axios.get("/api/patient/index", {
-            headers: {
-              'Authorization': 'Bearer '+access_token,
-            }
-          }).then((response) => {
-        this.patients = response.data.patients;
-      });
-    },
-
-    getService() {
-
-      const access_token = localStorage.getItem('access_token');
-
-      Axios.get("/api/service/index", {
-            headers: {
-              'Authorization': 'Bearer '+access_token,
-            }
-          }).then((response) => {
-        this.services = response.data.services;
-      });
-    },
-
-    addRow() {
-
-      if(this.procedures.length == 0)
-      {
-
-        this.procedures.push({ procedure: this.procedure, price: this.price });
-        this.procedureHasError = false;
-        this.priceHasError = false;
-
-      }
-      else
-      { 
+    methods: {
+      createPatientService() {
         
-        //if last index was removed then don't validate fields
+        this.$v.$touch();
+
         if(!this.LastIndexIsRemoved)
         {
           this.procedureValidate();
           this.priceValidate();
         }
-        
-        if(this.procedureHasError == false && this.priceHasError == false)
+        else
         {
-          
-          const data = { procedure: this.procedure, price: this.price };
+          this.$v.$reset();
+        }
 
-          //if last index was removed and procedures has only 1 row data, don't assign data on procedures
+        if(this.service_procedures.length == 0)
+        {
+          this.procedureHasError = true;
+          this.priceHasError = true;
+        }
+        
+      
+        if(!this.$v.$error && !this.procedureHasError && !this.priceHasError)
+        {
+          const procedure_data = { procedure: this.procedure, price: this.price };
+
+          //Assign data from last row textfield value of procedure and price; if last index was not removed
           if(!this.LastIndexIsRemoved)
           {
-            Object.assign(this.procedures[this.index], data);
-          }
-          else if(this.procedures.length == 1)
-          {
-            Object.assign(this.procedures[this.index], data);
+            Object.assign(this.service_procedures[this.index], procedure_data);
           }
 
-          this.procedure = "";
-          this.price = "";
-          this.LastIndexIsRemoved = false;
+          this.disabled = true;
 
-          this.procedures.push({ procedure: this.procedure, price: this.price });
+          let myForm = document.getElementById('procedureform');
+          let formData = new FormData(myForm);
+          const data = this.patientservicesData;
+
+          //Assign procedures data into data variable
+          data['service_procedures'] = this.service_procedures;
+
+          Axios.post('/api/patientservice/store', data, {
+              headers: {
+                'Authorization': 'Bearer '+access_token,
+              }
+            }).then((response) => {
+
+            console.log(response.data);
+            
+            if(response.data.success)
+            {
+              this.clear();
+              this.showAlert(); 
+              this.getService();
+              
+            }
+
+            this.disabled = false;
+
+          }, (errors) => {
+            console.log(errors);
+          });
 
         }
         
-      }
-    },
+      },
+      
+      showAlert() {
 
-    removeRow(item) {
+        this.$swal({
+          position: 'center',
+          icon: 'success',
+          title: 'Record has successfully added',
+          showConfirmButton: false,
+          timer: 2500
+        });
+      },
 
-      const index = this.procedures.indexOf(item);
-      const last_index = this.procedures.length - 1;
+      getPatient() {
 
-      //Delete rows on the object procedures
-      this.procedures.splice(index, 1);
+        Axios.get("/api/patient/index", {
+              headers: {
+                'Authorization': 'Bearer '+access_token,
+              }
+            }).then((response) => {
+          this.patients = response.data.patients;
+        });
+      },
 
-      if(index == last_index)
-      { 
+      getService() {
+
+        Axios.get("/api/service/index", {
+              headers: {
+                'Authorization': 'Bearer '+access_token,
+              }
+            }).then((response) => {
+          this.services = response.data.services;
+        });
+      },
+
+      getProcedure() {
+
+        Axios.get("/api/procedure/index", {
+              headers: {
+                'Authorization': 'Bearer '+access_token,
+              }
+            }).then((response) => {
+          this.procedures = response.data.services;
+        });
+      },
+
+      getIndex(index) {
+        this.index = index;
+      },
+
+      addRow() {
+
+        if(this.service_procedures.length == 0)
+        {
+
+          this.service_procedures.push({ procedure: this.procedure, price: this.price });
+          this.procedureHasError = false;
+          this.priceHasError = false;
+
+        }
+        else
+        { 
+          
+          //if last index was removed then don't validate fields
+          if(!this.LastIndexIsRemoved)
+          {
+            this.procedureValidate();
+            this.priceValidate();
+          }
+          
+          if(this.procedureHasError == false && this.priceHasError == false)
+          {
+            
+            const data = { procedure: this.procedure, price: this.price };
+
+            //if last index was removed and procedures has only 1 row data, don't assign data on procedures
+            if(!this.LastIndexIsRemoved)
+            {
+              Object.assign(this.service_procedures[this.index], data);
+            }
+            else if(this.service_procedures.length == 1)
+            {
+              Object.assign(this.service_procedures[this.index], data);
+            }
+
+            this.procedure = "";
+            this.price = "";
+            this.LastIndexIsRemoved = false;
+
+            this.procedures.push({ procedure: this.procedure, price: this.price });
+
+          }
+          
+        }
+      },
+
+      removeRow(item) {
+
+        const index = this.service_procedures.indexOf(item);
+        const last_index = this.service_procedures.length - 1;
+
+        //Delete rows on the object service_procedures
+        this.service_procedures.splice(index, 1);
+
+        if(index == last_index)
+        { 
+          this.procedureHasError = false;
+          this.priceHasError = false;
+
+          this.procedure = "";
+          this.price = "";
+          
+          this.LastIndexIsRemoved = true;
+        }
+
+      },
+
+      procedureValidate() {
+        
+        // const procedure = document.getElementById("procedure").value;
+
+        if(this.procedure)
+        {
+          this.procedureHasError = false;
+        }
+        else
+        {
+          this.procedureHasError = true;
+        }
+      
+      },
+
+      priceValidate() {
+        
+        // const price = document.getElementById("input-73").value;
+
+        if(this.price)
+        {
+          this.priceHasError = false;
+        }
+        else
+        {
+          this.priceHasError = true;
+        }
+      }, 
+
+      clear() {
+        this.$v.$reset();
+        this.LastIndexIsRemoved = false;
         this.procedureHasError = false;
         this.priceHasError = false;
-
+        this.disabled = false;
         this.procedure = "";
         this.price = "";
-        
-        this.LastIndexIsRemoved = true;
-      }
+        this.service = "";
+        this.services = [];
+        this.procedures = [];
+        this.service_procedures = [];
+        this.index = "";
+      },
+      formatDate (date) {
+          if (!date) return null
 
+          const [year, month, day] = date.split('-')
+          return `${month}/${day}/${year}`
+        },
+        parseDate (date) {
+          if (!date) return null
+
+          const [month, day, year] = date.split('/')
+          return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`
+        },
     },
-
-    procedureValidate() {
-      
-      // const procedure = document.getElementById("procedure").value;
-
-      if(this.procedure)
-      {
-        this.procedureHasError = false;
-      }
-      else
-      {
-        this.procedureHasError = true;
-      }
     
-    },
-
-    priceValidate() {
-      
-      // const price = document.getElementById("input-73").value;
-
-      if(this.price)
-      {
-        this.priceHasError = false;
-      }
-      else
-      {
-        this.priceHasError = true;
-      }
-    }, 
-
-    clear() {
-      this.$v.$reset();
-      this.LastIndexIsRemoved = false;
-      this.procedureHasError = false;
-      this.priceHasError = false;
-      this.disabled = false;
-      this.procedure = "";
-      this.price = "";
-      this.service = "";
-      this.services = [];
-      this.procedures = [];
-      this.index = "";
-    },
-    formatDate (date) {
-        if (!date) return null
-
-        const [year, month, day] = date.split('-')
-        return `${month}/${day}/${year}`
-      },
-      parseDate (date) {
-        if (!date) return null
-
-        const [month, day, year] = date.split('/')
-        return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`
-      },
-  },
-  
-  mounted () {
-    this.getService();
-    this.getPatient();
-  }
-};
+    mounted () {
+      this.getService();
+      this.getPatient();
+    }
+  };
 </script>

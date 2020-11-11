@@ -38,6 +38,9 @@
   </div>
 </template>
 <script>
+
+  const access_token = localStorage.getItem('access_token');
+
   import Axios from "axios";
 
   export default {
@@ -66,8 +69,6 @@
 
     methods: {
       getActivityLogs(){
-        
-        const access_token = localStorage.getItem('access_token');
 
         Axios.get('/api/activity_logs', {
             headers: {

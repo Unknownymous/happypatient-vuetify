@@ -35,110 +35,109 @@
 </template>
 
 <script>
-import Axios from 'axios';
-import { validationMixin } from "vuelidate";
-import { required, maxLength, email, minLength, sameAs } from "vuelidate/lib/validators";
-// Advanced Use - Hook into Quill's API for Custom Functionality
-import { VueEditor, Quill } from "vue2-editor";
 
-export default {
-  mixins: [validationMixin],
-  components: {
-    VueEditor
-  },
-  validations: {
-    service: { required },   
-    procedure: { required },    
-    price: { required },
-  },
+  const access_token = localStorage.getItem('access_token');
 
-  data: () => ({
-    
-    items: [
-        {
-          text: "Home",
-          disabled: false,
-          link: "/dashboard",
-        },
-        {
-          text: "Service Procedures Record",
-          disabled: false,
-          link: "/procedure/index"
-        },
-        {
-          text: "Template Content",
-          disabled: true,
-        },
-      ],
-      template: [],
-      content: null,
-  }),
+  import Axios from 'axios';
+  import { validationMixin } from "vuelidate";
+  import { required, maxLength, email, minLength, sameAs } from "vuelidate/lib/validators";
+  // Advanced Use - Hook into Quill's API for Custom Functionality
+  import { VueEditor, Quill } from "vue2-editor";
 
-  computed: {
-
-    templateErrors() {
-      const errors = [];
-      if (!this.$v.service.$dirty) return errors;
-      !this.$v.service.required && errors.push("Service is required.");
-      return errors;
+  export default {
+    mixins: [validationMixin],
+    components: {
+      VueEditor
     },
-     
-  },
-  methods: {
-    saveTemplate() { 
-     
+    validations: {
+      service: { required },   
+      procedure: { required },    
+      price: { required },
+    },
+
+    data: () => ({
       
-        const data = {content: this.content};
-        const procedureid = this.template.procedureid;
-        const access_token = localStorage.getItem('access_token');
+      items: [
+          {
+            text: "Home",
+            disabled: false,
+            link: "/dashboard",
+          },
+          {
+            text: "Service Procedures Record",
+            disabled: false,
+            link: "/procedure/index"
+          },
+          {
+            text: "Template Content",
+            disabled: true,
+          },
+        ],
+        template: [],
+        content: null,
+    }),
 
-        Axios.post('/api/procedure/template/update/'+procedureid, data, {
-            headers: {
-              'Authorization': 'Bearer '+access_token,
+    computed: {
+
+      templateErrors() {
+        const errors = [];
+        if (!this.$v.service.$dirty) return errors;
+        !this.$v.service.required && errors.push("Service is required.");
+        return errors;
+      },
+      
+    },
+    methods: {
+      saveTemplate() { 
+      
+          const data = {content: this.content};
+          const procedureid = this.template.procedureid;
+
+          Axios.post('/api/procedure/template/update/'+procedureid, data, {
+              headers: {
+                'Authorization': 'Bearer '+access_token,
+              }
+            }).then((response) => {
+            
+            if(response.data.success)
+            { 
+              this.showAlert();
             }
-          }).then((response) => {
-          
-          if(response.data.success)
-          { 
-            this.showAlert();
-          }
 
-        }, (errors) => {
-          console.log(errors);
+          }, (errors) => {
+            console.log(errors);
+          });
+
+        
+      },
+      
+      showAlert() {
+
+        this.$swal({
+          position: 'center',
+          icon: 'success',
+          title: 'Record has successfully added',
+          showConfirmButton: false,
+          timer: 2500
         });
+      },
 
-      
+      getTemplateContent() {
+
+        Axios.get('/api'+this.$route.path, {
+              headers: {
+                'Authorization': 'Bearer '+access_token,
+              }
+            }).then((response) => {
+          this.template = response.data.template_content;
+          this.content = this.template.content;
+          console.log(this.template);
+        });
+      },
     },
-    
-    showAlert() {
 
-      this.$swal({
-        position: 'center',
-        icon: 'success',
-        title: 'Record has successfully added',
-        showConfirmButton: false,
-        timer: 2500
-      });
-    },
-
-    getTemplateContent() {
-
-      const access_token = localStorage.getItem('access_token');
-
-      Axios.get('/api'+this.$route.path, {
-            headers: {
-              'Authorization': 'Bearer '+access_token,
-            }
-          }).then((response) => {
-        this.template = response.data.template_content;
-        this.content = this.template.content;
-        console.log(this.template);
-      });
-    },
-  },
-
-  mounted () {
-    this.getTemplateContent();
-  }
-};
+    mounted () {
+      this.getTemplateContent();
+    }
+  };
 </script>

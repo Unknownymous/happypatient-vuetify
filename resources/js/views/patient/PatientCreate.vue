@@ -223,253 +223,255 @@
 </template>
 
 <script>
-import Axios from 'axios';
-import { validationMixin } from "vuelidate";
-import { required, maxLength, email } from "vuelidate/lib/validators";
 
-export default {
-  mixins: [validationMixin],
+  const access_token = localStorage.getItem('access_token');
 
-  validations: {
-    lastname: { required },
-    firstname: { required },
-    birthdate: { required },
-    email: { email },
-    province: { required },
-    city: { required },
-    barangay: { required },
-    
-  },
+  import Axios from 'axios';
+  import { validationMixin } from "vuelidate";
+  import { required, maxLength, email } from "vuelidate/lib/validators";
 
-  data: () => ({
-    lastname: "",
-    firstname: "",
-    middlename: "",
-    gender: "male",
-    civilstatus: "single",
-    birthdate: "",
-    input: false,
-    landline: "",
-    mobile: "",
-    email: "",
-    address: "",
-    province: null,
-    city: null,
-    barangay: null,
-    provinces: [],
-    cities: [],  
-    barangays: [],
-    checkbox: false,
-    disabled: false,
-    items: [
-        { 
-          text: 'Home', 
-          disabled: false, 
-          link: '/dashboard',
-        },
-        { 
-          text: 'Create Patient', 
-          disabled: true, 
-        }
-      ]
-  }),
+  export default {
+    mixins: [validationMixin],
 
-  computed: {
-    checkboxErrors() {
-      const errors = [];
-      if (!this.$v.checkbox.$dirty) return errors;
-      !this.$v.checkbox.checked && errors.push("You must agree to continue!");
-      return errors;
-    },
-    lastnameErrors() {
-      const errors = [];
-      if (!this.$v.lastname.$dirty) return errors;
-      // !this.$v.lastname.maxLength &&
-        // errors.push("Name must be at most 10 characters long");
-      !this.$v.lastname.required && errors.push("Lastname is required.");
-      return errors;
-    },
-    firstnameErrors() {
-      const errors = [];
-      if (!this.$v.firstname.$dirty) return errors;
-      !this.$v.firstname.required && errors.push("Firstname is required.");
-      return errors;
-    },
-    birthdateErrors() {
-      const errors = [];
-      if (!this.$v.birthdate.$dirty) return errors;
-      !this.$v.birthdate.required && errors.push("Birthdate is required");
-      // !this.$v.email.required && errors.push("E-mail is required");
-      return errors;
-    },
-    computedDateFormatted () {
-      return this.formatDate(this.birthdate)
-    },
-    emailErrors() {
-      const errors = [];
-      if (!this.$v.email.$dirty) return errors;
-      !this.$v.email.email && errors.push("Must be valid e-mail");
-      // !this.$v.email.required && errors.push("E-mail is required");
-      return errors;
-    },
-    provinceErrors() {
-      const errors = [];
-      if (!this.$v.province.$dirty) return errors;
-      !this.$v.province.required && errors.push("Province is required");
-      return errors;
-    },
-    cityErrors() {
-      const errors = [];
-      if (!this.$v.city.$dirty) return errors;
-      !this.$v.city.required && errors.push("City is required");
-      return errors;
-    },
-    barangayErrors() {
-      const errors = [];
-      if (!this.$v.barangay.$dirty) return errors;
-      !this.$v.barangay.required && errors.push("Barangay is required");
-      return errors;
-    },
-  },
-  watch: {
-    date (val) {
-      this.dateFormatted = this.formatDate(this.birthdate)
-    },
-  },
-  methods: {
-    createPatient() {
+    validations: {
+      lastname: { required },
+      firstname: { required },
+      birthdate: { required },
+      email: { email },
+      province: { required },
+      city: { required },
+      barangay: { required },
       
-      this.$v.$touch();
+    },
 
-      if(!this.$v.$error)
-      {
+    data: () => ({
+      lastname: "",
+      firstname: "",
+      middlename: "",
+      gender: "male",
+      civilstatus: "single",
+      birthdate: "",
+      input: false,
+      landline: "",
+      mobile: "",
+      email: "",
+      address: "",
+      province: null,
+      city: null,
+      barangay: null,
+      provinces: [],
+      cities: [],  
+      barangays: [],
+      checkbox: false,
+      disabled: false,
+      items: [
+          { 
+            text: 'Home', 
+            disabled: false, 
+            link: '/dashboard',
+          },
+          { 
+            text: 'Create Patient', 
+            disabled: true, 
+          }
+        ]
+    }),
+
+    computed: {
+      checkboxErrors() {
+        const errors = [];
+        if (!this.$v.checkbox.$dirty) return errors;
+        !this.$v.checkbox.checked && errors.push("You must agree to continue!");
+        return errors;
+      },
+      lastnameErrors() {
+        const errors = [];
+        if (!this.$v.lastname.$dirty) return errors;
+        // !this.$v.lastname.maxLength &&
+          // errors.push("Name must be at most 10 characters long");
+        !this.$v.lastname.required && errors.push("Lastname is required.");
+        return errors;
+      },
+      firstnameErrors() {
+        const errors = [];
+        if (!this.$v.firstname.$dirty) return errors;
+        !this.$v.firstname.required && errors.push("Firstname is required.");
+        return errors;
+      },
+      birthdateErrors() {
+        const errors = [];
+        if (!this.$v.birthdate.$dirty) return errors;
+        !this.$v.birthdate.required && errors.push("Birthdate is required");
+        // !this.$v.email.required && errors.push("E-mail is required");
+        return errors;
+      },
+      computedDateFormatted () {
+        return this.formatDate(this.birthdate)
+      },
+      emailErrors() {
+        const errors = [];
+        if (!this.$v.email.$dirty) return errors;
+        !this.$v.email.email && errors.push("Must be valid e-mail");
+        // !this.$v.email.required && errors.push("E-mail is required");
+        return errors;
+      },
+      provinceErrors() {
+        const errors = [];
+        if (!this.$v.province.$dirty) return errors;
+        !this.$v.province.required && errors.push("Province is required");
+        return errors;
+      },
+      cityErrors() {
+        const errors = [];
+        if (!this.$v.city.$dirty) return errors;
+        !this.$v.city.required && errors.push("City is required");
+        return errors;
+      },
+      barangayErrors() {
+        const errors = [];
+        if (!this.$v.barangay.$dirty) return errors;
+        !this.$v.barangay.required && errors.push("Barangay is required");
+        return errors;
+      },
+    },
+    watch: {
+      date (val) {
+        this.dateFormatted = this.formatDate(this.birthdate)
+      },
+    },
+    methods: {
+      createPatient() {
         
-        this.disabled = true;
+        this.$v.$touch();
 
-        let myForm = document.getElementById('patientform');
-        let formData = new FormData(myForm);
-        const data = {};
-
-        for(let [key, val] of formData.entries())
+        if(!this.$v.$error)
         {
-          Object.assign(data ,{[key]: val});
-        }
-
-        const access_token = localStorage.getItem('access_token');
-
-        Axios.post('/api/patient/store', data, {
-            headers: {
-              'Authorization': 'Bearer '+access_token,
-            }
-          }).then((response) => {
           
-          console.log(response.data);
+          this.disabled = true;
 
-          if(response.data.success)
+          let myForm = document.getElementById('patientform');
+          let formData = new FormData(myForm);
+          const data = {};
+
+          for(let [key, val] of formData.entries())
           {
-            this.clear();
-            this.getProvinces();
-            this.showAlert(); 
+            Object.assign(data ,{[key]: val});
           }
 
-          this.disabled = false;
 
-        }, (error) => {
-          console.log(error);
-        });
+          Axios.post('/api/patient/store', data, {
+              headers: {
+                'Authorization': 'Bearer '+access_token,
+              }
+            }).then((response) => {
+            
+            console.log(response.data);
+
+            if(response.data.success)
+            {
+              this.clear();
+              this.getProvinces();
+              this.showAlert(); 
+            }
+
+            this.disabled = false;
+
+          }, (error) => {
+            console.log(error);
+          });
 
 
-      }
-      
-    },
-    clear() {
-      this.$v.$reset();
-      this.lastname = "";
-      this.firstname=  "";
-      this.middlename = "";
-      this.gender = "male";
-      this.civilstatus = "single";
-      this.birthdate = "";
-      this.landline = "";
-      this.mobile = "";
-      this.email = "";
-      this.address = "";
-      this.province = null;
-      this.city = null;
-      this.barangay = null;
-      this.provinces = [];
-      this.cities = []; 
-      this.barangays = [];
-
-    },
-    formatDate (birthdate) {
-      if (!birthdate) return null
-
-      const [year, month, day] = birthdate.split('-')
-      return `${month}/${day}/${year}`
-    },
-    parseDate (birthdate) {
-      if (!birthdate) return null
-
-      const [month, day, year] = birthdate.split('/')
-      return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`
-    },
-    getProvinces(){
-      Axios.get('/api/provinces').then((response) => {
-        this.provinces = response.data.provinces;
-        console.log(this.provinces);
-      });
-    },
-    getCities(province_id) {
-      Axios.get('/api/cities/'+province_id).then((response) => {
-        this.cities = response.data.cities;
-        this.barangays = [];
+        }
+        
+      },
+      clear() {
+        this.$v.$reset();
+        this.lastname = "";
+        this.firstname=  "";
+        this.middlename = "";
+        this.gender = "male";
+        this.civilstatus = "single";
+        this.birthdate = "";
+        this.landline = "";
+        this.mobile = "";
+        this.email = "";
+        this.address = "";
+        this.province = null;
         this.city = null;
         this.barangay = null;
-        this.$v.city.$reset();
-        this.$v.barangay.$reset();
-        console.log(this.cities);
-      });
-    },
-    getBarangays(city_id) {
-      Axios.get('/api/barangays/'+city_id).then((response) => {
-        this.barangays = response.data.barangays;
-        console.log(this.barangays);
-      });
-    },
-    showAlert() {
-      // Use sweetalert2
-      
-      // this.$swal({
-      //     title: "Delete this order status?",
-      //     text: "Are you sure? You won't be able to revert this!",
-      //     type: "warning",
-      //     showCancelButton: true,
-      //     confirmButtonColor: "#3085d6",
-      //     confirmButtonText: "Yes, Delete it!"
-      // }).then((result) => { // <--
-      //     if (result.value) { // <-- if confirmed
-      //         this.$swal({
-      //           position: 'center',
-      //           icon: 'success',
-      //           title: 'Record has been deleted',
-      //           showConfirmButton: false,
-      //           timer: 2500
-      //         });
-      //     }
-      // });
+        this.provinces = [];
+        this.cities = []; 
+        this.barangays = [];
 
-      this.$swal({
-        position: 'center',
-        icon: 'success',
-        title: 'Record has successfully added',
-        showConfirmButton: false,
-        timer: 2500
-      });
+      },
+      formatDate (birthdate) {
+        if (!birthdate) return null
+
+        const [year, month, day] = birthdate.split('-')
+        return `${month}/${day}/${year}`
+      },
+      parseDate (birthdate) {
+        if (!birthdate) return null
+
+        const [month, day, year] = birthdate.split('/')
+        return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`
+      },
+      getProvinces(){
+        Axios.get('/api/provinces').then((response) => {
+          this.provinces = response.data.provinces;
+          console.log(this.provinces);
+        });
+      },
+      getCities(province_id) {
+        Axios.get('/api/cities/'+province_id).then((response) => {
+          this.cities = response.data.cities;
+          this.barangays = [];
+          this.city = null;
+          this.barangay = null;
+          this.$v.city.$reset();
+          this.$v.barangay.$reset();
+          console.log(this.cities);
+        });
+      },
+      getBarangays(city_id) {
+        Axios.get('/api/barangays/'+city_id).then((response) => {
+          this.barangays = response.data.barangays;
+          console.log(this.barangays);
+        });
+      },
+      showAlert() {
+        // Use sweetalert2
+        
+        // this.$swal({
+        //     title: "Delete this order status?",
+        //     text: "Are you sure? You won't be able to revert this!",
+        //     type: "warning",
+        //     showCancelButton: true,
+        //     confirmButtonColor: "#3085d6",
+        //     confirmButtonText: "Yes, Delete it!"
+        // }).then((result) => { // <--
+        //     if (result.value) { // <-- if confirmed
+        //         this.$swal({
+        //           position: 'center',
+        //           icon: 'success',
+        //           title: 'Record has been deleted',
+        //           showConfirmButton: false,
+        //           timer: 2500
+        //         });
+        //     }
+        // });
+
+        this.$swal({
+          position: 'center',
+          icon: 'success',
+          title: 'Record has successfully added',
+          showConfirmButton: false,
+          timer: 2500
+        });
+      },
     },
-  },
-  mounted () {
-    this.getProvinces();
-  }
-};
+    mounted () {
+      this.getProvinces();
+    }
+  };
 </script>

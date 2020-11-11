@@ -168,225 +168,225 @@
   </div>
 </template>
 <script>
-import Axios from "axios";
-import { validationMixin } from "vuelidate";
-import { required, maxLength, email } from "vuelidate/lib/validators";
 
-export default {
-  mixins: [validationMixin],
+  const access_token = localStorage.getItem('access_token');
 
-  validations: {
-    editedItem: {
-      serviceid: { required },
-      procedure: { required },
-      price: { required },
-    },
-  },
-  data() {
-    return {
-      search: "",
-      headers: [
-        { text: "Service", value: "service" },
-        { text: "Procedure", value: "procedure" },
-        { text: "Price", value: "price" },
-        { text: "Actions", value: "actions", sortable: false },
-      ],
-      disabled: false,
-      dialog: false,
-      services: [],
-      procedures: [],
-      editedIndex: -1,
+  import Axios from "axios";
+  import { validationMixin } from "vuelidate";
+  import { required, maxLength, email } from "vuelidate/lib/validators";
+
+  export default {
+    mixins: [validationMixin],
+
+    validations: {
       editedItem: {
-        serviceid: "",
-        service: "",
-        procedure: "",
-        price: "",
+        serviceid: { required },
+        procedure: { required },
+        price: { required },
       },
-      defaultItem: {
-        serviceid: "",
-        service: "",
-        procedure: "",
-        price: "",
+    },
+    data() {
+      return {
+        search: "",
+        headers: [
+          { text: "Service", value: "service" },
+          { text: "Procedure", value: "procedure" },
+          { text: "Price", value: "price" },
+          { text: "Actions", value: "actions", sortable: false },
+        ],
+        disabled: false,
+        dialog: false,
+        services: [],
+        procedures: [],
+        editedIndex: -1,
+        editedItem: {
+          serviceid: "",
+          service: "",
+          procedure: "",
+          price: "",
+        },
+        defaultItem: {
+          serviceid: "",
+          service: "",
+          procedure: "",
+          price: "",
+        },
+        items: [
+          {
+            text: "Home",
+            disabled: false,
+            link: "/dashboard",
+          },
+          {
+            text: "Service Procedures Record",
+            disabled: true,
+          },
+        ],
+      };
+    },
+
+    methods: {
+      getServiceProcedures() {
+
+        Axios.get("/api/procedure/index", {
+              headers: {
+                'Authorization': 'Bearer '+access_token,
+              }
+            }).then((response) => {
+          this.procedures = response.data.procedures;
+        });
+
       },
-      items: [
-        {
-          text: "Home",
-          disabled: false,
-          link: "/dashboard",
-        },
-        {
-          text: "Service Procedures Record",
-          disabled: true,
-        },
-      ],
-    };
-  },
 
-  methods: {
-    getServiceProcedures() {
+      getService() {
 
-      const access_token = localStorage.getItem('access_token');
+        Axios.get("/api/service/index", {
+              headers: {
+                'Authorization': 'Bearer '+access_token,
+              }
+            }).then((response) => {
+          this.services = response.data.services;
+        });
 
-      Axios.get("/api/procedure/index", {
-            headers: {
-              'Authorization': 'Bearer '+access_token,
-            }
-          }).then((response) => {
-        this.procedures = response.data.procedures;
-      });
-    },
+      },
 
-    getService() {
-      
-      const access_token = localStorage.getItem('access_token');
+      editProcedure(item) {
+        
+        this.editedIndex = this.procedures.indexOf(item);
+        this.editedItem = Object.assign({}, item);
+        this.dialog = true;
+      },
 
-      Axios.get("/api/service/index", {
-            headers: {
-              'Authorization': 'Bearer '+access_token,
-            }
-          }).then((response) => {
-        this.services = response.data.services;
-      });
-    },
+      deleteProcedure(procedureid) {
+        const data = { procedureid: procedureid };
 
-    editProcedure(item) {
-      
-      this.editedIndex = this.procedures.indexOf(item);
-      this.editedItem = Object.assign({}, item);
-      this.dialog = true;
-    },
-
-    deleteProcedure(procedureid) {
-      const data = { procedureid: procedureid };
-      const access_token = localStorage.getItem('access_token');
-
-      Axios.post("/api/procedure/delete", data, {
-            headers: {
-              'Authorization': 'Bearer '+access_token,
-            }
-          }).then(
-        (response) => {
-          console.log(response.data);
-        },
-        (error) => {
-          console.log(error);
-        }
-      );
-    },
-
-    createTemplate(item) {
-      this.$router.push({name: 'template.create', params: {procedureid: item.id}})
-    },
-
-    showAlert() {
-      this.$swal({
-        position: "center",
-        icon: "success",
-        title: "Record has been saved",
-        showConfirmButton: false,
-        timer: 2500,
-      });
-    },
-
-    showConfirmAlert(item) {
-      this.$swal({
-        title: "Are you sure?",
-        text: "You won't be able to revert this!",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#d33",
-        cancelButtonColor: "#6c757d",
-        confirmButtonText: "Delete record!",
-      }).then((result) => {
-        // <--
-
-        if (result.value) {
-          // <-- if confirmed
-
-          const procedureid = item.id;
-          const index = this.services.indexOf(item);
-
-          //Call delete Patient function
-          this.deleteProcedure(procedureid);
-
-          //Remove item from array services
-          this.procedures.splice(index, 1);
-
-          this.$swal({
-            position: "center",
-            icon: "success",
-            title: "Record has been deleted",
-            showConfirmButton: false,
-            timer: 2500,
-          });
-        }
-      });
-    },
-    close() {
-      this.dialog = false;
-    },
-    save() {
-
-      this.$v.$touch();
-
-      if (!this.$v.$error && this.editedItem.price) {
-        this.disabled = true;
-
-        Object.assign(this.procedures[this.editedIndex], this.editedItem);
-
-        const data = this.editedItem;
-        const procedureid = this.editedItem.id;
-        const access_token = localStorage.getItem('access_token');
-
-        Axios.post("/api/procedure/update/" + procedureid, data, {
-            headers: {
-              'Authorization': 'Bearer '+access_token,
-            }
-          }).then( (response) => {
-
+        Axios.post("/api/procedure/delete", data, {
+              headers: {
+                'Authorization': 'Bearer '+access_token,
+              }
+            }).then(
+          (response) => {
             console.log(response.data);
-
-            if (response.data.success) {
-              this.showAlert();
-              this.close();
-            }
-
-            this.disabled = false;
           },
           (error) => {
             console.log(error);
           }
         );
-      }
-      
+
+      },
+
+      createTemplate(item) {
+        this.$router.push({name: 'template.create', params: {procedureid: item.id}})
+      },
+
+      showAlert() {
+        this.$swal({
+          position: "center",
+          icon: "success",
+          title: "Record has been saved",
+          showConfirmButton: false,
+          timer: 2500,
+        });
+      },
+
+      showConfirmAlert(item) {
+        this.$swal({
+          title: "Are you sure?",
+          text: "You won't be able to revert this!",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#d33",
+          cancelButtonColor: "#6c757d",
+          confirmButtonText: "Delete record!",
+        }).then((result) => {
+          // <--
+
+          if (result.value) {
+            // <-- if confirmed
+
+            const procedureid = item.id;
+            const index = this.services.indexOf(item);
+
+            //Call delete Patient function
+            this.deleteProcedure(procedureid);
+
+            //Remove item from array services
+            this.procedures.splice(index, 1);
+
+            this.$swal({
+              position: "center",
+              icon: "success",
+              title: "Record has been deleted",
+              showConfirmButton: false,
+              timer: 2500,
+            });
+          }
+        });
+      },
+      close() {
+        this.dialog = false;
+      },
+      save() {
+
+        this.$v.$touch();
+
+        if (!this.$v.$error && this.editedItem.price) {
+          this.disabled = true;
+
+          Object.assign(this.procedures[this.editedIndex], this.editedItem);
+
+          const data = this.editedItem;
+          const procedureid = this.editedItem.id;
+
+          Axios.post("/api/procedure/update/" + procedureid, data, {
+              headers: {
+                'Authorization': 'Bearer '+access_token,
+              }
+            }).then( (response) => {
+
+              console.log(response.data);
+
+              if (response.data.success) {
+                this.showAlert();
+                this.close();
+              }
+
+              this.disabled = false;
+            },
+            (error) => {
+              console.log(error);
+            }
+          );
+        }
+        
+      },
     },
-  },
-  computed: {
-    serviceErrors() {
-      const errors = [];
-      if (!this.$v.editedItem.serviceid.$dirty) return errors;
-      !this.$v.editedItem.serviceid.required &&
-        errors.push("Service is required.");
-      return errors;
+    computed: {
+      serviceErrors() {
+        const errors = [];
+        if (!this.$v.editedItem.serviceid.$dirty) return errors;
+        !this.$v.editedItem.serviceid.required &&
+          errors.push("Service is required.");
+        return errors;
+      },
+      procedureErrors() {
+        const errors = [];
+        if (!this.$v.editedItem.procedure.$dirty) return errors;
+        !this.$v.editedItem.procedure.required &&
+          errors.push("Procedure is required.");
+        return errors;
+      },
+      priceErrors() {
+        const errors = [];
+        if (!this.$v.editedItem.price.$dirty) return errors;
+        !this.$v.editedItem.price.required &&
+          errors.push("Price is required.");
+        return errors;
+      },
     },
-    procedureErrors() {
-      const errors = [];
-      if (!this.$v.editedItem.procedure.$dirty) return errors;
-      !this.$v.editedItem.procedure.required &&
-        errors.push("Procedure is required.");
-      return errors;
+    mounted() {
+      this.getServiceProcedures();
+      this.getService();
     },
-    priceErrors() {
-      const errors = [];
-      if (!this.$v.editedItem.price.$dirty) return errors;
-      !this.$v.editedItem.price.required &&
-        errors.push("Price is required.");
-      return errors;
-    },
-  },
-  mounted() {
-    this.getServiceProcedures();
-    this.getService();
-  },
-};
+  };
 </script>

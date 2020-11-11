@@ -128,153 +128,155 @@
 </template>
 
 <script>
-import Axios from 'axios';
-import { validationMixin } from "vuelidate";
-import { required, maxLength, email, minLength, sameAs } from "vuelidate/lib/validators";
 
-export default {
-  mixins: [validationMixin],
+  const access_token = localStorage.getItem('access_token');
 
-  validations: {
-    name: { required },
-    username: { required },
-    password: { required, minLength: minLength(8) },
-    confirm_password: { required, sameAsPassword: sameAs('password') },
-    email: { email },    
-  },
+  import Axios from 'axios';
+  import { validationMixin } from "vuelidate";
+  import { required, maxLength, email, minLength, sameAs } from "vuelidate/lib/validators";
 
-  data: () => ({
-    name: "",
-    description: "",
-    license: "",
-    email: "",
-    username: "",
-    password: "",
-    confirm_password: "",
-    role: "",
-    roles: ['Role 1', 'Role 2', 'Role 3', 'Role 4'],
-    disabled: false,
-    items: [
-        { 
-          text: 'Home', 
-          disabled: false, 
-          link: '/dashboard',
-        },
-        { 
-          text: 'Create User', 
-          disabled: true, 
-        }
-      ]
-  }),
+  export default {
+    mixins: [validationMixin],
 
-  computed: {
-    nameErrors() {
-      const errors = [];
-      if (!this.$v.name.$dirty) return errors;
-      !this.$v.name.required && errors.push("Full Name is required.");
-      return errors;
-    },
-    
-     usernameErrors() {
-      const errors = [];
-      if (!this.$v.username.$dirty) return errors;
-      !this.$v.username.required && errors.push("Username is required.");
-      return errors;
+    validations: {
+      name: { required },
+      username: { required },
+      password: { required, minLength: minLength(8) },
+      confirm_password: { required, sameAsPassword: sameAs('password') },
+      email: { email },    
     },
 
-    passwordErrors() {
-      const errors = [];
-      if (!this.$v.password.$dirty) return errors;
-      !this.$v.password.required && errors.push("Password is required.");
-      !this.$v.password.minLength && errors.push("Password must be atleast 8 characters.");
-      return errors;
-    },
+    data: () => ({
+      name: "",
+      description: "",
+      license: "",
+      email: "",
+      username: "",
+      password: "",
+      confirm_password: "",
+      role: "",
+      roles: ['Role 1', 'Role 2', 'Role 3', 'Role 4'],
+      disabled: false,
+      items: [
+          { 
+            text: 'Home', 
+            disabled: false, 
+            link: '/dashboard',
+          },
+          { 
+            text: 'Create User', 
+            disabled: true, 
+          }
+        ]
+    }),
 
-    confirm_passwordErrors() {
-      const errors = [];
-      if (!this.$v.confirm_password.$dirty) return errors;
-      !this.$v.confirm_password.required && errors.push("Password Confirmation is required.");
-      !this.$v.confirm_password.sameAsPassword && errors.push("Passwords did not match");
-      return errors;
-    },
-    
-    emailErrors() {
-      const errors = [];
-      if (!this.$v.email.$dirty) return errors;
-      !this.$v.email.email && errors.push("Must be valid e-mail");
-      return errors;
-    },
-  },
-  methods: {
-    createUser() {
+    computed: {
+      nameErrors() {
+        const errors = [];
+        if (!this.$v.name.$dirty) return errors;
+        !this.$v.name.required && errors.push("Full Name is required.");
+        return errors;
+      },
       
-      this.$v.$touch();
+      usernameErrors() {
+        const errors = [];
+        if (!this.$v.username.$dirty) return errors;
+        !this.$v.username.required && errors.push("Username is required.");
+        return errors;
+      },
 
-      if(!this.$v.$error)
-      {
+      passwordErrors() {
+        const errors = [];
+        if (!this.$v.password.$dirty) return errors;
+        !this.$v.password.required && errors.push("Password is required.");
+        !this.$v.password.minLength && errors.push("Password must be atleast 8 characters.");
+        return errors;
+      },
+
+      confirm_passwordErrors() {
+        const errors = [];
+        if (!this.$v.confirm_password.$dirty) return errors;
+        !this.$v.confirm_password.required && errors.push("Password Confirmation is required.");
+        !this.$v.confirm_password.sameAsPassword && errors.push("Passwords did not match");
+        return errors;
+      },
+      
+      emailErrors() {
+        const errors = [];
+        if (!this.$v.email.$dirty) return errors;
+        !this.$v.email.email && errors.push("Must be valid e-mail");
+        return errors;
+      },
+    },
+    methods: {
+      createUser() {
         
-        this.disabled = true;
+        this.$v.$touch();
 
-        let myForm = document.getElementById('userform');
-        let formData = new FormData(myForm);
-        const data = {};
-        const access_token = localStorage.getItem('access_token');
-
-        for(let [key, val] of formData.entries())
+        if(!this.$v.$error)
         {
-          Object.assign(data ,{[key]: val});
-        }
+          
+          this.disabled = true;
 
+          let myForm = document.getElementById('userform');
+          let formData = new FormData(myForm);
+          const data = {};
 
-        Axios.post('/api/user/store', data, {
-            headers: {
-              'Authorization': 'Bearer '+access_token,
-            }
-          }).then((response) => {
-          console.log(response.data);
-
-          if(response.data.success)
+          for(let [key, val] of formData.entries())
           {
-            this.clear();
-            this.showAlert(); 
+            Object.assign(data ,{[key]: val});
           }
 
-          this.disabled = false;
 
-        }, (error) => {
-          console.log(error);
-        });
+          Axios.post('/api/user/store', data, {
+              headers: {
+                'Authorization': 'Bearer '+access_token,
+              }
+            }).then((response) => {
+            console.log(response.data);
+
+            if(response.data.success)
+            {
+              this.clear();
+              this.showAlert(); 
+            }
+
+            this.disabled = false;
+
+          }, (error) => {
+            console.log(error);
+          });
 
 
-      }
+        }
+        
+      },
+      clear() {
+        this.$v.$reset();
+        this.name = "";
+        this.description=  "";
+        this.license = "";
+        this.email = "";
+        this.username = "";
+        this.password = "";
+        this.confirm_password = "";
+        this.role = "";
+        this.roles = ['Role 1', 'Role 2', 'Role 3', 'Role 4'];
+      },
       
-    },
-    clear() {
-      this.$v.$reset();
-      this.name = "";
-      this.description=  "";
-      this.license = "";
-      this.email = "";
-      this.username = "";
-      this.password = "";
-      this.confirm_password = "";
-      this.role = "";
-      this.roles = ['Role 1', 'Role 2', 'Role 3', 'Role 4'];
-    },
-    
-    showAlert() {
+      showAlert() {
 
-      this.$swal({
-        position: 'center',
-        icon: 'success',
-        title: 'Record has successfully added',
-        showConfirmButton: false,
-        timer: 2500
-      });
+        this.$swal({
+          position: 'center',
+          icon: 'success',
+          title: 'Record has successfully added',
+          showConfirmButton: false,
+          timer: 2500
+        });
+      },
     },
-  },
-  // mounted () {
-  //   this.getProvinces();
-  // }
-};
+    // mounted () {
+    //   this.getProvinces();
+    // }
+  };
 </script>
