@@ -89,6 +89,7 @@
                                 class="mt-2"
                                 v-model="price"
                                 v-bind:properties="{
+                                  name: 'price',
                                   prefix: '₱',
                                   placeholder: '0.00',
                                 }"

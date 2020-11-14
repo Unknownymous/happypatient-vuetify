@@ -154,7 +154,7 @@ class PatientServiceController extends Controller
         }
 
         //PUSHER - send data/message if patient services is created
-        event(new EventNotification('create-patient-services', 'patient_services'));
+        // event(new EventNotification('create-patient-services', 'patient_services'));
 
         //Activity Log
         $activity_log = new ActivityLog();
@@ -162,7 +162,7 @@ class PatientServiceController extends Controller
         $activity_log->table_name = 'patient_services';
         $activity_log->description = 'Create Patient Services';
         $activity_log->action = 'create';
-        $activity_log->userid = auth()->user()->id;
+        // $activity_log->userid = auth()->user()->id;
         $activity_log->save();
 
         return response()->json(['success' => 'Record has successfully added'], 200);

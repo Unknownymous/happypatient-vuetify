@@ -164,10 +164,22 @@
                         <thead>
                           <tr>
                             <th class="text-left">
-                              Procedure
+                              Services
+                            </th>
+                            <th class="text-left">
+                              Procedures
                             </th>
                             <th class="text-left" width="150px">
                               Price (PHP)
+                            </th>
+                            <th class="text-left" width="150px">
+                              Discount (%)
+                            </th>
+                            <th class="text-left" width="150px">
+                              Discount (PHP)
+                            </th>
+                            <th class="text-left" width="150px">
+                              Total Amount (PHP)
                             </th>
                             <th width="100px">
                               
@@ -180,15 +192,37 @@
                             :key="item.id"
                           >
                             <td>
-                              <v-text-field
-                                v-model="procedure"
-                                class="mt-5"
-                                id="procedure"
-                                dense
-                                required
-                                v-if="service_procedures.indexOf(item) == (service_procedures.length - 1) && !item.procedure"
-                              ></v-text-field>   
+                              <v-autocomplete
+                                name="service"
+                                v-model="service"
+                                :items="services"
+                                item-text="service"
+                                item-value="id"     
+                                label="Service"
+                                v-on:change="serviceOnChange()"
+                                v-if="service_procedures.indexOf(item) == (service_procedures.length - 1) && !item.service"
+                              >
+                              </v-autocomplete>   
 
+                              {{ item.service }}
+
+                              {{ getIndex(service_procedures.indexOf(item)) }}
+
+                            </td>
+                            <td>
+                              <v-autocomplete
+                                name="procedure"
+                                v-model="procedure"
+                                :items="procedure_per_service"
+                                item-text="procedure"
+                                item-value="id"     
+                                label="Procedure"
+                                :disabled="procedureDisabled"
+                                v-on:change="procedureOnChange()"
+                                v-if="service_procedures.indexOf(item) == (service_procedures.length - 1) && !item.procedure"
+                              >
+                              </v-autocomplete>   
+  
                               {{ item.procedure }}
 
                               {{ getIndex(service_procedures.indexOf(item)) }}
@@ -199,17 +233,18 @@
                                 class="mt-2"
                                 v-model="price"
                                 v-bind:properties="{
+                                  name: 'price',
                                   prefix: '₱',
                                   placeholder: '0.00',
+                                  disabled: priceDisabled,
                                 }"
                                 v-bind:options="{
                                   length: 11,
                                   precision: 2,
                                   empty: null,
                                 }"
-                                dense
-                                required
-                                v-if="procedures.indexOf(item) == (procedures.length - 1) && !item.price"
+                                :disabled="priceDisabled"
+                                v-if="service_procedures.indexOf(item) == (service_procedures.length - 1) && !item.price"
                               >
                               </v-text-field-money>
 
@@ -218,6 +253,88 @@
                               </strong> 
 
                               {{ item.price }}
+
+                            </td>
+                            <td>
+                              <v-text-field-money
+                                class="mt-2"
+                                v-model="discount"
+                                v-bind:properties="{
+                                  name: 'discount',
+                                  suffix: '%',
+                                  placeholder: '0.00',
+                                  disabled: discountDisabled,
+                                }"
+                                v-bind:options="{
+                                  length: 4,
+                                  precision: 2,
+                                  empty: null,
+                                }"
+                                :disabled="discountDisabled"
+                                v-if="service_procedures.indexOf(item) == (service_procedures.length - 1) && !item.discount"
+                              >
+                              </v-text-field-money> 
+
+                              {{ item.discount }}
+
+                              <strong v-if="item.discount">
+                                %
+                              </strong>
+
+                            </td>
+                            <td>
+                              <v-text-field-money
+                                class="mt-2"
+                                v-model="discount_amt"
+                                v-bind:properties="{
+                                  name: 'discount_amt',
+                                  prefix: '₱',
+                                  placeholder: '0.00',
+                                  disabled: discount_amtDisabled
+                                }"
+                                v-bind:options="{
+                                  length: 11,
+                                  precision: 2,
+                                  empty: null,
+                                }"
+                                v-if="service_procedures.indexOf(item) == (service_procedures.length - 1) && !item.discount_amt"
+                              >
+                              </v-text-field-money>
+
+                              <strong v-if="item.discount_amt">
+                                ₱
+                              </strong> 
+
+                              {{ item.discount_amt }}
+
+                            </td>
+                            <td>
+                              <v-text-field-money
+                                class="mt-2"
+                                v-model="total_amount"
+                                v-bind:properties="{
+                                  name: 'total_amount',
+                                  prefix: '₱',
+                                  placeholder: '0.00',
+                                  readonly: true,
+                                  disabled: total_amtDisabled,
+                                  
+                                }"
+                                v-bind:options="{
+                                  length: 11,
+                                  precision: 2,
+                                  empty: null,
+                                  
+                                }"
+                                v-if="service_procedures.indexOf(item) == (service_procedures.length - 1) && !item.total_amount"
+                              >
+                              </v-text-field-money>
+
+                              <strong v-if="item.total_amount">
+                                ₱
+                              </strong> 
+
+                              {{ item.total_amount }}
 
                             </td>
                             <td>
@@ -238,7 +355,7 @@
                         </tbody>
                         <tfoot>
                           <tr>
-                            <td colspan="1"></td>
+                            <td colspan="5"></td>
                             <td>
                               <td>
                                 <v-btn
@@ -259,7 +376,7 @@
                       </template>
                     </v-simple-table>
                   </v-card>
-                  <span class="v-messages error--text" v-if="procedureHasError || priceHasError">Procedure and Price are required</span>
+                  <span class="v-messages error--text" v-if="serviceHasError || procedureHasError || priceHasError">Service, Procedure and Price are required</span>
                 </v-col>
               </v-row>
               <v-btn class="mr-4 mt-5" color="primary" @click="createPatientService" :disabled="disabled"> add </v-btn>
@@ -300,14 +417,21 @@
       dateFormatted: vm.formatDate(new Date().toISOString().substr(0, 10)),
       input: false,
       LastIndexIsRemoved: false,
+      serviceHasError: false,
       procedureHasError: false,
       priceHasError: false,
       disabled: false,
+      procedureDisabled: true,
+      priceDisabled: true,
+      discountDisabled: true,
+      discount_amtDisabled: true,
+      total_amtDisabled: true,
       patients: [],
       service: "",
       services: [],
       procedure: "",
       procedures: [],
+      procedure_per_service: [],
       service_procedures: [],
       price: "",
       prices: [],
@@ -315,6 +439,8 @@
       discounts: [],
       discount_amt: "",
       discount_amts: [],
+      total_amount: "",
+      total_amounts: [],
       index: "",
       ctr: 0,
       items: [
@@ -390,13 +516,14 @@
         }
 
         if(this.service_procedures.length == 0)
-        {
+        { 
+          this.serviceHasError = true;
           this.procedureHasError = true;
           this.priceHasError = true;
         }
         
       
-        if(!this.$v.$error && !this.procedureHasError && !this.priceHasError)
+        if(!this.$v.$error && !this.serviceHasError && !this.procedureHasError && !this.priceHasError)
         {
           const procedure_data = { procedure: this.procedure, price: this.price };
 
@@ -470,6 +597,9 @@
                 'Authorization': 'Bearer '+access_token,
               }
             }).then((response) => {
+          
+          console.log(response.data);
+
           this.services = response.data.services;
         });
       },
@@ -481,7 +611,8 @@
                 'Authorization': 'Bearer '+access_token,
               }
             }).then((response) => {
-          this.procedures = response.data.services;
+
+          this.procedures = response.data.procedures;
         });
       },
 
@@ -494,25 +625,51 @@
         if(this.service_procedures.length == 0)
         {
 
-          this.service_procedures.push({ procedure: this.procedure, price: this.price });
+          this.service_procedures.push({ 
+            service: this.service, 
+            procedure: this.procedure, 
+            price: this.price, 
+            discount: this.discount,
+            discount_amt: this.discount_amt,
+            total_amount: this.total_amount,
+          });
+
+          this.serviceHasError = false;
           this.procedureHasError = false;
           this.priceHasError = false;
 
         }
         else
         { 
-          
+
+          if(!this.discount)
+          {
+            this.discount = 0.00;
+          }
+
+          if(!this.discount_amt)
+          {
+            this.discount_amt = 0.00;
+          }
           //if last index was removed then don't validate fields
           if(!this.LastIndexIsRemoved)
-          {
+          { 
+            this.serviceValidate();
             this.procedureValidate();
             this.priceValidate();
           }
           
-          if(this.procedureHasError == false && this.priceHasError == false)
+          if(!this.serviceHasError && !this.procedureHasError && !this.priceHasError)
           {
             
-            const data = { procedure: this.procedure, price: this.price };
+            const data = { 
+              service: this.service, 
+              procedure: this.procedure, 
+              price: this.price, 
+              discount: this.discount,
+              discount_amt: this.discount_amt,
+              total_amount: this.total_amount,
+            };
 
             //if last index was removed and procedures has only 1 row data, don't assign data on procedures
             if(!this.LastIndexIsRemoved)
@@ -524,15 +681,21 @@
               Object.assign(this.service_procedures[this.index], data);
             }
 
-            this.procedure = "";
-            this.price = "";
-            this.LastIndexIsRemoved = false;
+            this.reset();  
 
-            this.procedures.push({ procedure: this.procedure, price: this.price });
+            this.service_procedures.push({ 
+              service: this.service, 
+              procedure: this.procedure, 
+              price: this.price, 
+              discount: this.discount,
+              discount_amt: this.discount_amt,
+              total_amount: this.total_amount,
+            });
 
           }
           
         }
+        console.log(this.service_procedures);
       },
 
       removeRow(item) {
@@ -545,15 +708,74 @@
 
         if(index == last_index)
         { 
+          this.serviceHasError = false;
           this.procedureHasError = false;
           this.priceHasError = false;
 
-          this.procedure = "";
-          this.price = "";
+          this.reset();
           
           this.LastIndexIsRemoved = true;
         }
 
+      },
+
+      serviceOnChange() {
+        
+        this.procedureDisabled = false;
+        this.priceDisabled = true;
+        this.discountDisabled = true;
+        this.discount_amtDisabled = true;
+        this.total_amtDisabled = true;
+        this.price = "";
+        this.procedure = "";
+        this.discount = "";
+        this.discount_amt = "";
+        this.procedure_per_service = [];
+        const data = {};
+
+        for(let [key, val] of this.procedures.entries())
+        { 
+          if(this.service == val.serviceid)
+          {
+            this.procedure_per_service.push({id: val.id, procedure: val.procedure, price: val.price});
+          }
+        }      
+        console.log(this.procedure_per_service);
+      },
+
+      procedureOnChange() {
+
+        this.priceDisabled = false;
+        this.discountDisabled = false;
+        this.discount_amtDisabled = false;
+        this.total_amtDisabled = false;
+        this.discount = "";
+        this.discount_amt = "";
+
+        for(let [key, val] of this.procedures.entries())
+        { 
+          if(this.procedure == val.id)
+          {
+            this.price = val.price;
+            this.total_amount = val.price;
+          }
+        }
+      
+      },
+
+      serviceValidate() {
+        
+        // const procedure = document.getElementById("procedure").value;
+
+        if(this.procedure)
+        {
+          this.serviceHasError = false;
+        }
+        else
+        {
+          this.serviceHasError = true;
+        }
+      
       },
 
       procedureValidate() {
@@ -588,17 +810,40 @@
       clear() {
         this.$v.$reset();
         this.LastIndexIsRemoved = false;
-        this.procedureHasError = false;
-        this.priceHasError = false;
         this.disabled = false;
-        this.procedure = "";
-        this.price = "";
-        this.service = "";
+        this.patientservicesData.type = "individual";
+        this.patientservicesData.patient = "";
+        this.patientservicesData.organization = "";
+        this.patientservicesData.or_number = "";
+        this.patientservicesData.bloodpressure = "";
+        this.patientservicesData.temperature = "";
+        this.patientservicesData.weight = "";
         this.services = [];
         this.procedures = [];
         this.service_procedures = [];
         this.index = "";
+        this.reset();
       },
+
+      reset() {
+        this.serviceHasError = false;
+        this.procedureHasError = false;
+        this.priceHasError = false;
+        this.procedureDisabled = true;
+        this.priceDisabled = true;
+        this.discountDisabled = true;
+        this.discount_amtDisabled = true;
+        this.total_amtDisabled = true;
+        this.procedure_per_service = [];
+        this.procedure = "";
+        this.service = "";
+        this.price = "";
+        this.discount = "";
+        this.discount_amt = "";
+        this.total_amount = "";
+        this.LastIndexIsRemoved = false;
+      },
+
       formatDate (date) {
           if (!date) return null
 
@@ -614,8 +859,11 @@
     },
     
     mounted () {
-      this.getService();
+      
       this.getPatient();
+      this.getService();
+      this.getProcedure();
+
     }
   };
 </script>

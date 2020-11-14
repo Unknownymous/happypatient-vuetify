@@ -38,7 +38,7 @@ class ServiceController extends Controller
 
         if($validator->fails())
         {
-            return response()->json($validator->errors(), 401);
+            return response()->json($validator->errors(), 200);
         }
 
         $service = new Service();
@@ -89,7 +89,7 @@ class ServiceController extends Controller
 
         if($validator->fails())
         {
-            return response()->json($validator->errors(), 401);
+            return response()->json($validator->errors(), 200);
         }
 
         $service = Service::find($serviceid);

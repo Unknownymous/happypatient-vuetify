@@ -96,7 +96,7 @@
 <script>
 
   const access_token = localStorage.getItem('access_token');
-
+  
   import Axios from 'axios';
   export default {
     data () {
@@ -151,7 +151,7 @@
     methods: {  
       logout() {
 
-        Axios.get('/api/auth/logout',{
+        Axios.get('/api/auth/logout', {
             headers: {
               'Authorization': 'Bearer '+access_token,
             }
