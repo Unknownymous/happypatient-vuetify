@@ -129,21 +129,20 @@
                         </tbody>
                         <tfoot>
                           <tr>
-                            <td colspan="1"></td>
+                            <td colspan="2"></td>
                             <td>
-                              <td>
-                                <v-btn
-                                  class="mx-2 mb-5 mt-5"
-                                  fab
-                                  dark
-                                  small
-                                  color="primary"
-                                  @click="addRow"
-                                >
-                                  <v-icon dark>
-                                    mdi-plus
-                                  </v-icon>
-                                </v-btn>
+                              <v-btn
+                                class="mx-2 mb-5 mt-5"
+                                fab
+                                dark
+                                small
+                                color="primary"
+                                @click="addRow"
+                              >
+                                <v-icon dark>
+                                  mdi-plus
+                                </v-icon>
+                              </v-btn>
                             </td>
                           </tr>
                         </tfoot>

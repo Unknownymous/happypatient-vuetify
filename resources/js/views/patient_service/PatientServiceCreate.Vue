@@ -194,7 +194,7 @@
                             <td>
                               <v-autocomplete
                                 name="service"
-                                v-model="service"
+                                v-model="service_id"
                                 :items="services"
                                 item-text="service"
                                 item-value="id"     
@@ -212,7 +212,7 @@
                             <td>
                               <v-autocomplete
                                 name="procedure"
-                                v-model="procedure"
+                                v-model="procedure_id"
                                 :items="procedure_per_service"
                                 item-text="procedure"
                                 item-value="id"     
@@ -237,6 +237,7 @@
                                   prefix: '₱',
                                   placeholder: '0.00',
                                   disabled: priceDisabled,
+                                  keyup:computeTotalAmount()
                                 }"
                                 v-bind:options="{
                                   length: 11,
@@ -264,6 +265,7 @@
                                   suffix: '%',
                                   placeholder: '0.00',
                                   disabled: discountDisabled,
+                                  keyup:computeTotalAmount()
                                 }"
                                 v-bind:options="{
                                   length: 4,
@@ -290,7 +292,8 @@
                                   name: 'discount_amt',
                                   prefix: '₱',
                                   placeholder: '0.00',
-                                  disabled: discount_amtDisabled
+                                  disabled: discount_amtDisabled,
+                                  keyup:computeTotalAmount()
                                 }"
                                 v-bind:options="{
                                   length: 11,
@@ -355,21 +358,23 @@
                         </tbody>
                         <tfoot>
                           <tr>
-                            <td colspan="5"></td>
+                            <td colspan="5">
+                              <strong><span class="pull-right">Grand Total :</span></strong>
+                            </td>
+                            <td><strong><span class="service-grand-total">₱ {{ grand_total }}</span></strong></td>
                             <td>
-                              <td>
-                                <v-btn
-                                  class="mx-2 mb-5 mt-5"
-                                  fab
-                                  dark
-                                  small
-                                  color="primary"
-                                  @click="addRow"
-                                >
-                                  <v-icon dark>
-                                    mdi-plus
-                                  </v-icon>
-                                </v-btn>
+                              <v-btn
+                                class="mx-2 mb-5 mt-5"
+                                fab
+                                dark
+                                small
+                                color="primary"
+                                @click="addRow"
+                              >
+                                <v-icon dark>
+                                   mdi-plus
+                                </v-icon>
+                              </v-btn>
                             </td>
                           </tr>
                         </tfoot>
@@ -427,8 +432,10 @@
       discount_amtDisabled: true,
       total_amtDisabled: true,
       patients: [],
+      service_id: "",
       service: "",
       services: [],
+      procedure_id: "",
       procedure: "",
       procedures: [],
       procedure_per_service: [],
@@ -463,6 +470,7 @@
         bloodpressure: "",
         temperature: "",
         weight: "",
+        grand_total: '0.00',
       }
     }),
 
@@ -493,6 +501,27 @@
         this.patientservicesData.docdate = this.formatDate(this.date);
         return this.patientservicesData.docdate
       },
+
+      grand_total() {
+        let grand_total = 0;
+        let total_amount = 0;
+        return this.service_procedures.reduce(function (sum, item) {
+          
+          if(item.total_amount)
+          {
+            total_amount = item.total_amount;
+          }
+          else
+          {
+            total_amount = 0;
+          }
+          alert(parseFloat(total_amount));
+          grand_total = parseFloat(grand_total) + parseFloat(total_amount);
+
+          return grand_total.toFixed(2);
+
+        }, 0)
+      }
       
     },
     watch: {
@@ -504,6 +533,16 @@
       createPatientService() {
         
         this.$v.$touch();
+
+        //if type is individual then reset validation for organization else reset validation for patient
+        if(this.patientservicesData.type == 'individual')
+        {
+          this.$v.patientservicesData.organization.$reset();
+        }
+        else
+        {
+          this.$v.patientservicesData.patient.$reset();
+        }
 
         if(!this.LastIndexIsRemoved)
         {
@@ -548,7 +587,6 @@
               }
             }).then((response) => {
 
-            console.log(response.data);
             
             if(response.data.success)
             {
@@ -597,8 +635,7 @@
                 'Authorization': 'Bearer '+access_token,
               }
             }).then((response) => {
-          
-          console.log(response.data);
+        
 
           this.services = response.data.services;
         });
@@ -626,7 +663,9 @@
         {
 
           this.service_procedures.push({ 
+            service_id: this.service_id, 
             service: this.service, 
+            procedure_id: this.procedure_id, 
             procedure: this.procedure, 
             price: this.price, 
             discount: this.discount,
@@ -644,12 +683,12 @@
 
           if(!this.discount)
           {
-            this.discount = 0.00;
+            this.discount = '0.00';
           }
 
           if(!this.discount_amt)
           {
-            this.discount_amt = 0.00;
+            this.discount_amt = '0.00';
           }
           //if last index was removed then don't validate fields
           if(!this.LastIndexIsRemoved)
@@ -663,12 +702,14 @@
           {
             
             const data = { 
+              service_id: this.service_id, 
               service: this.service, 
+              procedure_id: this.procedure_id, 
               procedure: this.procedure, 
               price: this.price, 
               discount: this.discount,
               discount_amt: this.discount_amt,
-              total_amount: this.total_amount,
+              total_amount: this.total_amount.toFixed(2),
             };
 
             //if last index was removed and procedures has only 1 row data, don't assign data on procedures
@@ -684,7 +725,9 @@
             this.reset();  
 
             this.service_procedures.push({ 
+              service_id: this.service_id, 
               service: this.service, 
+              procedure_id: this.procedure_id, 
               procedure: this.procedure, 
               price: this.price, 
               discount: this.discount,
@@ -695,7 +738,7 @@
           }
           
         }
-        console.log(this.service_procedures);
+
       },
 
       removeRow(item) {
@@ -727,20 +770,31 @@
         this.discount_amtDisabled = true;
         this.total_amtDisabled = true;
         this.price = "";
+        this.procedure_id = "";
         this.procedure = "";
         this.discount = "";
         this.discount_amt = "";
         this.procedure_per_service = [];
         const data = {};
 
+        //services
+        for(let [key, val] of this.services.entries())
+        { 
+          if(this.service_id == val.id)
+          {
+            this.service = val.service;
+          }
+        } 
+
+        //procedures
         for(let [key, val] of this.procedures.entries())
         { 
-          if(this.service == val.serviceid)
+          if(this.service_id == val.serviceid)
           {
             this.procedure_per_service.push({id: val.id, procedure: val.procedure, price: val.price});
           }
         }      
-        console.log(this.procedure_per_service);
+ 
       },
 
       procedureOnChange() {
@@ -754,8 +808,9 @@
 
         for(let [key, val] of this.procedures.entries())
         { 
-          if(this.procedure == val.id)
-          {
+          if(this.procedure_id == val.id)
+          { 
+            this.procedure = val.procedure;
             this.price = val.price;
             this.total_amount = val.price;
           }
@@ -767,7 +822,7 @@
         
         // const procedure = document.getElementById("procedure").value;
 
-        if(this.procedure)
+        if(this.procedure_id)
         {
           this.serviceHasError = false;
         }
@@ -782,7 +837,7 @@
         
         // const procedure = document.getElementById("procedure").value;
 
-        if(this.procedure)
+        if(this.procedure_id)
         {
           this.procedureHasError = false;
         }
@@ -807,6 +862,54 @@
         }
       }, 
 
+      computeTotalAmount() {
+
+        if(!this.price)
+        {
+          this.price = '0.00';
+        }
+
+        if(!this.discount)
+        {
+          this.discount = '0.00';
+        }
+
+        if(!this.discount_amt)
+        {
+          this.discount_amt = '0.00';
+        }
+
+        let discounted_price = parseFloat(this.price) * (parseFloat(this.discount) / 100);
+    
+        this.total_amount = parseFloat(this.price) - parseFloat(discounted_price) - parseFloat(this.discount_amt);
+
+        // this.patientservicesData.grand_total = 0;
+
+        // let grand_total = 0;
+        // let total_amount = 0;
+
+        // try {
+        //   for(let [key, val] of this.procedures.entries())
+        //   { 
+        //     if(val.total_amount)
+        //     {
+        //       total_amount = val.total_amount;
+        //     }
+        //     else
+        //     {
+        //       total_amount = 0;
+        //     }
+        //     grand_total = parseFloat(grand_total) + parseFloat(total_amount);
+        //   }
+
+        //   this.patientservicesData.grand_total = this.total_amount + grand_total;
+
+        // } catch (error) {
+        //   console.log(error)
+        // }
+
+      },
+
       clear() {
         this.$v.$reset();
         this.LastIndexIsRemoved = false;
@@ -818,6 +921,7 @@
         this.patientservicesData.bloodpressure = "";
         this.patientservicesData.temperature = "";
         this.patientservicesData.weight = "";
+        this.patientservicesData.grand_total = "0.00";
         this.services = [];
         this.procedures = [];
         this.service_procedures = [];
@@ -835,7 +939,9 @@
         this.discount_amtDisabled = true;
         this.total_amtDisabled = true;
         this.procedure_per_service = [];
+        this.procedure_id = "";
         this.procedure = "";
+        this.service_id = "";
         this.service = "";
         this.price = "";
         this.discount = "";
