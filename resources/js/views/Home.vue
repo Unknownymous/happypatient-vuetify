@@ -1,15 +1,8 @@
 <template>
   <v-app>
     <!-- Navbar -->
-    <v-app-bar
-      dense
-      dark
-      app
-    >
-      <v-btn
-          icon
-          @click.stop="mini = !mini"
-        >
+    <v-app-bar dense dark app>
+      <v-btn icon @click.stop="mini = !mini">
         <v-app-bar-nav-icon></v-app-bar-nav-icon>
       </v-btn>
 
@@ -19,27 +12,24 @@
         <v-icon>mdi-logout </v-icon>
         Logout
       </v-btn>
-      
-    </v-app-bar> 
-    
-    <!-- Sidebar -->
-    <v-navigation-drawer
-      v-model="drawer"
-      :mini-variant.sync="mini"
-      dark
-      app
-    >
-      <v-list-item>
-        <v-list-item-content>
-          <v-list-item-title class="title">
-            Happy Patient
-          </v-list-item-title>
-          <!-- <v-list-item-subtitle>
-            subtext
-          </v-list-item-subtitle> -->
-        </v-list-item-content>
-      </v-list-item>
+    </v-app-bar>
 
+    <!-- Sidebar -->
+    <v-navigation-drawer v-model="drawer" :mini-variant.sync="mini" dark app>
+      <v-list>
+        <v-list-item class="px-2">
+          <v-list-item-avatar class="rounded-0" height="60">
+            <v-img
+              src="/img/siteicon4.png"
+            ></v-img>
+          </v-list-item-avatar>
+          <v-list-item-content>
+            <v-list-item-title>Happy Patient</v-list-item-title>
+            <v-list-item-subtitle>Admin</v-list-item-subtitle>
+          </v-list-item-content>
+        </v-list-item>
+      </v-list>
+      
       <v-divider></v-divider>
 
       <v-list>
@@ -49,7 +39,7 @@
           </v-list-item-icon>
           <v-list-item-title>Dashboard</v-list-item-title>
         </v-list-item>
-        <v-list-item link :to="{ name: 'transactions' }" >
+        <v-list-item link :to="{ name: 'transactions' }">
           <v-list-item-icon>
             <v-icon>mdi-currency-usd</v-icon>
           </v-list-item-icon>
@@ -94,78 +84,74 @@
 </template>
 
 <script>
+const access_token = localStorage.getItem("access_token");
 
-  const access_token = localStorage.getItem('access_token');
-  
-  import Axios from 'axios';
-  export default {
-    data () {
-      return {
-        
-        drawer: true,
-        mini: false,
-        items: [
-          {
-            icon: 'mdi-account',
-            items: [
-              { title: 'Create New', link: '/patient/create' },
-              { title: 'Patients Record', link: '/patient/index' },
-            ],
-            title: 'Patient',
-          },
-          {
-            icon: 'mdi-stethoscope',
-            items: [
-              { title: 'Create Services', link: '/patient_service/create' },
-              { title: 'Services List', link: '/patient_service/index' },
-            ],
-            title: 'Services',
-          },
-          {
-            icon: 'mdi-account-arrow-right-outline',
-            items: [
-              { title: 'Create User', link: '/user/create'},
-              { title: 'Users Record', link: '/user/index'},
-            ],
-            title: 'Users',
-          },
-          {
-            icon: 'fa-cog',
-            items: [
-              { title: 'Services', link: '/service/index' },
-              { title: 'Service Procedures', link: '/procedure/index' },
-              { title: 'Permissions' },
-              { title: 'Roles' },
-            ],
-            title: 'Settings',
-          },
-        ],
-        right: null,
-        selectedItem: 1,
-        user: null,
-        loading: null,
-        initiated: false,
+import Axios from "axios";
+export default {
+  data() {
+    return {
+      drawer: true,
+      mini: false,
+      items: [
+        {
+          icon: "mdi-account",
+          items: [
+            { title: "Create New", link: "/patient/create" },
+            { title: "Patients Record", link: "/patient/index" },
+          ],
+          title: "Patient",
+        },
+        {
+          icon: "mdi-stethoscope",
+          items: [
+            { title: "Create Services", link: "/patient_service/create" },
+            { title: "Services List", link: "/patient_service/index" },
+          ],
+          title: "Services",
+        },
+        {
+          icon: "mdi-account-arrow-right-outline",
+          items: [
+            { title: "Create User", link: "/user/create" },
+            { title: "Users Record", link: "/user/index" },
+          ],
+          title: "Users",
+        },
+        {
+          icon: "fa-cog",
+          items: [
+            { title: "Services", link: "/service/index" },
+            { title: "Service Procedures", link: "/procedure/index" },
+            { title: "Permissions" },
+            { title: "Roles" },
+          ],
+          title: "Settings",
+        },
+      ],
+      right: null,
+      selectedItem: 1,
+      user: null,
+      loading: null,
+      initiated: false,
+    };
+  },
+  methods: {
+    logout() {
+      Axios.get("/api/auth/logout", {
+        headers: {
+          Authorization: "Bearer " + access_token,
+        },
+      }).then(
+        (response) => {
+          localStorage.removeItem("access_token");
 
-      }
-    },
-    methods: {  
-      logout() {
-
-        Axios.get('/api/auth/logout', {
-            headers: {
-              'Authorization': 'Bearer '+access_token,
-            }
-          }).then( (response) => {
-
-          localStorage.removeItem('access_token');
-
-          this.$router.push('/login').catch(()=>{});
-          
-        }, (error) => {
+          this.$router.push("/login").catch(() => {});
+        },
+        (error) => {
           console.log(error);
-        });
-      }
+        }
+      );
     },
-  }
-
+  },
+};
 </script>
