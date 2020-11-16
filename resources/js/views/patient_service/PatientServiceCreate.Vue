@@ -46,8 +46,8 @@
                     label="Patient"
                     required
                     :error-messages="patientErrors"
-                    @change="$v.service.$touch()"
-                    @blur="$v.service.$touch()"
+                    @change="$v.patientservicesData.patient.$touch()"
+                    @blur="$v.patientservicesData.patient.$touch()"
                     v-if="patientservicesData.type == 'individual'"
                   >
                     <template slot="selection" slot-scope="data">
@@ -64,8 +64,8 @@
                     :error-messages="organizationErrors"
                     label="Organization"
                     required
-                    @input="$v.organization.$touch()"
-                    @blur="$v.organization.$touch()"
+                    @input="$v.patientservicesData.organization.$touch()"
+                    @blur="$v.patientservicesData.organization.$touch()"
                     v-if="patientservicesData.type == 'group'"
                   ></v-text-field>
 
@@ -361,7 +361,7 @@
                             <td colspan="5">
                               <strong><span class="pull-right">Grand Total :</span></strong>
                             </td>
-                            <td><strong><span class="service-grand-total">₱ {{ grand_total }}</span></strong></td>
+                            <td><strong><span class="service-grand-total">₱ {{ patientservicesData.grand_total = computedGrandTotal }}</span></strong></td>
                             <td>
                               <v-btn
                                 class="mx-2 mb-5 mt-5"
@@ -410,11 +410,6 @@
         patient: { required },   
         organization: { required },
       },
-      service: { required },
-      procedure: { required },    
-      price: { required },
-      discount: { required },
-      discount_amt: { required },
     },
 
     data: vm => ({
@@ -441,13 +436,9 @@
       procedure_per_service: [],
       service_procedures: [],
       price: "",
-      prices: [],
       discount: "",
-      discounts: [],
       discount_amt: "",
-      discount_amts: [],
       total_amount: "",
-      total_amounts: [],
       index: "",
       ctr: 0,
       items: [
@@ -476,13 +467,6 @@
 
     computed: {
 
-      serviceErrors() {
-        const errors = [];
-        if (!this.$v.service.$dirty) return errors;
-        !this.$v.service.required && errors.push("Service is required.");
-        return errors;
-      },
-
       patientErrors() {
         const errors = [];
         if (!this.$v.patientservicesData.patient.$dirty) return errors;
@@ -502,25 +486,27 @@
         return this.patientservicesData.docdate
       },
 
-      grand_total() {
-        let grand_total = 0;
-        let total_amount = 0;
+      computedGrandTotal() {
+        
+        let total_amount = this.total_amount;
+
+        if(!this.total_amount)
+        { 
+          total_amount = 0;
+        }
+
+        let grand_total = parseFloat(total_amount);
+        
         return this.service_procedures.reduce(function (sum, item) {
           
           if(item.total_amount)
           {
-            total_amount = item.total_amount;
+            grand_total = parseFloat(grand_total) + parseFloat(item.total_amount);
           }
-          else
-          {
-            total_amount = 0;
-          }
-          alert(parseFloat(total_amount));
-          grand_total = parseFloat(grand_total) + parseFloat(total_amount);
 
-          return grand_total.toFixed(2);
+          return parseFloat(grand_total).toFixed(2);
 
-        }, 0)
+        }, '0.00')
       }
       
     },
@@ -532,8 +518,8 @@
     methods: {
       createPatientService() {
         
-        this.$v.$touch();
-
+        this.$v.patientservicesData.$touch();
+        
         //if type is individual then reset validation for organization else reset validation for patient
         if(this.patientservicesData.type == 'individual')
         {
@@ -544,14 +530,18 @@
           this.$v.patientservicesData.patient.$reset();
         }
 
+        let nameHasError = false;
+
+        if(this.$v.patientservicesData.patient.$error || this.$v.patientservicesData.organization.$error) 
+        {
+           nameHasError = true;
+        }
+
         if(!this.LastIndexIsRemoved)
         {
+          this.serviceValidate();
           this.procedureValidate();
           this.priceValidate();
-        }
-        else
-        {
-          this.$v.$reset();
         }
 
         if(this.service_procedures.length == 0)
@@ -561,10 +551,18 @@
           this.priceHasError = true;
         }
         
-      
-        if(!this.$v.$error && !this.serviceHasError && !this.procedureHasError && !this.priceHasError)
+        if(!nameHasError && !this.serviceHasError && !this.procedureHasError && !this.priceHasError)
         {
-          const procedure_data = { procedure: this.procedure, price: this.price };
+          const procedure_data = { 
+              service_id: this.service_id, 
+              service: this.service, 
+              procedure_id: this.procedure_id, 
+              procedure: this.procedure, 
+              price: this.price, 
+              discount: this.discount,
+              discount_amt: this.discount_amt,
+              total_amount: parseFloat(this.total_amount).toFixed(2),
+          };
 
           //Assign data from last row textfield value of procedure and price; if last index was not removed
           if(!this.LastIndexIsRemoved)
@@ -586,7 +584,8 @@
                 'Authorization': 'Bearer '+access_token,
               }
             }).then((response) => {
-
+            
+            console.log(response.data);
             
             if(response.data.success)
             {
@@ -709,15 +708,11 @@
               price: this.price, 
               discount: this.discount,
               discount_amt: this.discount_amt,
-              total_amount: this.total_amount.toFixed(2),
+              total_amount: parseFloat(this.total_amount).toFixed(2),
             };
 
             //if last index was removed and procedures has only 1 row data, don't assign data on procedures
             if(!this.LastIndexIsRemoved)
-            {
-              Object.assign(this.service_procedures[this.index], data);
-            }
-            else if(this.service_procedures.length == 1)
             {
               Object.assign(this.service_procedures[this.index], data);
             }
@@ -748,7 +743,7 @@
 
         //Delete rows on the object service_procedures
         this.service_procedures.splice(index, 1);
-
+   
         if(index == last_index)
         { 
           this.serviceHasError = false;
@@ -757,7 +752,11 @@
 
           this.reset();
           
-          this.LastIndexIsRemoved = true;
+          // if table has records
+          if(this.service_procedures.length > 0)
+          {
+            this.LastIndexIsRemoved = true;
+          }
         }
 
       },
@@ -852,7 +851,7 @@
         
         // const price = document.getElementById("input-73").value;
 
-        if(this.price)
+        if(parseFloat(this.price) > 0)
         {
           this.priceHasError = false;
         }
@@ -883,31 +882,6 @@
     
         this.total_amount = parseFloat(this.price) - parseFloat(discounted_price) - parseFloat(this.discount_amt);
 
-        // this.patientservicesData.grand_total = 0;
-
-        // let grand_total = 0;
-        // let total_amount = 0;
-
-        // try {
-        //   for(let [key, val] of this.procedures.entries())
-        //   { 
-        //     if(val.total_amount)
-        //     {
-        //       total_amount = val.total_amount;
-        //     }
-        //     else
-        //     {
-        //       total_amount = 0;
-        //     }
-        //     grand_total = parseFloat(grand_total) + parseFloat(total_amount);
-        //   }
-
-        //   this.patientservicesData.grand_total = this.total_amount + grand_total;
-
-        // } catch (error) {
-        //   console.log(error)
-        // }
-
       },
 
       clear() {
@@ -922,8 +896,6 @@
         this.patientservicesData.temperature = "";
         this.patientservicesData.weight = "";
         this.patientservicesData.grand_total = "0.00";
-        this.services = [];
-        this.procedures = [];
         this.service_procedures = [];
         this.index = "";
         this.reset();

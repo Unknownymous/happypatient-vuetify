@@ -324,7 +324,7 @@
 
         if(this.procedures.length == 0)
         {
-
+          
           this.procedures.push({ procedure: this.procedure, price: this.price });
           this.procedureHasError = false;
           this.priceHasError = false;
@@ -339,7 +339,7 @@
             this.procedureValidate();
             this.priceValidate();
           }
-          
+  
           if(this.procedureHasError == false && this.priceHasError == false)
           {
             
@@ -347,10 +347,6 @@
 
             //if last index was removed and procedures has only 1 row data, don't assign data on procedures
             if(!this.LastIndexIsRemoved)
-            {
-              Object.assign(this.procedures[this.index], data);
-            }
-            else if(this.procedures.length == 1)
             {
               Object.assign(this.procedures[this.index], data);
             }
@@ -364,6 +360,9 @@
           }
           
         }
+
+
+        console.log(this.procedures);
       },
 
       removeRow(item) {
@@ -382,8 +381,15 @@
           this.procedure = "";
           this.price = "";
           
-          this.LastIndexIsRemoved = true;
+          // if table has records
+          if(this.procedures.length > 0)
+          {
+            this.LastIndexIsRemoved = true;
+          }
+       
         }
+
+        console.log(this.procedures);
 
       },
 

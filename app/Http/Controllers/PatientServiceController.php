@@ -31,19 +31,19 @@ class PatientServiceController extends Controller
 
     public function store(Request $request)
     {
-        return response()->json($request->all(), 200);
+        // return response()->json($request->all(), 200);
 
         $rules = [
             'patient.required' => 'Please select patient',
             'organization.required' => 'Please enter organization name',
             'docdate.required' => 'Please enter document date',
             'docdate.date' => 'Please enter a valid date',
-            'services.required' => 'Please select at least 1 service'
+            'service_procedures.required' => 'Please select at least 1 service'
         ];
 
         $valid_fields = [
             'docdate' => 'required|date',
-            'services' => 'required'
+            'service_procedures' => 'required'
         ];
 
         //if service type is individual or group
@@ -80,7 +80,6 @@ class PatientServiceController extends Controller
         {
             $name = $request->get('organization');
         }
-        
 
         $patientservice  = new PatientService();
         $patientservice->type = $request->get('type');
@@ -97,59 +96,20 @@ class PatientServiceController extends Controller
         $patientservice->cancelled = 'N'; //cancelled (No)
         $patientservice->save();
 
-        $ctr = count($request->get('services'));
-        $service_id = $request->get('services');
-        $procedure_id = $request->get('procedures');
-        $price = $request->get('price');
-        $discount = $request->get('discount');
-        $discount_amt = $request->get('discount_amt');
-        $service_price = 0.00;
-        $service_discount = 0.00;
-        $service_discount_amt = 0.00;
-        // return $discount[];
-        for($x=0; $x < $ctr; $x++)
+        $service_procedures = $request->get('service_procedures');
+
+        foreach($service_procedures as $key => $item)
         {   
-
-            if($price[$x])
-            {
-                $service_price = $price[$x];
-            }
-            else
-            {
-                $service_price = 0.00;
-            }
-
-            if($discount[$x])
-            {
-                $service_discount = $discount[$x];
-            }
-            else
-            {
-                $service_discount = 0.00;
-            }
-
-            if($discount_amt[$x])
-            {
-                $service_discount_amt = $discount_amt[$x];
-            }
-            else
-            {
-                $service_discount_amt = 0.00;
-            }
-
-            $discounted_price = ($price[$x] * ($service_discount / 100));
-            $total_amount = $price[$x] - $discounted_price - $discount_amt[$x];
-
+            // return response()->json($key, 200);
             $serviceitem = new PatientServiceItem();
             $serviceitem->psid = $patientservice->id;
-            $serviceitem->serviceid = $service_id[$x];
-            $serviceitem->procedureid = $procedure_id[$x];
+            $serviceitem->serviceid = $item['service_id'];
+            $serviceitem->procedureid = $item['procedure_id'];
             $serviceitem->status = "pending";
-            $serviceitem->price = $service_price;
-            $serviceitem->discount = $service_discount;
-            $serviceitem->discount_amt = $service_discount_amt;
-            $serviceitem->total_amount = $total_amount;
-
+            $serviceitem->price = $item['price'];
+            $serviceitem->discount = $item['discount'];
+            $serviceitem->discount_amt = $item['discount_amt'];
+            $serviceitem->total_amount = $item['total_amount'];
             $serviceitem->save();
         }
 
