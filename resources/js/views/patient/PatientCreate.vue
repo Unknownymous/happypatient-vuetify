@@ -224,7 +224,7 @@
 
 <script>
 
-  const access_token = localStorage.getItem('access_token');
+  let access_token;
 
   import Axios from 'axios';
   import { validationMixin } from "vuelidate";
@@ -440,27 +440,6 @@
         });
       },
       showAlert() {
-        // Use sweetalert2
-        
-        // this.$swal({
-        //     title: "Delete this order status?",
-        //     text: "Are you sure? You won't be able to revert this!",
-        //     type: "warning",
-        //     showCancelButton: true,
-        //     confirmButtonColor: "#3085d6",
-        //     confirmButtonText: "Yes, Delete it!"
-        // }).then((result) => { // <--
-        //     if (result.value) { // <-- if confirmed
-        //         this.$swal({
-        //           position: 'center',
-        //           icon: 'success',
-        //           title: 'Record has been deleted',
-        //           showConfirmButton: false,
-        //           timer: 2500
-        //         });
-        //     }
-        // });
-
         this.$swal({
           position: 'center',
           icon: 'success',
@@ -471,6 +450,7 @@
       },
     },
     mounted () {
+      access_token = localStorage.getItem('access_token');
       this.getProvinces();
     }
   };

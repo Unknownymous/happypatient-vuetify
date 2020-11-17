@@ -84,7 +84,8 @@
 </template>
 
 <script>
-const access_token = localStorage.getItem("access_token");
+
+let access_token = localStorage.getItem('access_token');
 
 import Axios from "axios";
 export default {
@@ -137,15 +138,20 @@ export default {
   },
   methods: {
     logout() {
+
+      let access_token = localStorage.getItem('access_token');
+      
       Axios.get("/api/auth/logout", {
         headers: {
           Authorization: "Bearer " + access_token,
         },
       }).then(
         (response) => {
-          localStorage.removeItem("access_token");
-
-          this.$router.push("/login").catch(() => {});
+          if(response.data.success)
+          {
+            localStorage.removeItem("access_token");
+            this.$router.push("/login").catch(() => {});
+          }  
         },
         (error) => {
           console.log(error);

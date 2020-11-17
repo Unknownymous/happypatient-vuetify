@@ -39,7 +39,7 @@
 </template>
 <script>
 
-  const access_token = localStorage.getItem('access_token');
+  let access_token;
 
   import Axios from "axios";
 
@@ -81,6 +81,7 @@
       },
     },
     mounted() {
+      access_token = localStorage.getItem('access_token');
       this.getActivityLogs();
     },
   };

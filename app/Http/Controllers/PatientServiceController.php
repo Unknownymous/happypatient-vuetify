@@ -19,7 +19,7 @@ class PatientServiceController extends Controller
  
     public function index()
     {
-        //
+        return response()->json(Auth::user(), 200);
     }
 
 
@@ -31,7 +31,7 @@ class PatientServiceController extends Controller
 
     public function store(Request $request)
     {
-        // return response()->json($request->all(), 200);
+        return response()->json(Auth::user(), 200);
 
         $rules = [
             'patient.required' => 'Please select patient',

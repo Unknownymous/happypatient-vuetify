@@ -76,7 +76,7 @@
 </template>
 <script>
 
-  const access_token = localStorage.getItem('access_token');
+  let access_token;
 
   import Axios from "axios";
   import moment from 'moment';
@@ -120,9 +120,9 @@
 
     methods: {
       getPatients(){
-
         Axios.get('/api/patient/index', {
             headers: {
+              'Accept': 'application/json',
               'Authorization': 'Bearer '+access_token,
             }
           }).then( (response) => {
@@ -199,6 +199,7 @@
       }
     },
     mounted() {
+      access_token = localStorage.getItem('access_token');
       this.getPatients();
     },
   };

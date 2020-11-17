@@ -129,7 +129,7 @@
 
 <script>
 
-  const access_token = localStorage.getItem('access_token');
+  let access_token;
 
   import Axios from 'axios';
   import { validationMixin } from "vuelidate";
@@ -275,8 +275,9 @@
         });
       },
     },
-    // mounted () {
-    //   this.getProvinces();
-    // }
+    mounted () {
+      access_token = localStorage.getItem('access_token');
+      // this.getProvinces();
+    }
   };
 </script>

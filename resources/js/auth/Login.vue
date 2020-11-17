@@ -127,7 +127,6 @@
           const data = {username: username, password: password};
 
           Axios.post('/api/auth/login', data).then( (response) => {
-            // console.log(response.data);
 
             if(response.data.access_token)
             { 
@@ -136,7 +135,7 @@
 
               localStorage.setItem('access_token', response.data.access_token);
  
-              this.$router.push('/').catch(e => {});
+              this.$router.push('/patient/index').catch(e => {});
               this.clear();
               this.username = null;
               this.password = null;
