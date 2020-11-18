@@ -579,8 +579,6 @@
           //Assign procedures data into data variable
           data['service_procedures'] = this.service_procedures;
 
-          console.log(data);
-
           Axios.post('/api/patientservice/store', data, {
               headers: {
                 'Authorization': 'Bearer '+access_token,
