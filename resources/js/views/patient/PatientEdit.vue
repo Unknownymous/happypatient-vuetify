@@ -450,7 +450,11 @@
         });
       },
       getPatient(){
-        Axios.get('/api'+this.$route.path).then((response) => {  
+        Axios.get('/api'+this.$route.path, {
+          headers: {
+              'Authorization': 'Bearer '+access_token,
+            }
+        }).then((response) => {  
           
           this.lastname = response.data.patient.lastname;
           this.firstname =  response.data.patient.firstname;

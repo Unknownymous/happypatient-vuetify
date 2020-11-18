@@ -564,6 +564,8 @@
               total_amount: parseFloat(this.total_amount).toFixed(2),
           };
 
+          this.reset();
+
           //Assign data from last row textfield value of procedure and price; if last index was not removed
           if(!this.LastIndexIsRemoved)
           {

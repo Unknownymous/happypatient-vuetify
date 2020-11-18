@@ -37,7 +37,7 @@ class PatientServiceController extends Controller
 
     public function store(Request $request)
     {
-        // return response()->json(Auth::user(), 200);
+        // return response()->json($request->all(), 200);
 
         $rules = [
             'patient.required' => 'Please select patient',
@@ -100,7 +100,7 @@ class PatientServiceController extends Controller
         $patientservice->grand_total = $request->get('grand_total');
         $patientservice->status = 'O'; //status Open
         $patientservice->cancelled = 'N'; //cancelled (No)
-        // $patientservice->save();
+        $patientservice->save();
 
         $service_procedures = $request->get('service_procedures');
 
@@ -116,7 +116,7 @@ class PatientServiceController extends Controller
             $serviceitem->discount = $item['discount'];
             $serviceitem->discount_amt = $item['discount_amt'];
             $serviceitem->total_amount = $item['total_amount'];
-            // $serviceitem->save();
+            $serviceitem->save();
         }
 
         //PUSHER - send data/message if patient services is created
@@ -168,9 +168,131 @@ class PatientServiceController extends Controller
     }
 
 
-    public function update(Request $request, PatientService $patientService)
+    public function update(Request $request, $psid)
     {
-        //
+        // return response()->json($request->all(), 200);
+
+        $patientservice = PatientService::find($psid);
+
+        //if record is empty then display error page
+        if(empty($patientservice->id))
+        {
+            return abort(404, 'Not Found');
+        }
+        
+        $patientservice->docdate = Carbon::parse($request->get('docdate'))->format('y-m-d');
+        if($patientservice->type == 'group')
+        {
+            $patientservice->name = $request->get('organization');
+        }
+        $patientservice->bloodpressure = $request->get('bloodpressure');
+        $patientservice->temperature = $request->get('temperature');
+        $patientservice->weight = $request->get('weight');
+        $patientservice->or_number = $request->get('or_number');
+        $patientservice->note = $request->get('note');
+        $patientservice->save();
+
+        //PUSHER - send data/message if patient services is updated from table patient_services
+        // event(new EventNotification('edit-patient-services', 'patient_services'));
+
+        //Activity Log
+        $activity_log = new ActivityLog();
+        $activity_log->object_id = $patientservice->id;
+        $activity_log->table_name = 'patient_services';
+        $activity_log->description = 'Update Patient Services';
+        $activity_log->action = 'update';
+        $activity_log->userid = auth()->user()->id;
+        $activity_log->save();
+
+        return response()->json(['success' => 'Record has been updated'], 200);
+    }
+
+    public function update_price(Request $request)
+    {   
+
+        // return response()->json($request->all(), 200);
+
+        $ps_item_id = $request->get('id');
+        $patientserviceitem = PatientServiceItem::find($ps_item_id);
+
+        //if record is empty then display error page
+        // if(empty($patientserviceitem->id))
+        // {
+        //     return abort(404, 'Not Found');
+        // }
+
+        $patientserviceitem->price = $request->get('price');
+        $patientserviceitem->discount = $request->get('discount');
+        $patientserviceitem->discount_amt = $request->get('discount_amt');
+        $patientserviceitem->total_amount = $request->get('total_amount');
+        $patientserviceitem->save();
+
+        $service_amounts = PatientServiceItem::where('psid', $patientserviceitem->psid)->get();
+        $grand_total = 0;
+
+        foreach($service_amounts as $service_amount)
+        {
+            $grand_total = $grand_total + $service_amount->total_amount;
+        }
+
+        $patientservice = PatientService::find($patientserviceitem->psid);
+
+        //if record is empty then display error page
+        // if(empty($patientservice->id))
+        // {
+        //     return abort(404, 'Not Found');
+        // }
+
+        $patientservice->grand_total = $grand_total;
+
+        $patientservice->save();
+
+        //PUSHER - send data/message if service procedure price is updated
+        // event(new EventNotification('edit-service-amount', 'patient_service_items'));
+
+        //Activity Log
+        $activity_log = new ActivityLog();
+        $activity_log->object_id = $patientserviceitem->id;
+        $activity_log->table_name = 'patient_service_items';
+        $activity_log->description = 'Update Service Amount';
+        $activity_log->action = 'udpate';
+        $activity_log->userid = auth('api')->user()->id;
+        $activity_log->save();
+
+        return response()->json(['success' => 'Record has been updated'], 200);
+
+    }
+
+    public function cancel(Request $request, $psid)
+    {
+        $patientservice = PatientService::find($psid);
+
+        //if record is empty then display error page
+        // if(empty($patientservice->id))
+        // {
+        //     return abort(404, 'Not Found');
+        // }
+
+        $patientservice->or_number = $request->get('or_number');
+        $patientservice->note = $request->get('note');
+        $patientservice->cancelled = 'Y';
+        $patientservice->canceldate = Carbon::now()->format('Y-m-d');
+        $patientservice->save();
+
+        //PUSHER - send data/message if transaction/services is cancelled
+        // event(new EventNotification('cancel-patient-services', 'patient_services'));
+
+        //Activity Log
+        $activity_log = new ActivityLog();
+        $activity_log->object_id = $patientservice->id;
+        $activity_log->table_name = 'patient_services';
+        $activity_log->description = 'Cancel Patient Services';
+        $activity_log->action = 'cancel';
+        $activity_log->userid = auth()->user()->id;
+        $activity_log->save();
+
+        return response()->json(['success' => 'Record has been updated'], 200);
+
     }
 
 

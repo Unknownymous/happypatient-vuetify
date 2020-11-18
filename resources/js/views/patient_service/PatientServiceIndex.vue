@@ -41,15 +41,25 @@
           > 
 
             <template v-slot:item.actions="{ item }">
-              <v-btn
+              <v-icon
+                small
+                class="mr-2"
+                color="green"
+                @click="editPatientService(item)"
+              >
+                mdi-pencil
+                
+              </v-icon>
+              <!-- <v-btn
                 color="primary"
                 dark
                 x-small
                 class="ml-2"
                 @click="editPatientService(item)"
               >
+              
                 view
-              </v-btn>
+              </v-btn> -->
               
             </template>
           </v-data-table>
