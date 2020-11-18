@@ -286,8 +286,6 @@
 
           if (this.editedIndex > -1) {
 
-            Object.assign(this.services[this.editedIndex], this.editedItem)
-
             const data = this.editedItem
             const serviceid = this.editedItem.id
 
@@ -301,10 +299,12 @@
 
               if(response.data.success)
               {
+                
                 this.clear();
                 this.showAlert();
                 this.close();
-                
+                Object.assign(this.services[this.editedIndex], this.editedItem);
+
               }
 
               this.disabled = false;

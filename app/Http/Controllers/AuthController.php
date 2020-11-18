@@ -39,7 +39,6 @@ class AuthController extends Controller
         if(!Auth::attempt(['username' => $request->get('username'), 'password' => $request->get('password')], true))
         {   
             return response()->json(['error' => 'Invalid credentials'], 200);
-            
         }
         
         $accessToken = Auth::user()->createToken('authToken')->accessToken;

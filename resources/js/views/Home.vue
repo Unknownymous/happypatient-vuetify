@@ -25,7 +25,7 @@
           </v-list-item-avatar>
           <v-list-item-content>
             <v-list-item-title>Happy Patient</v-list-item-title>
-            <v-list-item-subtitle>Admin</v-list-item-subtitle>
+            <v-list-item-subtitle>{{user}}</v-list-item-subtitle>
           </v-list-item-content>
         </v-list-item>
       </v-list>
@@ -85,8 +85,6 @@
 
 <script>
 
-let access_token = localStorage.getItem('access_token');
-
 import Axios from "axios";
 export default {
   data() {
@@ -105,8 +103,8 @@ export default {
         {
           icon: "mdi-stethoscope",
           items: [
-            { title: "Create Services", link: "/patient_service/create" },
-            { title: "Services List", link: "/patient_service/index" },
+            { title: "Create Services", link: "/patientservice/create" },
+            { title: "Services List", link: "/patientservice/index" },
           ],
           title: "Services",
         },
@@ -134,6 +132,7 @@ export default {
       user: null,
       loading: null,
       initiated: false,
+      user: "",
     };
   },
   methods: {
@@ -150,6 +149,7 @@ export default {
           if(response.data.success)
           {
             localStorage.removeItem("access_token");
+            localStorage.removeItem("user");
             this.$router.push("/login").catch(() => {});
           }  
         },
@@ -159,5 +159,9 @@ export default {
       );
     },
   },
+
+  mounted() {
+    this.user = localStorage.getItem('user');
+  }
 };
 </script>

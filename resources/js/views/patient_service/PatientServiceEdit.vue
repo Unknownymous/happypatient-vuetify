@@ -14,7 +14,7 @@
         </v-breadcrumbs>
         <v-card>
           <v-card-title class="grey darken-2  text-white">
-            Create Patient Services
+            Edit Patient Services
           </v-card-title>
           <v-card-text class="pa-10">
             <form id="procedureform">
@@ -188,45 +188,14 @@
                         </thead>
                         <tbody>
                           <tr
-                            v-for="item in service_procedures"
+                            v-for="item in patient_service_items"
                             :key="item.id"
                           >
                             <td>
-                              <v-autocomplete
-                                name="service"
-                                v-model="service_id"
-                                :items="services"
-                                item-text="service"
-                                item-value="id"     
-                                label="Service"
-                                v-on:change="serviceOnChange()"
-                                v-if="service_procedures.indexOf(item) == (service_procedures.length - 1) && !item.service"
-                              >
-                              </v-autocomplete>   
-
                               {{ item.service }}
-
-                              {{ getIndex(service_procedures.indexOf(item)) }}
-
                             </td>
-                            <td>
-                              <v-autocomplete
-                                name="procedure"
-                                v-model="procedure_id"
-                                :items="procedure_per_service"
-                                item-text="procedure"
-                                item-value="id"     
-                                label="Procedure"
-                                :disabled="procedureDisabled"
-                                v-on:change="procedureOnChange()"
-                                v-if="service_procedures.indexOf(item) == (service_procedures.length - 1) && !item.procedure"
-                              >
-                              </v-autocomplete>   
-  
+                            <td> 
                               {{ item.procedure }}
-
-                              {{ getIndex(service_procedures.indexOf(item)) }}
-
                             </td>
                             <td>
                               <v-text-field-money
@@ -245,7 +214,6 @@
                                   empty: null,
                                 }"
                                 :disabled="priceDisabled"
-                                v-if="service_procedures.indexOf(item) == (service_procedures.length - 1) && !item.price"
                               >
                               </v-text-field-money>
 
@@ -273,7 +241,6 @@
                                   empty: null,
                                 }"
                                 :disabled="discountDisabled"
-                                v-if="service_procedures.indexOf(item) == (service_procedures.length - 1) && !item.discount"
                               >
                               </v-text-field-money> 
 
@@ -300,7 +267,6 @@
                                   precision: 2,
                                   empty: null,
                                 }"
-                                v-if="service_procedures.indexOf(item) == (service_procedures.length - 1) && !item.discount_amt"
                               >
                               </v-text-field-money>
 
@@ -329,7 +295,6 @@
                                   empty: null,
                                   
                                 }"
-                                v-if="service_procedures.indexOf(item) == (service_procedures.length - 1) && !item.total_amount"
                               >
                               </v-text-field-money>
 
@@ -361,31 +326,16 @@
                             <td colspan="5">
                               <strong><span class="pull-right">Grand Total :</span></strong>
                             </td>
-                            <td><strong><span class="service-grand-total">₱ {{ patientservicesData.grand_total = computedGrandTotal }}</span></strong></td>
-                            <td>
-                              <v-btn
-                                class="mx-2 mb-5 mt-5"
-                                fab
-                                dark
-                                small
-                                color="primary"
-                                @click="addRow"
-                              >
-                                <v-icon dark>
-                                   mdi-plus
-                                </v-icon>
-                              </v-btn>
-                            </td>
+                            <td><strong><span class="service-grand-total">₱ {{ patientservicesData.grand_total }}</span></strong></td>
                           </tr>
                         </tfoot>
                       </template>
                     </v-simple-table>
                   </v-card>
-                  <span class="v-messages error--text" v-if="serviceHasError || procedureHasError || priceHasError">Service, Procedure and Price are required</span>
                 </v-col>
               </v-row>
-              <v-btn class="mr-4 mt-5" color="primary" @click="createPatientService" :disabled="disabled"> add </v-btn>
-              <v-btn class="mt-5" color="#E0E0E0" :to="{name: 'procedure.index'}"> cancel </v-btn>
+              <v-btn class="mr-4 mt-5" color="primary" @click="updatePatientService" :disabled="disabled"> update </v-btn>
+              <v-btn class="mt-5" color="#E0E0E0" :to="{name: 'patientservice.index'}"> cancel </v-btn>
             </form>
           </v-card-text>
         </v-card>
@@ -416,25 +366,15 @@
       date: new Date().toISOString().substr(0, 10),
       dateFormatted: vm.formatDate(new Date().toISOString().substr(0, 10)),
       input: false,
-      LastIndexIsRemoved: false,
-      serviceHasError: false,
-      procedureHasError: false,
       priceHasError: false,
       disabled: false,
-      procedureDisabled: true,
       priceDisabled: true,
       discountDisabled: true,
       discount_amtDisabled: true,
       total_amtDisabled: true,
       patients: [],
       service_id: "",
-      service: "",
-      services: [],
-      procedure_id: "",
-      procedure: "",
-      procedures: [],
-      procedure_per_service: [],
-      service_procedures: [],
+      patient_service_items: [],
       price: "",
       discount: "",
       discount_amt: "",
@@ -448,7 +388,12 @@
             link: "/dashboard",
           },
           {
-            text: "Create Patient Services",
+            text: "Patient Services Record",
+            disabled: false,
+            link: "/patientservice/index",
+          },
+          {
+            text: "Edit Patient Services",
             disabled: true,
           },
         ],
@@ -485,29 +430,6 @@
         this.patientservicesData.docdate = this.formatDate(this.date);
         return this.patientservicesData.docdate
       },
-
-      computedGrandTotal() {
-        
-        let total_amount = this.total_amount;
-
-        if(!this.total_amount)
-        { 
-          total_amount = 0;
-        }
-
-        let grand_total = parseFloat(total_amount);
-        
-        return this.service_procedures.reduce(function (sum, item) {
-          
-          if(item.total_amount)
-          {
-            grand_total = parseFloat(grand_total) + parseFloat(item.total_amount);
-          }
-
-          return parseFloat(grand_total).toFixed(2);
-
-        }, '0.00')
-      }
       
     },
     watch: {
@@ -516,106 +438,37 @@
       },
     },
     methods: {
-      createPatientService() {
+      
+      updatePatientService() {
+
         
-        this.$v.patientservicesData.$touch();
-        
-        //if type is individual then reset validation for organization else reset validation for patient
-        if(this.patientservicesData.type == 'individual')
-        {
-          this.$v.patientservicesData.organization.$reset();
-        }
-        else
-        {
-          this.$v.patientservicesData.patient.$reset();
-        }
+      },
 
-        let nameHasError = false;
+      updateAmount(){
 
-        if(this.$v.patientservicesData.patient.$error || this.$v.patientservicesData.organization.$error) 
-        {
-           nameHasError = true;
-        }
+      },
 
-        if(!this.LastIndexIsRemoved)
-        {
-          this.serviceValidate();
-          this.procedureValidate();
-          this.priceValidate();
-        }
+      getPatientServices() {
 
-        if(this.service_procedures.length == 0)
-        { 
-          this.serviceHasError = true;
-          this.procedureHasError = true;
-          this.priceHasError = true;
-        }
-        
-        if(!nameHasError && !this.serviceHasError && !this.procedureHasError && !this.priceHasError)
-        {
-          const procedure_data = { 
-              service_id: this.service_id, 
-              service: this.service, 
-              procedure_id: this.procedure_id, 
-              procedure: this.procedure, 
-              price: this.price, 
-              discount: this.discount,
-              discount_amt: this.discount_amt,
-              total_amount: parseFloat(this.total_amount).toFixed(2),
-          };
-
-          //Assign data from last row textfield value of procedure and price; if last index was not removed
-          if(!this.LastIndexIsRemoved)
-          {
-            Object.assign(this.service_procedures[this.index], procedure_data);
-          }
-
-          this.disabled = true;
-
-          let myForm = document.getElementById('procedureform');
-          let formData = new FormData(myForm);
-          const data = this.patientservicesData;
-
-          //Assign procedures data into data variable
-          data['service_procedures'] = this.service_procedures;
-
-          console.log(data);
-
-          Axios.post('/api/patientservice/store', data, {
+        Axios.get('/api'+this.$route.path, {
               headers: {
                 'Authorization': 'Bearer '+access_token,
               }
-            }).then((response) => {
-            
+          }).then((response) => {
             console.log(response.data);
-            
-            if(response.data.success)
-            {
-              this.clear();
-              this.showAlert(); 
-              this.getService();
-              
-            }
+            this.patientservicesData.type = response.data.patientservice.type;
+            this.patientservicesData.patient = response.data.patientservice.patientid;
+            this.patientservicesData.organization = response.data.patientservice.organization;
+            this.patientservicesData.or_number = response.data.patientservice.or_number;
+            this.date = response.data.patientservice.docdate;
+            this.patientservicesData.bloodpressure = response.data.patientservice.bloodpressure;
+            this.patientservicesData.temperature = response.data.patientservice.temperature;
+            this.patientservicesData.weight = response.data.patientservice.weight;
+            this.patientservicesData.grand_total = response.data.patientservice.grand_total ;
+            this.patient_service_items = response.data.patientserviceitems;
 
-            this.disabled = false;
-
-          }, (errors) => {
-            console.log(errors);
-          });
-
-        }
-        
-      },
-      
-      showAlert() {
-
-        this.$swal({
-          position: 'center',
-          icon: 'success',
-          title: 'Record has successfully added',
-          showConfirmButton: false,
-          timer: 2500
         });
+
       },
 
       getPatient() {
@@ -624,8 +477,10 @@
               headers: {
                 'Authorization': 'Bearer '+access_token,
               }
-            }).then((response) => {
+          }).then((response) => {
+
           this.patients = response.data.patients;
+
         });
       },
 
@@ -642,226 +497,34 @@
         });
       },
 
-      getProcedure() {
-
-        Axios.get("/api/procedure/index", {
-              headers: {
-                'Authorization': 'Bearer '+access_token,
-              }
-            }).then((response) => {
-
-          this.procedures = response.data.procedures;
-        });
-      },
-
       getIndex(index) {
         this.index = index;
       },
 
-      addRow() {
+      formatDate (date) {
+          if (!date) return null
 
-        if(this.service_procedures.length == 0)
-        {
-
-          this.service_procedures.push({ 
-            service_id: this.service_id, 
-            service: this.service, 
-            procedure_id: this.procedure_id, 
-            procedure: this.procedure, 
-            price: this.price, 
-            discount: this.discount,
-            discount_amt: this.discount_amt,
-            total_amount: this.total_amount,
-          });
-
-          this.serviceHasError = false;
-          this.procedureHasError = false;
-          this.priceHasError = false;
-
-        }
-        else
-        { 
-
-          if(!this.discount)
-          {
-            this.discount = '0.00';
-          }
-
-          if(!this.discount_amt)
-          {
-            this.discount_amt = '0.00';
-          }
-          //if last index was removed then don't validate fields
-          if(!this.LastIndexIsRemoved)
-          { 
-            this.serviceValidate();
-            this.procedureValidate();
-            this.priceValidate();
-          }
-          
-          if(!this.serviceHasError && !this.procedureHasError && !this.priceHasError)
-          {
-            
-            const data = { 
-              service_id: this.service_id, 
-              service: this.service, 
-              procedure_id: this.procedure_id, 
-              procedure: this.procedure, 
-              price: this.price, 
-              discount: this.discount,
-              discount_amt: this.discount_amt,
-              total_amount: parseFloat(this.total_amount).toFixed(2),
-            };
-
-            //if last index was removed and procedures has only 1 row data, don't assign data on procedures
-            if(!this.LastIndexIsRemoved)
-            {
-              Object.assign(this.service_procedures[this.index], data);
-            }
-
-            this.reset();  
-
-            this.service_procedures.push({ 
-              service_id: this.service_id, 
-              service: this.service, 
-              procedure_id: this.procedure_id, 
-              procedure: this.procedure, 
-              price: this.price, 
-              discount: this.discount,
-              discount_amt: this.discount_amt,
-              total_amount: this.total_amount,
-            });
-
-          }
-          
-        }
-
+          const [year, month, day] = date.split('-')
+          return `${month}/${day}/${year}`
       },
 
-      removeRow(item) {
+      parseDate (date) {
+          if (!date) return null
 
-        const index = this.service_procedures.indexOf(item);
-        const last_index = this.service_procedures.length - 1;
-
-        //Delete rows on the object service_procedures
-        this.service_procedures.splice(index, 1);
-   
-        if(index == last_index)
-        { 
-          this.serviceHasError = false;
-          this.procedureHasError = false;
-          this.priceHasError = false;
-
-          this.reset();
-          
-          // if table has records
-          if(this.service_procedures.length > 0)
-          {
-            this.LastIndexIsRemoved = true;
-          }
-        }
-
+          const [month, day, year] = date.split('/')
+          return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`
       },
 
-      serviceOnChange() {
-        
-        this.procedureDisabled = false;
-        this.priceDisabled = true;
-        this.discountDisabled = true;
-        this.discount_amtDisabled = true;
-        this.total_amtDisabled = true;
-        this.price = "";
-        this.procedure_id = "";
-        this.procedure = "";
-        this.discount = "";
-        this.discount_amt = "";
-        this.procedure_per_service = [];
-        const data = {};
+      showAlert() {
 
-        //services
-        for(let [key, val] of this.services.entries())
-        { 
-          if(this.service_id == val.id)
-          {
-            this.service = val.service;
-          }
-        } 
-
-        //procedures
-        for(let [key, val] of this.procedures.entries())
-        { 
-          if(this.service_id == val.serviceid)
-          {
-            this.procedure_per_service.push({id: val.id, procedure: val.procedure, price: val.price});
-          }
-        }      
- 
+        this.$swal({
+          position: 'center',
+          icon: 'success',
+          title: 'Record has successfully updated',
+          showConfirmButton: false,
+          timer: 2500
+        });
       },
-
-      procedureOnChange() {
-
-        this.priceDisabled = false;
-        this.discountDisabled = false;
-        this.discount_amtDisabled = false;
-        this.total_amtDisabled = false;
-        this.discount = "";
-        this.discount_amt = "";
-
-        for(let [key, val] of this.procedures.entries())
-        { 
-          if(this.procedure_id == val.id)
-          { 
-            this.procedure = val.procedure;
-            this.price = val.price;
-            this.total_amount = val.price;
-          }
-        }
-      
-      },
-
-      serviceValidate() {
-        
-        // const procedure = document.getElementById("procedure").value;
-
-        if(this.procedure_id)
-        {
-          this.serviceHasError = false;
-        }
-        else
-        {
-          this.serviceHasError = true;
-        }
-      
-      },
-
-      procedureValidate() {
-        
-        // const procedure = document.getElementById("procedure").value;
-
-        if(this.procedure_id)
-        {
-          this.procedureHasError = false;
-        }
-        else
-        {
-          this.procedureHasError = true;
-        }
-      
-      },
-
-      priceValidate() {
-        
-        // const price = document.getElementById("input-73").value;
-
-        if(parseFloat(this.price) > 0)
-        {
-          this.priceHasError = false;
-        }
-        else
-        {
-          this.priceHasError = true;
-        }
-      }, 
 
       computeTotalAmount() {
 
@@ -886,64 +549,12 @@
 
       },
 
-      clear() {
-        this.$v.$reset();
-        this.LastIndexIsRemoved = false;
-        this.disabled = false;
-        this.patientservicesData.type = "individual";
-        this.patientservicesData.patient = "";
-        this.patientservicesData.organization = "";
-        this.patientservicesData.or_number = "";
-        this.patientservicesData.bloodpressure = "";
-        this.patientservicesData.temperature = "";
-        this.patientservicesData.weight = "";
-        this.patientservicesData.grand_total = "0.00";
-        this.service_procedures = [];
-        this.index = "";
-        this.reset();
-      },
-
-      reset() {
-        this.serviceHasError = false;
-        this.procedureHasError = false;
-        this.priceHasError = false;
-        this.procedureDisabled = true;
-        this.priceDisabled = true;
-        this.discountDisabled = true;
-        this.discount_amtDisabled = true;
-        this.total_amtDisabled = true;
-        this.procedure_per_service = [];
-        this.procedure_id = "";
-        this.procedure = "";
-        this.service_id = "";
-        this.service = "";
-        this.price = "";
-        this.discount = "";
-        this.discount_amt = "";
-        this.total_amount = "";
-        this.LastIndexIsRemoved = false;
-      },
-
-      formatDate (date) {
-          if (!date) return null
-
-          const [year, month, day] = date.split('-')
-          return `${month}/${day}/${year}`
-        },
-        parseDate (date) {
-          if (!date) return null
-
-          const [month, day, year] = date.split('/')
-          return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`
-        },
     },
     
     mounted () {
       access_token = localStorage.getItem('access_token');
       this.getPatient();
-      this.getService();
-      this.getProcedure();
-
+      this.getPatientServices();
     }
   };
 </script>

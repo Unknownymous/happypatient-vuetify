@@ -117,6 +117,7 @@
     methods: {
 
       login() {
+
          this.$v.$touch();
 
         if(!this.$v.$error)
@@ -128,11 +129,12 @@
 
           Axios.post('/api/auth/login', data).then( (response) => {
 
+            // console.log(response.data);
+
             if(response.data.access_token)
             { 
-
               // console.log(localStorage.getItem('access_token'));
-
+              localStorage.setItem('user', response.data.user.name);
               localStorage.setItem('access_token', response.data.access_token);
  
               this.$router.push('/patient/index').catch(e => {});
@@ -146,7 +148,7 @@
             }
             
           }, (error) => {
-            console.log();
+            console.log(error);
           });
 
         }

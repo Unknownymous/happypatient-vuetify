@@ -56,7 +56,7 @@ class ServiceController extends Controller
         $activity_log->table_name = 'services';
         $activity_log->description = 'Create Service';
         $activity_log->action = 'create';
-        // $activity_log->userid = auth()->user()->id;
+        $activity_log->userid = auth('api')->user()->id;
         $activity_log->save();
 
         return response()->json(['success' => 'Record has successfully added', 'service' => $service], 200);
@@ -114,7 +114,7 @@ class ServiceController extends Controller
         $activity_log->table_name = 'services';
         $activity_log->description = 'Update Service';
         $activity_log->action = 'update';
-        // $activity_log->userid = auth()->user()->id;
+        $activity_log->userid = auth('api')->user()->id;
         $activity_log->save();
 
         return response()->json(['success' => 'Record has been updated']);
@@ -145,7 +145,7 @@ class ServiceController extends Controller
         $activity_log->table_name = 'services';
         $activity_log->description = 'Delete Service';
         $activity_log->action = 'delete';
-        // $activity_log->userid = auth()->user()->id;
+        $activity_log->userid = auth('api')->user()->id;
         $activity_log->save();
         
         return response()->json(['success' => 'Record has been deleted'], 200);

@@ -7,6 +7,8 @@ import PatientCreate from './views/patient/PatientCreate.vue';
 import PatientIndex from './views/patient/PatientIndex.vue';
 import PatientEdit from './views/patient/PatientEdit.vue';
 import PatientServiceCreate from './views/patient_service/PatientServiceCreate.vue';
+import PatientServiceIndex from './views/patient_service/PatientServiceIndex.vue';
+import PatientServiceEdit from './views/patient_service/PatientServiceEdit.vue';
 import ServiceIndex from './views/service/ServiceIndex.vue';
 import ProcedureIndex from './views/service_procedure/ProcedureIndex.vue';
 import ProcedureCreate from './views/service_procedure/ProcedureCreate.vue';
@@ -54,9 +56,19 @@ const routes = [
         component: PatientEdit
       },
       {
-        path: '/patient_service/create',
-        name: 'patient_service.create',
+        path: '/patientservice/create',
+        name: 'patientservice.create',
         component: PatientServiceCreate
+      },
+      {
+        path: '/patientservice/index',
+        name: 'patientservice.index',
+        component: PatientServiceIndex
+      },
+      {
+        path: '/patientservice/edit/:psid',
+        name: 'patientservice.edit',
+        component: PatientServiceEdit
       },
       {
         path: '/service/index',
@@ -137,8 +149,7 @@ const routes = [
   },
   {
     path: '*',
-    component: PageNotFound,
-    
+    component: PageNotFound, 
   },
 
 ];

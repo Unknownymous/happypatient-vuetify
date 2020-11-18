@@ -14,7 +14,7 @@
         </v-breadcrumbs>
         <v-card>
           <v-card-title>
-            Patients Record
+            Patient Services Record
             <v-spacer></v-spacer>
             <v-text-field
               v-model="search"
@@ -29,43 +29,28 @@
               fab
               dark
               class="mb-2"
-              :to="{ name: 'patient.create' }"
+              :to="{ name: 'patientservice.create' }"
             >
               <v-icon>mdi-plus</v-icon>
             </v-btn>
           </v-card-title>
           <v-data-table
             :headers="headers"
-            :items="patients"
+            :items="patient_services"
             :search="search"
           > 
-          
-            <!-- <template v-slot:item.rows="{item}">
-              {{ index(item) }}
-            </template> -->
-
-
-            <template v-slot:item.birthdate="{ item }">
-              {{ getBirthdate(item.birthdate) }}
-            </template>  
 
             <template v-slot:item.actions="{ item }">
-              <v-icon
-                small
-                class="mr-2"
-                color="green"
-                @click="editPatient(item)"
+              <v-btn
+                color="primary"
+                dark
+                x-small
+                class="ml-2"
+                @click="editPatientService(item)"
               >
-                mdi-pencil
-                
-              </v-icon>
-              <v-icon
-                small
-                color="red"
-                @click="showConfirmAlert(item)"
-              >
-                mdi-delete
-              </v-icon>
+                view
+              </v-btn>
+              
             </template>
           </v-data-table>
           
@@ -85,25 +70,13 @@
       return {
         search: "",
         headers: [
-          // {
-          //   text: "#",
-          //   align: "start",
-          //   value: "rows",
-          //   sortable: false
-          // },
-          {
-            text: "Lastname",
-            value: "lastname",
-          },
-          { text: "Firstname", value: "firstname" },
-          { text: "Middlename", value: "middlename" },
-          { text: "Birthdate", value: "birthdate" },
-          { text: "Gender", value: "gender" },
-          { text: "Civil Status", value: "civilstatus" },
-          { text: "Mobile", value: "mobile" },
+          { text: "Document Date", value: "docdate" },
+          { text: "OR Number", value: "or_number" },
+          { text: "Patient/Organization", value: "name" },
+          { text: "Cancelled", value: "cancelled" },
           { text: "Actions", value: "actions", sortable: false },
         ],
-        patients: [],
+        patient_services: [],
         items: [
           { 
             text: 'Home', 
@@ -111,7 +84,7 @@
             link: '/dashboard',
           },
           { 
-            text: 'Patients Record', 
+            text: 'Patient Services Record', 
             disabled: true, 
           }
         ]
@@ -119,14 +92,14 @@
     },
 
     methods: {
-      getPatients(){
-        Axios.get('/api/patient/index', {
+      getPatientServices(){
+        Axios.get('/api/patientservice/index', {
             headers: {
               'Authorization': 'Bearer '+access_token,
             }
           }).then( (response) => {
           console.log(response.data);
-          this.patients = response.data.patients;
+          this.patient_services = response.data.patient_services;
         });
       },
 
@@ -134,8 +107,8 @@
         return moment(String(birthdate)).format('MM/DD/YYYY');
       },
 
-      editPatient (item) {
-        this.$router.push({ name: 'patient.edit', params: { patientid: item.id} });
+      editPatientService (item) {
+        this.$router.push({ name: 'patientservice.edit', params: { psid: item.id} });
       },
 
       deletePatient (patientid) {
@@ -193,13 +166,10 @@
             }
         });
       },
-      index(item){
-        return this.patients.indexOf(item) + 1;
-      }
     },
     mounted() {
       access_token = localStorage.getItem('access_token');
-      this.getPatients();
+      this.getPatientServices();
     },
   };
 </script>

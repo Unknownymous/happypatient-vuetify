@@ -16,7 +16,7 @@ class PatientController extends Controller
     {
         $patients = Patient::all();
 
-        return response()->json(['patients' => $patients , 'auth_check' => Auth::check()], 200);
+        return response()->json(['patients' => $patients], 200);
     }
 
    
@@ -101,7 +101,7 @@ class PatientController extends Controller
         $activity_log->table_name = 'patients';
         $activity_log->description = 'Create Patient';
         $activity_log->action = 'create';
-        // $activity_log->userid = auth()->user()->id;
+        $activity_log->userid = auth('api')->user()->id;
         $activity_log->save();
 
         return response()->json(['success' => 'Record has successfully added', 'patientid' => $patient->id], 200);
@@ -211,9 +211,9 @@ class PatientController extends Controller
         $activity_log = new ActivityLog();
         $activity_log->object_id = $patient->id;
         $activity_log->table_name = 'patients';
-        $activity_log->description = 'Create Patient';
+        $activity_log->description = 'Update Patient';
         $activity_log->action = 'create';
-        // $activity_log->userid = auth()->user()->id;
+        $activity_log->userid = auth('api')->user()->id;
         $activity_log->save();
 
         return response()->json(['success' => 'Record has been updated']);
@@ -242,7 +242,7 @@ class PatientController extends Controller
         $activity_log->table_name = 'patients';
         $activity_log->description = 'Delete Patient';
         $activity_log->action = 'delete';
-        // $activity_log->userid = auth()->user()->id;
+        $activity_log->userid = auth('api')->user()->id;
         $activity_log->save();
 
         return response()->json(['success' => 'Record has been deleted'], 200);

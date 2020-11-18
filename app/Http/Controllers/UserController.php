@@ -79,7 +79,7 @@ class UserController extends Controller
         $activity_log->table_name = 'users';
         $activity_log->description = 'Create User';
         $activity_log->action = 'create';
-        // $activity_log->userid = auth()->user()->id;
+        $activity_log->userid = auth('api')->user()->id;
         $activity_log->save();
 
         return response()->json(['success' => 'Record has successfully added'], 200);
@@ -170,7 +170,7 @@ class UserController extends Controller
         $activity_log->table_name = 'users';
         $activity_log->description = 'Update Service Procedures';
         $activity_log->action = 'update';
-        // $activity_log->userid = auth()->user()->id;
+        $activity_log->userid = auth('api')->user()->id;
         $activity_log->save();
 
         return response()->json(['success' => 'Record has been updated']);
@@ -197,7 +197,7 @@ class UserController extends Controller
         $activity_log->table_name = 'users';
         $activity_log->description = 'Delete User';
         $activity_log->action = 'delete';
-        // $activity_log->userid = auth()->user()->id;
+        $activity_log->userid = auth('api')->user()->id;
         $activity_log->save();
 
         return response()->json(['success' => 'Record has been deleted'], 200);
