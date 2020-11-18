@@ -384,6 +384,17 @@
                   <span class="v-messages error--text" v-if="serviceHasError || procedureHasError || priceHasError">Service, Procedure and Price are required</span>
                 </v-col>
               </v-row>
+              <v-divider></v-divider>
+              <v-row>
+                <v-col cols="4">
+                  <v-textarea
+                    name="note"
+                    v-model="patientservicesData.note"
+                    label="Note"
+                    rows="2"
+                  ></v-textarea>
+                </v-col>
+              </v-row>
               <v-btn class="mr-4 mt-5" color="primary" @click="createPatientService" :disabled="disabled"> add </v-btn>
               <v-btn class="mt-5" color="#E0E0E0" :to="{name: 'procedure.index'}"> cancel </v-btn>
             </form>
@@ -462,6 +473,7 @@
         temperature: "",
         weight: "",
         grand_total: '0.00',
+        note: "",
       }
     }),
 

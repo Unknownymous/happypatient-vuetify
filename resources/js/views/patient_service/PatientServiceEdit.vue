@@ -357,6 +357,17 @@
                   </v-card>
                 </v-col>
               </v-row>
+              <v-divider></v-divider>
+              <v-row>
+                <v-col cols="4">
+                  <v-textarea
+                    name="note"
+                    v-model="patientservicesData.note"
+                    label="Note"
+                    rows="2"
+                  ></v-textarea>
+                </v-col>
+              </v-row>
               <v-btn
                 class="mr-4 mt-5"
                 color="primary"
@@ -442,6 +453,7 @@ export default {
       temperature: "",
       weight: "",
       grand_total: "0.00",
+      note: "",
     },
     editedIndex: -1,
     editedItem: {
@@ -595,6 +607,7 @@ export default {
         this.patientservicesData.temperature = response.data.patientservice.temperature;
         this.patientservicesData.weight = response.data.patientservice.weight;
         this.patientservicesData.grand_total = response.data.patientservice.grand_total;
+        this.patientservicesData.note = response.data.patientservice.note;
         this.patient_service_items = response.data.patientserviceitems;
       });
     },
