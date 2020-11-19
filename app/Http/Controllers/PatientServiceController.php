@@ -201,7 +201,7 @@ class PatientServiceController extends Controller
         $activity_log->table_name = 'patient_services';
         $activity_log->description = 'Update Patient Services';
         $activity_log->action = 'update';
-        $activity_log->userid = auth()->user()->id;
+        $activity_log->userid = auth('api')->user()->id;
         $activity_log->save();
 
         return response()->json(['success' => 'Record has been updated'], 200);

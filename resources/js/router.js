@@ -3,6 +3,7 @@ import Router from 'vue-router';
 import Home from './views/Home.vue';
 import Login from './auth/Login.vue';
 import Register from './auth/Register.vue';
+import Transactions from './views/transactions/Transactions.vue';
 import PatientCreate from './views/patient/PatientCreate.vue';
 import PatientIndex from './views/patient/PatientIndex.vue';
 import PatientEdit from './views/patient/PatientEdit.vue';
@@ -36,7 +37,7 @@ const routes = [
       {
         path: '/transactions',
         name: 'transactions',
-        // component: PatientCreate
+        component: Transactions
       },
       
       //Patient Route

@@ -18,6 +18,8 @@ use Illuminate\Support\Facades\Route;
 //     return $request->user();
 // });
 
+Route::get('/transactions', 'TransactionController@index')->name('transactions.index')->middleware('auth:api');
+Route::post('/gettransactions', 'TransactionController@gettransactions')->name('gettransactions')->middleware('auth:api');
 Route::prefix('auth')->group(function(){
     Route::get('/init', [
         'uses' => 'AuthController@init',
