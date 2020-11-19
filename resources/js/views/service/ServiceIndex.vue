@@ -40,6 +40,7 @@
                       class="mb-2"
                       v-bind="attrs"
                       v-on="on"
+                      @click="clear()"
                     >
                       <v-icon>mdi-plus</v-icon>
                     </v-btn>
@@ -269,13 +270,16 @@
             }
         });
       },
+
       close () {
-        this.dialog = false
+        this.dialog = false;
+        this.clear();
         this.$nextTick(() => {
           this.editedItem = Object.assign({}, this.defaultItem)
           this.editedIndex = -1
-        })
+        });
       },
+
       save () {
 
         this.$v.$touch();
@@ -300,11 +304,10 @@
 
               if(response.data.success)
               {
-                
-                this.clear();
+
+                Object.assign(this.services[this.editedIndex], this.editedItem);
                 this.showAlert();
                 this.close();
-                Object.assign(this.services[this.editedIndex], this.editedItem);
 
               }
 
@@ -329,7 +332,6 @@
               if(response.data.success)
               {
                 this.disabled = false;
-                this.clear();
                 this.showAlert();
                 this.close();
                 
