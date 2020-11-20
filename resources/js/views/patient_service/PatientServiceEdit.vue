@@ -195,7 +195,7 @@
                               {{ item.service }}
                             </td>
                             <td>
-                              {{ item.procedure }}
+                              {{ item.code }}
                             </td>
                             <td>
                               <v-text-field-money
@@ -377,9 +377,10 @@
                 update
               </v-btn>
               <v-btn
-                class="mt-5"
-                color="#E0E0E0"
-                :to="{ name: 'patientservice.index' }"
+                class="mt-5 float-right"
+                color="error"
+                @click="cancelPatientService"
+                :disabled="btnCancelDisabled"
               >
                 cancel
               </v-btn>
@@ -421,6 +422,7 @@ export default {
     priceHasError: false,
     disabled: false,
     btnSaveDisabled: false,
+    btnCancelDisabled: false,
     priceDisabled: false,
     discountDisabled: false,
     discount_amtDisabled: false,
@@ -585,6 +587,44 @@ export default {
       
     },
 
+    cancelPatientService() {
+
+      this.$swal({
+          title: 'Are you sure?',
+          text: "You won't be able to revert this!",
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#d33',
+          cancelButtonColor: '#6c757d',
+          confirmButtonText: 'Cancel record!'
+        }).then((result) => { // <--
+
+            if (result.value) { // <-- if confirmed
+                
+                const psid = this.$route.params.psid
+
+                Axios.post('/api/patientservice/cancel/' + psid, {}, {
+                  headers: {
+                    Authorization: "Bearer " + access_token,
+                  },
+                }).then((response) => {
+                  if(response.data.success)
+                  {
+                    this.$swal({
+                      position: 'center',
+                      icon: 'success',
+                      title: 'Record has been cancelled',
+                      showConfirmButton: false,
+                      timer: 2500
+                    });
+
+                    this.btnCancelDisabled = true;
+                  }
+                });
+            }
+        });
+    },
+
     reset() {
       this.editedIndex = -1;
       this.editedItem = Object.assign({}, this.defaultItem);
@@ -609,6 +649,12 @@ export default {
         this.patientservicesData.grand_total = response.data.patientservice.grand_total;
         this.patientservicesData.note = response.data.patientservice.note;
         this.patient_service_items = response.data.patientserviceitems;
+
+        if(response.data.patientservice.cancelled == 'Y')
+        {
+          this.btnCancelDisabled = true;
+        }
+      
       });
     },
 

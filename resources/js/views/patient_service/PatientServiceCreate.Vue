@@ -214,16 +214,16 @@
                                 name="procedure"
                                 v-model="procedure_id"
                                 :items="procedure_per_service"
-                                item-text="procedure"
+                                item-text="code"
                                 item-value="id"     
                                 label="Procedure"
                                 :disabled="procedureDisabled"
                                 v-on:change="procedureOnChange()"
-                                v-if="service_procedures.indexOf(item) == (service_procedures.length - 1) && !item.procedure"
+                                v-if="service_procedures.indexOf(item) == (service_procedures.length - 1) && !item.code"
                               >
                               </v-autocomplete>   
   
-                              {{ item.procedure }}
+                              {{ item.code }}
 
                               {{ getIndex(service_procedures.indexOf(item)) }}
 
@@ -442,6 +442,7 @@
       service: "",
       services: [],
       procedure_id: "",
+      code: "",
       procedure: "",
       procedures: [],
       procedure_per_service: [],
@@ -500,9 +501,9 @@
 
       computedGrandTotal() {
         
-        let total_amount = this.total_amount;
+        let total_amount = parseFloat(this.total_amount);
 
-        if(!this.total_amount)
+        if(!parseFloat(this.total_amount))
         { 
           total_amount = 0;
         }
@@ -569,6 +570,7 @@
               service_id: this.service_id, 
               service: this.service, 
               procedure_id: this.procedure_id, 
+              code: this.code, 
               procedure: this.procedure, 
               price: this.price, 
               discount: this.discount,
@@ -576,13 +578,13 @@
               total_amount: parseFloat(this.total_amount).toFixed(2),
           };
 
-          this.reset();
-
           //Assign data from last row textfield value of procedure and price; if last index was not removed
           if(!this.LastIndexIsRemoved)
           {
             Object.assign(this.service_procedures[this.index], procedure_data);
           }
+
+          this.reset();
 
           this.disabled = true;
 
@@ -679,6 +681,7 @@
             service_id: this.service_id, 
             service: this.service, 
             procedure_id: this.procedure_id, 
+            code: this.code, 
             procedure: this.procedure, 
             price: this.price, 
             discount: this.discount,
@@ -718,6 +721,7 @@
               service_id: this.service_id, 
               service: this.service, 
               procedure_id: this.procedure_id, 
+              code: this.code, 
               procedure: this.procedure, 
               price: this.price, 
               discount: this.discount,
@@ -731,12 +735,15 @@
               Object.assign(this.service_procedures[this.index], data);
             }
 
+            console.log(this.service_procedures);
+
             this.reset();  
 
             this.service_procedures.push({ 
               service_id: this.service_id, 
               service: this.service, 
               procedure_id: this.procedure_id, 
+              code: this.code, 
               procedure: this.procedure, 
               price: this.price, 
               discount: this.discount,
@@ -771,6 +778,7 @@
           {
             this.LastIndexIsRemoved = true;
           }
+
         }
 
       },
@@ -784,6 +792,7 @@
         this.total_amtDisabled = true;
         this.price = "";
         this.procedure_id = "";
+        this.code = "";
         this.procedure = "";
         this.discount = "";
         this.discount_amt = "";
@@ -804,7 +813,7 @@
         { 
           if(this.service_id == val.serviceid)
           {
-            this.procedure_per_service.push({id: val.id, procedure: val.procedure, price: val.price});
+            this.procedure_per_service.push({id: val.id, code: val.code, procedure: val.procedure, price: val.price});
           }
         }      
  
@@ -823,6 +832,7 @@
         { 
           if(this.procedure_id == val.id)
           { 
+            this.code = val.code;
             this.procedure = val.procedure;
             this.price = val.price;
             this.total_amount = val.price;
@@ -909,6 +919,7 @@
         this.patientservicesData.bloodpressure = "";
         this.patientservicesData.temperature = "";
         this.patientservicesData.weight = "";
+        this.patientservicesData.note = "";
         this.patientservicesData.grand_total = "0.00";
         this.service_procedures = [];
         this.index = "";
@@ -926,6 +937,7 @@
         this.total_amtDisabled = true;
         this.procedure_per_service = [];
         this.procedure_id = "";
+        this.code = "";
         this.procedure = "";
         this.service_id = "";
         this.service = "";

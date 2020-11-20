@@ -365,7 +365,6 @@
               }
             }).then((response) => {
             
-            console.log(response.data);
 
             if(response.data.success)
             {
@@ -419,7 +418,6 @@
       getProvinces(){
         Axios.get('/api/provinces').then((response) => {
           this.provinces = response.data.provinces;
-          console.log(this.provinces);
         });
       },
       getCities(province_id) {
@@ -430,13 +428,11 @@
           this.barangay = null;
           this.$v.city.$reset();
           this.$v.barangay.$reset();
-          console.log(this.cities);
         });
       },
       getBarangays(city_id) {
         Axios.get('/api/barangays/'+city_id).then((response) => {
           this.barangays = response.data.barangays;
-          console.log(this.barangays);
         });
       },
       showAlert() {

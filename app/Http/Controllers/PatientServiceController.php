@@ -129,7 +129,7 @@ class PatientServiceController extends Controller
         $activity_log->description = 'Create Patient Services';
         $activity_log->action = 'create';
         $activity_log->userid = auth('api')->user()->id;
-        // $activity_log->save();
+        $activity_log->save();
 
         return response()->json(['success' => 'Record has successfully added'], 200);
     }
@@ -156,7 +156,7 @@ class PatientServiceController extends Controller
                  ->join('service_procedures', 'patient_service_items.procedureid', '=', 'service_procedures.id')
                  ->join('patient_services', 'patient_service_items.psid', '=', 'patient_services.id')
                  ->join('patients', 'patient_services.patientid', '=', 'patients.id')
-                 ->select('patient_service_items.id', 'services.service', 'patient_service_items.price', 'patient_service_items.discount', 'service_procedures.procedure',
+                 ->select('patient_service_items.id', 'services.service', 'patient_service_items.price', 'patient_service_items.discount', 'service_procedures.code', 'service_procedures.procedure',
                           'patient_service_items.discount_amt', 'patient_service_items.total_amount', 'patient_service_items.status', 'patient_services.docdate', 'patient_services.type')
                 //  ->whereIn('services.service', $services)
                  ->where('patient_service_items.psid', '=', $psid)
@@ -288,7 +288,7 @@ class PatientServiceController extends Controller
         $activity_log->table_name = 'patient_services';
         $activity_log->description = 'Cancel Patient Services';
         $activity_log->action = 'cancel';
-        $activity_log->userid = auth()->user()->id;
+        $activity_log->userid = auth('api')->user()->id;
         $activity_log->save();
 
         return response()->json(['success' => 'Record has been updated'], 200);

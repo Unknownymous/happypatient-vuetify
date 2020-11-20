@@ -113,7 +113,7 @@
                   </tbody>
                   <tfoot>
                     <tr>
-                      <td class="text-right" colspan="4">
+                      <td class="text-right" colspan="5">
                         <strong>Grand Total:</strong>
                       </td>
                       <td><strong>₱</strong> {{ computedGrandTotal }}</td>
@@ -222,7 +222,7 @@
             Authorization: "Bearer " + access_token,
           },
         }).then((response) => {
-          console.log(response.data.transactions);
+          // console.log(response.data.transactions);
           this.transactions = response.data.transactions;
         });
       },

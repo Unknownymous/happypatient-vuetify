@@ -67,7 +67,7 @@
                               v-model="editedItem.code"
                               label="Code Name"
                               required
-                              :error-messages="pcodeErrors"
+                              :error-messages="codeErrors"
                               @input="$v.editedItem.code.$touch()"
                               @blur="$v.editedItem.code.$touch()"
                             ></v-text-field>
@@ -385,6 +385,13 @@
         if (!this.$v.editedItem.serviceid.$dirty) return errors;
         !this.$v.editedItem.serviceid.required &&
           errors.push("Service is required.");
+        return errors;
+      },
+      codeErrors() {
+        const errors = [];
+        if (!this.$v.editedItem.code.$dirty) return errors;
+        !this.$v.editedItem.code.required &&
+          errors.push("Code Name is required.");
         return errors;
       },
       procedureErrors() {
