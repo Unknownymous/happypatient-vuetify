@@ -18,7 +18,7 @@ class ServiceProcedureController extends Controller
     {   
         $procedures = DB::table('services')
                                ->join('service_procedures', 'services.id', '=', 'service_procedures.serviceid')
-                               ->select('service_procedures.id', 'service_procedures.serviceid', 'services.service', 'service_procedures.procedure', 'service_procedures.price')
+                               ->select('service_procedures.id', 'service_procedures.serviceid', 'services.service', 'service_procedures.code', 'service_procedures.procedure', 'service_procedures.price')
                                ->get();
         return response()->json(['procedures' => $procedures], 200);
     }
@@ -32,7 +32,7 @@ class ServiceProcedureController extends Controller
     
     public function store(Request $request)
     {   
-        // return $request->get('procedures')[0]['procedure'];
+        // return response()->json($request->all(), 200);
 
         $rules = [
             'service.required' => 'Please enter service',   
@@ -51,13 +51,18 @@ class ServiceProcedureController extends Controller
 
         $ctr = count($request->get('procedures'));
         $procedure = $request->get('procedures');
-        $price = $request->get('price');
+        $codeIsNull = false;
         $procedureIsNull = false;
         $priceIsNull = false;
 
         //Validate procedure and price if null
         for($x=0; $x < $ctr; $x++)
-        {
+        {   
+            if(empty($procedure[$x]['code']))
+            {
+                $codeIsNull = true;
+            }
+
             if(empty($procedure[$x]['procedure']))
             {
                 $procedureIsNull = true;
@@ -71,7 +76,7 @@ class ServiceProcedureController extends Controller
         }
 
         //validated if procedure or price is null
-        if($procedureIsNull == true || $priceIsNull == true)
+        if($codeIsNull == true || $procedureIsNull == true || $priceIsNull == true)
         {
             return response()->json(['procedures' => 'Procedure and Price is required'], 401);
         }
@@ -81,6 +86,7 @@ class ServiceProcedureController extends Controller
         {
             $service = new ServiceProcedure();
             $service->serviceid = $request->get('service');
+            $service->code = $procedure[$x]['code'];
             $service->procedure = $procedure[$x]['procedure'];
             $service->price = $procedure[$x]['price'];
             $service->save();
@@ -141,6 +147,7 @@ class ServiceProcedureController extends Controller
 
         $procedure = ServiceProcedure::find($procedureid);
         $procedure->serviceid = $request->get('serviceid');
+        $procedure->code = $request->get('code');
         $procedure->procedure = $request->get('procedure');
         $procedure->price = $request->get('price');
         $procedure->save();

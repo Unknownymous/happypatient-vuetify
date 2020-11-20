@@ -63,6 +63,20 @@
                         <v-row>
                           <v-col>
                             <v-text-field
+                              name="code"
+                              v-model="editedItem.code"
+                              label="Code Name"
+                              required
+                              :error-messages="pcodeErrors"
+                              @input="$v.editedItem.code.$touch()"
+                              @blur="$v.editedItem.code.$touch()"
+                            ></v-text-field>
+                            
+                          </v-col>
+                        </v-row>
+                        <v-row>
+                          <v-col>
+                            <v-text-field
                               name="procedure"
                               v-model="editedItem.procedure"
                               label="Procedure"
@@ -181,6 +195,7 @@
     validations: {
       editedItem: {
         serviceid: { required },
+        code: { required },
         procedure: { required },
         price: { required },
       },
@@ -190,6 +205,7 @@
         search: "",
         headers: [
           { text: "Service", value: "service" },
+          { text: "Code Name", value: "code" },
           { text: "Procedure", value: "procedure" },
           { text: "Price", value: "price" },
           { text: "Actions", value: "actions", sortable: false },
@@ -202,12 +218,14 @@
         editedItem: {
           serviceid: "",
           service: "",
+          code: "",
           procedure: "",
           price: "",
         },
         defaultItem: {
           serviceid: "",
           service: "",
+          code: "",
           procedure: "",
           price: "",
         },

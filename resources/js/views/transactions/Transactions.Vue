@@ -96,6 +96,7 @@
                       <th class="text-left">Document Date</th>
                       <th class="text-left">Patient/Organization</th>
                       <th class="text-left">Service</th>
+                      <th class="text-left">Code Name</th>
                       <th class="text-left">Procedure</th>
                       <th class="text-left">Amount (PHP)</th>
                     </tr>
@@ -105,6 +106,7 @@
                       <td>{{ item.docdate }}</td>
                       <td>{{ item.name }}</td>
                       <td>{{ item.service }}</td>
+                      <td>{{ item.code }}</td>
                       <td>{{ item.procedure }}</td>
                       <td><strong>₱</strong> {{ item.total_amount }}</td>
                     </tr>
@@ -142,6 +144,7 @@
           { text: "Document Date", value: "docdate" },
           { text: "Patient/Organization", value: "name" },
           { text: "Service", value: "service" },
+          { text: "Code Name", value: "code" },
           { text: "Procedure", value: "procedure" },
           { text: "Amout (PHP)", value: "total_amount" },
         ],

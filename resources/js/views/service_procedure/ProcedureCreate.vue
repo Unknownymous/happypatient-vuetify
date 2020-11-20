@@ -44,6 +44,9 @@
                       <template v-slot:default>
                         <thead>
                           <tr>
+                            <th width="250px">
+                              Code Name
+                            </th>
                             <th class="text-left">
                               Procedure
                             </th>
@@ -59,7 +62,22 @@
                           <tr
                             v-for="item in procedures"
                             :key="item.id"
-                          >
+                          > 
+                            <td>
+                              <v-text-field
+                                v-model="code"
+                                class="mt-5"
+                                id="code"
+                                dense
+                                required
+                                v-if="procedures.indexOf(item) == (procedures.length - 1) && !item.code"
+                              ></v-text-field>   
+
+                              {{ item.code }}
+
+                              {{ getIndex(procedures.indexOf(item)) }}
+
+                            </td>
                             <td>
                               <v-text-field
                                 v-model="procedure"
@@ -129,7 +147,7 @@
                         </tbody>
                         <tfoot>
                           <tr>
-                            <td colspan="2"></td>
+                            <td colspan="3"></td>
                             <td>
                               <v-btn
                                 class="mx-2 mb-5 mt-5"
@@ -175,15 +193,18 @@
 
     validations: {
       service: { required },   
+      code: { required },  
       procedure: { required },    
       price: { required },
     },
 
     data: () => ({
       LastIndexIsRemoved: false,
+      codeHasError: false,
       procedureHasError: false,
       priceHasError: false,
       disabled: false,
+      code: "",
       procedure: "",
       price: "",
       service: "",
@@ -241,9 +262,9 @@
         }
         
       
-        if(!this.$v.$error && !this.procedureHasError && !this.priceHasError)
+        if(!this.$v.$error && !this.codeHasError && !this.procedureHasError && !this.priceHasError)
         {
-          const procedure_data = { procedure: this.procedure, price: this.price };
+          const procedure_data = { code: this.code, procedure: this.procedure, price: this.price };
 
           //Assign data from last row textfield value of procedure and price; if last index was not removed
           if(!this.LastIndexIsRemoved)
@@ -325,7 +346,8 @@
         if(this.procedures.length == 0)
         {
           
-          this.procedures.push({ procedure: this.procedure, price: this.price });
+          this.procedures.push({ code: this.code, procedure: this.procedure, price: this.price });
+          this.codeHasError = false;
           this.procedureHasError = false;
           this.priceHasError = false;
 
@@ -340,10 +362,10 @@
             this.priceValidate();
           }
   
-          if(this.procedureHasError == false && this.priceHasError == false)
+          if(this.codeHasError == false && this.procedureHasError == false && this.priceHasError == false)
           {
             
-            const data = { procedure: this.procedure, price: this.price };
+            const data = { code: this.code, procedure: this.procedure, price: this.price };
 
             //if last index was removed and procedures has only 1 row data, don't assign data on procedures
             if(!this.LastIndexIsRemoved)
@@ -351,18 +373,17 @@
               Object.assign(this.procedures[this.index], data);
             }
 
+            this.code = "";
             this.procedure = "";
             this.price = "";
             this.LastIndexIsRemoved = false;
 
-            this.procedures.push({ procedure: this.procedure, price: this.price });
+            this.procedures.push({ code: this.code, procedure: this.procedure, price: this.price });
 
           }
           
         }
 
-
-        console.log(this.procedures);
       },
 
       removeRow(item) {
@@ -377,7 +398,8 @@
         { 
           this.procedureHasError = false;
           this.priceHasError = false;
-
+          
+          this.code = "";
           this.procedure = "";
           this.price = "";
           
@@ -389,8 +411,21 @@
        
         }
 
-        console.log(this.procedures);
+      },
 
+      codeValidate() {
+        
+        // const procedure = document.getElementById("procedure").value;
+
+        if(this.code)
+        {
+          this.codeHasError = false;
+        }
+        else
+        {
+          this.codeHasError = true;
+        }
+      
       },
 
       procedureValidate() {
@@ -428,6 +463,7 @@
         this.procedureHasError = false;
         this.priceHasError = false;
         this.disabled = false;
+        this.code = "";
         this.procedure = "";
         this.price = "";
         this.service = "";

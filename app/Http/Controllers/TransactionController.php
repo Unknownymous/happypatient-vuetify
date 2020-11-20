@@ -40,7 +40,7 @@ class TransactionController extends Controller
         $serviceid = $request->get('service');
         $date_from = Carbon::make($request->get('date_from'))->format('Y-m-d');
         $date_to = Carbon::make($request->get('date_to'))->format('Y-m-d');
-        $service_arr;
+        $service_arr = [];
 
         if(empty($serviceid))
         {   
